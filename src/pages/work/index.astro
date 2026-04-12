@@ -1,0 +1,33 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/layout.astro';
+import { getAllProjects } from '../../lib/queries';
+import { urlFor } from '../../lib/sanity';
+
+const projects = await getAllProjects();
+---
+
+<Layout title="Work — Mai" namespace="work" pageTheme="dark">
+  <section style="min-height:100vh;padding:8rem 2rem 4rem;">
+    <h1 style="font-size:clamp(2rem,5vw,4rem);margin-bottom:3rem;text-align:center;">Work</h1>
+    {projects.length === 0 ? (
+      <p style="text-align:center;color:#666;">No projects yet.</p>
+    ) : (
+      <div class="work-grid">
+        {projects.map((project: any) => (
+          <a href={`/work/${project.slug}`} class="work-card">
+            {project.thumbnail
+              ? <img class="work-card__thumb" src={urlFor(project.thumbnail).width(640).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
+              : <div class="work-card__thumb" />
+            }
+            <div class="work-card__info">
+              <div class="work-card__title">{project.title}</div>
+              <div class="work-card__meta">{project.client}{project.year ? ` · ${project.year}` : ''}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>

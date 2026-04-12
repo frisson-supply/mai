@@ -1,0 +1,179 @@
+---
+import { urlFor } from '../lib/sanity';
+import { LogoWall } from './logo-wall';
+
+interface TextSpan {
+  _type: string;
+  text: string;
+  marks?: string[];
+}
+
+interface Block {
+  _type: string;
+  _key: string;
+  style?: string;
+  children?: TextSpan[];
+}
+
+interface Section {
+  _type: string;
+  _key: string;
+  // textSection
+  text?: Block[];
+  width?: 'narrow' | 'normal' | 'wide';
+  // imageBlock
+  image?: { asset: any; alt?: string };
+  size?: string;
+  position?: string;
+  caption?: string;
+  // textImageBlock
+  imagePosition?: 'left' | 'right';
+  imageSize?: 'one-third' | 'half' | 'two-thirds';
+  // videoSection
+  url?: string;
+  aspectRatio?: string;
+  // projectDataSection
+  released?: string;
+  duration?: string;
+  client?: string;
+  role?: string;
+  // logoWallSection
+  heading?: string;
+  logos?: { src: string; alt: string; href?: string }[];
+}
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections = [] } = Astro.props;
+
+function renderBlocks(blocks: Block[] = []) {
+  return blocks.map(block => {
+    const text = (block.children ?? []).map(s => s.text || '').join('');
+    if (block.style === 'h2') return { tag: 'h2', text };
+    if (block.style === 'h3') return { tag: 'h3', text };
+    return { tag: 'p', text };
+  });
+}
+
+const imageSizeMap: Record<string, string> = {
+  'one-third':  '33.33%',
+  'half':       '50%',
+  'two-thirds': '66.66%',
+};
+---
+
+<div class="sections">
+  {sections.map((section) => {
+    if (section._type === 'projectDataSection') {
+      const meta = [
+        { label: 'Released', value: section.released },
+        { label: 'Duration', value: section.duration },
+        { label: 'Client',   value: section.client },
+        { label: 'Role',     value: section.role },
+      ].filter(m => m.value);
+      return (
+        <div class="project-data-section">
+          <dl class="project-data-section__meta">
+            {meta.map(({ label, value }) => (
+              <div class="project-data-section__item">
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+          {section.image && (
+            <div class="project-data-section__image">
+              <img
+                src={urlFor(section.image).width(1200).url()}
+                alt={section.image.alt || ''}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (section._type === 'textSection') {
+      const width = section.width ?? 'normal';
+      return (
+        <div class={`section-text section-text--${width}`}>
+          {renderBlocks(section.text).map(({ tag, text }) => (
+            tag === 'h2' ? <h2>{text}</h2> :
+            tag === 'h3' ? <h3>{text}</h3> :
+            <p>{text}</p>
+          ))}
+        </div>
+      );
+    }
+
+    if (section._type === 'imageBlock' && section.image) {
+      const size     = section.size ?? 'full';
+      const position = size === 'full' ? '' : ` image-block--${section.position ?? 'center'}`;
+      return (
+        <figure class={`image-block image-block--${size}${position}`}>
+          <img
+            src={urlFor(section.image).width(1200).url()}
+            alt={section.image.alt || ''}
+          />
+          {section.caption && <figcaption>{section.caption}</figcaption>}
+        </figure>
+      );
+    }
+
+    if (section._type === 'textImageBlock' && section.image) {
+      const position = section.imagePosition ?? 'right';
+      const size     = section.imageSize ?? 'half';
+      const imgWidth = imageSizeMap[size] ?? '50%';
+      return (
+        <div
+          class={`text-image-block text-image-block--image-${position}`}
+          style={`--image-width: ${imgWidth}`}
+        >
+          <div class="text-image-block__text">
+            {renderBlocks(section.text).map(({ tag, text }) => (
+              tag === 'h2' ? <h2>{text}</h2> :
+              tag === 'h3' ? <h3>{text}</h3> :
+              <p>{text}</p>
+            ))}
+          </div>
+          <div class="text-image-block__image">
+            <img
+              src={urlFor(section.image).width(800).url()}
+              alt={section.image.alt || ''}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (section._type === 'videoSection' && section.url) {
+      const ratio = section.aspectRatio ?? '16/9';
+      return (
+        <figure class="video-section">
+          <div class="video-section__embed" style={`aspect-ratio: ${ratio}`}>
+            <iframe
+              src={section.url}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+            />
+          </div>
+          {section.caption && <figcaption>{section.caption}</figcaption>}
+        </figure>
+      );
+    }
+
+    if (section._type === 'logoWallSection' && section.logos?.length) {
+      return (
+        <LogoWall
+          client:visible
+          heading={section.heading}
+          logos={section.logos}
+        />
+      );
+    }
+
+    return null;
+  })}
+</div>

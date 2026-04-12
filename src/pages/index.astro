@@ -1,0 +1,42 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/layout.astro';
+import { getSiteSettings, getFeaturedProjects } from '../lib/queries';
+import { urlFor } from '../lib/sanity';
+
+const settings = await getSiteSettings();
+const featured = await getFeaturedProjects();
+---
+
+<Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="dark">
+  <section class="hero">
+    <h1>{settings?.siteTitle || 'Mai'}</h1>
+    <p>Video Editor</p>
+    {settings?.showreelUrl && (
+      <a href={settings.showreelUrl} target="_blank" rel="noopener noreferrer" style="color:#fff;margin-top:2rem;text-decoration:underline;">
+        Watch Showreel
+      </a>
+    )}
+  </section>
+
+  {featured.length > 0 && (
+    <section class="content">
+      <h2>Selected Work</h2>
+      <div class="work-grid" style="margin-top:2rem">
+        {featured.map((project: any) => (
+          <a href={`/work/${project.slug}`} class="work-card">
+            {project.thumbnail
+              ? <img class="work-card__thumb" src={urlFor(project.thumbnail).width(640).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
+              : <div class="work-card__thumb" />
+            }
+            <div class="work-card__info">
+              <div class="work-card__title">{project.title}</div>
+              <div class="work-card__meta">{project.client}{project.year ? ` · ${project.year}` : ''}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</Layout>
