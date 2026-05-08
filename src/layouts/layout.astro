@@ -29,8 +29,30 @@ function isActive(href: string) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
+        <script is:inline>
+            if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("mai_loaded")) {
+                document.documentElement.classList.add("loader-done");
+            }
+        </script>
     </head>
     <body data-page-theme={pageTheme}>
+        {path === "/" && (
+            <div id="page-loader" class="page-loader">
+                <div class="page-loader__bg">
+                    <div class="page-loader__bar"></div>
+                </div>
+                <div class="page-loader__content">
+                    <div class="page-loader__name-wrap">
+                        <span class="page-loader__name-base">{siteName}</span>
+                        <span class="page-loader__name-top">{siteName}</span>
+                    </div>
+                    <div class="page-loader__text-wrap">
+                        <span class="page-loader__text page-loader__text--1">Hold tight</span>
+                        <span class="page-loader__text page-loader__text--2">Hi there!</span>
+                    </div>
+                </div>
+            </div>
+        )}
         <nav data-theme-nav>
             <a
                 href="/"
@@ -146,10 +168,65 @@ function isActive(href: string) {
                 }
             }
 
+            // -----------------------------------------
+            // PAGE LOADER (homepage, first visit only)
+            // -----------------------------------------
+
+            function runLoader(onDone) {
+                var loader = document.getElementById("page-loader");
+                if (!loader) { onDone(); return; }
+
+                if (sessionStorage.getItem("mai_loaded")) {
+                    gsap.set(loader, { display: "none" });
+                    onDone();
+                    return;
+                }
+
+                sessionStorage.setItem("mai_loaded", "1");
+
+                CustomEase.create("loader", "0.65, 0.01, 0.05, 0.99");
+                var bar     = loader.querySelector(".page-loader__bar");
+                var bg      = loader.querySelector(".page-loader__bg");
+                var content = loader.querySelector(".page-loader__content");
+                var nameTop = loader.querySelector(".page-loader__name-top");
+                var text1   = loader.querySelector(".page-loader__text--1");
+                var text2   = loader.querySelector(".page-loader__text--2");
+
+                if (!bar || !bg || !content || !nameTop || !text1 || !text2) {
+                    onDone();
+                    return;
+                }
+
+                var tl = gsap.timeline({
+                    defaults: { ease: "loader", duration: 3 },
+                    onComplete: onDone
+                })
+                .to(bar, { scaleX: 1 })
+                .to(nameTop, { clipPath: "inset(0% 0% 0% 0%)" }, "<")
+                .to(content, { autoAlpha: 0, duration: 0.5 })
+                .to(bar, { scaleX: 0, transformOrigin: "right center", duration: 0.5 }, "<")
+                .add("hideContent", "<")
+                .to(bg, { yPercent: -101, duration: 1 }, "hideContent")
+                .set(loader, { display: "none" });
+
+                if (typeof SplitText !== "undefined") {
+                    var split1 = new SplitText(text1, { type: "lines,chars", mask: "lines" });
+                    var split2 = new SplitText(text2, { type: "lines,chars", mask: "lines" });
+                    gsap.set([split1.chars, split2.chars], { autoAlpha: 0, yPercent: 125 });
+                    gsap.set([text1, text2], { autoAlpha: 1 });
+                    tl.to(split1.chars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: { each: 0.02 } }, 0);
+                    tl.to(split1.chars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: { each: 0.02 } }, ">+=0.4");
+                    tl.to(split2.chars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: { each: 0.02 } }, "<");
+                    tl.to(split2.chars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: { each: 0.02 } }, "hideContent-=0.5");
+                }
+            }
+
             if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", init);
+                document.addEventListener("DOMContentLoaded", function() {
+                    runLoader(init);
+                });
             } else {
-                init();
+                runLoader(init);
             }
 
             window.addEventListener("pageshow", function (e) {
