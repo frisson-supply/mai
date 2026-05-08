@@ -42,41 +42,24 @@ function isActive(href: string) {
             <div class="nav__col">
                 <a href="/about" class="nav__link">About</a>
             </div>
-            <div class="nav__col nav__col--end">
-                <div
-                    class="nav__meta"
-                    aria-hidden={showBack ? "true" : undefined}
-                    style={showBack ? "visibility:hidden;pointer-events:none;user-select:none" : undefined}
-                >
-                    <span class="nav__clip">
-                        <a
-                            href="/contact"
-                            class="nav__link"
-                            aria-current={
-                                isActive("/contact") ? "page" : undefined
-                            }
-                        >
-                            Contact
-                        </a>
-                    </span>
-                    {siteRole && (
-                        <span class="nav__clip">
-                            <span class="nav__role">{siteRole}</span>
-                        </span>
-                    )}
-                    {siteLocation && (
-                        <span class="nav__clip">
-                            <span class="nav__location">{siteLocation}</span>
-                        </span>
-                    )}
-                </div>
-                {showBack && (
-                    <span class="nav__clip nav__clip--back">
-                        <a href="/" class="nav__back">← Back</a>
-                    </span>
-                )}
-            </div>
         </nav>
+
+        <div class="page-meta">
+            {!showBack ? (
+                <>
+                    <a
+                        href="/contact"
+                        class="page-meta__link"
+                        aria-current={isActive("/contact") ? "page" : undefined}
+                        data-split="paragraph"
+                    >Contact</a>
+                    {siteRole && <span data-split="paragraph">{siteRole}</span>}
+                    {siteLocation && <span data-split="paragraph">{siteLocation}</span>}
+                </>
+            ) : (
+                <a href="/" class="page-meta__link" data-split="paragraph">← Back</a>
+            )}
+        </div>
 
         <main data-page-theme={pageTheme}>
             <slot />

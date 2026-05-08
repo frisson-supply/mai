@@ -61,44 +61,25 @@ nav a[aria-current="page"] {
     font-size: 0.875rem;
 }
 
-.nav__meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.1em;
-}
-
-.nav__role,
-.nav__location {
-    font-size: 0.875rem;
-    line-height: 1.3;
-}
-
-.nav__clip {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-}
-
-
 .nav__col {
     grid-area: about;
 }
 
-.nav__col--end {
-    grid-area: end;
-    text-align: right;
-    position: relative;
-}
-
-.nav__clip--back {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.nav__back {
+.page-meta {
+    position: fixed;
+    top: 1.5rem;
+    right: 2rem;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1em;
     font-size: 0.875rem;
+}
+
+.page-meta a {
+    color: inherit;
+    text-decoration: none;
 }
 
 nav[data-theme-nav="light"] {
