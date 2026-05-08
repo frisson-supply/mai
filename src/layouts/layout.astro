@@ -1,372 +1,495 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
+import { getSiteSettings } from "../lib/queries";
 
 interface Props {
-  title?: string;
-  namespace: string;
-  pageTheme?: 'light' | 'dark';
+    title?: string;
+    // namespace: string;
+    pageTheme?: "light" | "dark";
 }
 
-const { title = 'Mai', namespace, pageTheme = 'dark' } = Astro.props;
+const { title = "Mai", pageTheme = "dark" } = Astro.props;
 const path = Astro.url.pathname;
+const showBack = path !== "/";
+const settings = await getSiteSettings();
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/work', label: 'Work' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-];
+const siteName = settings?.siteTitle ?? "Mai";
+const siteRole = settings?.role ?? "";
+const siteLocation = settings?.location ?? "";
 
 function isActive(href: string) {
-  if (href === '/') return path === '/';
-  return path.startsWith(href);
+    if (href === "/") return path === "/";
+    return path.startsWith(href);
 }
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title}</title>
+    </head>
+    <body data-page-theme={pageTheme}>
+        <nav data-theme-nav>
+            <a
+                href="/"
+                class="nav__name"
+                aria-current={isActive("/") ? "page" : undefined}
+            >
+                {siteName}
+            </a>
+            <div class="nav__col">
+                <a href="/about" class="nav__link">About</a>
+            </div>
+            <div class="nav__col nav__col--end">
+                {
+                    showBack ? (
+                        <span class="nav__clip">
+                            <a href="/" class="nav__back">
+                                ← Back
+                            </a>
+                        </span>
+                    ) : (
+                        <div class="nav__meta">
+                            <span class="nav__clip">
+                                <a
+                                    href="/contact"
+                                    class="nav__link"
+                                    aria-current={
+                                        isActive("/contact")
+                                            ? "page"
+                                            : undefined
+                                    }
+                                >
+                                    Contact
+                                </a>
+                            </span>
+                            {siteRole && (
+                                <span class="nav__clip">
+                                    <span class="nav__role">{siteRole}</span>
+                                </span>
+                            )}
+                            {siteLocation && (
+                                <span class="nav__clip">
+                                    <span class="nav__location">
+                                        {siteLocation}
+                                    </span>
+                                </span>
+                            )}
+                        </div>
+                    )
+                }
+            </div>
+        </nav>
 
-  </head>
-  <body data-barba="wrapper" data-page-theme={pageTheme}>
-    <nav data-theme-nav>
-      {navLinks.map(({ href, label }) => (
-        <a
-          href={href}
-          data-barba-update
-          aria-current={isActive(href) ? 'page' : undefined}
-        >
-          {label}
-        </a>
-      ))}
-    </nav>
+        <main data-page-theme={pageTheme}>
+            <slot />
+        </main>
 
-    <div data-transition-wrap data-theme-transition class="transition">
-      <div data-transition-dark class="transition__dark"></div>
-    </div>
+        <!-- CDN: Lenis, GSAP -->
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js"
+        ></script>
 
-    <main data-barba="container" data-barba-namespace={namespace} data-page-theme={pageTheme}>
-      <slot />
-    </main>
+        <script is:inline>
+            gsap.registerPlugin(CustomEase);
+            if (typeof SplitText !== "undefined")
+                gsap.registerPlugin(SplitText);
 
-    <!-- CDN: Lenis, GSAP, Barba -->
-    <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3/dist/barba.umd.min.js"></script>
+            var lenis = null;
+            var hasLenis = typeof window.Lenis !== "undefined";
 
-    <script is:inline>
-      gsap.registerPlugin(CustomEase);
+            var rmMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+            var reducedMotion = rmMQ.matches;
+            rmMQ.addEventListener("change", function (e) {
+                reducedMotion = e.matches;
+            });
 
-      history.scrollRestoration = "manual";
+            CustomEase.create("osmo", "0.625, 0.05, 0, 1");
+            gsap.defaults({ ease: "osmo" });
 
-      let lenis = null;
-      let nextPage = document;
-      let onceFunctionsInitialized = false;
+            gsap.set(document.querySelectorAll(".nav__clip > *"), {
+                yPercent: 110,
+            });
+            gsap.set(document.querySelectorAll("[data-split]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll("[data-recognition-row]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll(".work-item"), { autoAlpha: 0 });
+            gsap.set(
+                document.querySelectorAll(
+                    ".image-block, .video-section, .text-image-block__image",
+                ),
+                { autoAlpha: 0 },
+            );
 
-      const hasLenis = typeof window.Lenis !== "undefined";
-      const hasScrollTrigger = typeof window.ScrollTrigger !== "undefined";
+            // -----------------------------------------
+            // INITIAL PAGE LOAD
+            // -----------------------------------------
 
-      const rmMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-      let reducedMotion = rmMQ.matches;
-      rmMQ.addEventListener?.("change", e => (reducedMotion = e.matches));
-      rmMQ.addListener?.(e => (reducedMotion = e.matches));
+            function init() {
+                var navEl = document.querySelector("nav");
+                if (navEl) {
+                    document.documentElement.style.setProperty(
+                        "--nav-h",
+                        navEl.offsetHeight + "px",
+                    );
+                }
 
-      const has = (s) => !!nextPage.querySelector(s);
+                initLenis();
+                initWorkView();
+                animateNavIn();
 
-      let staggerDefault = 0.05;
-      let durationDefault = 0.6;
-
-      CustomEase.create("osmo", "0.625, 0.05, 0, 1");
-      gsap.defaults({ ease: "osmo", duration: durationDefault });
-
-
-      // -----------------------------------------
-      // FUNCTION REGISTRY
-      // -----------------------------------------
-
-      function initOnceFunctions() {
-        initLenis();
-        if (onceFunctionsInitialized) return;
-        onceFunctionsInitialized = true;
-      }
-
-      function initBeforeEnterFunctions(next) {
-        nextPage = next || document;
-      }
-
-      function initAfterEnterFunctions(next) {
-        nextPage = next || document;
-
-        if (hasLenis) {
-          lenis.resize();
-        }
-
-        if (hasScrollTrigger) {
-          ScrollTrigger.refresh();
-        }
-      }
-
-
-      // -----------------------------------------
-      // PAGE TRANSITIONS
-      // -----------------------------------------
-
-      function runPageOnceAnimation(next) {
-        const tl = gsap.timeline();
-
-        tl.call(() => {
-          resetPage(next);
-        }, null, 0);
-
-        return tl;
-      }
-
-      function runPageLeaveAnimation(current, next) {
-        const transitionWrap = document.querySelector("[data-transition-wrap]");
-        const transitionDark = transitionWrap.querySelector("[data-transition-dark]");
-
-        const tl = gsap.timeline({
-          onComplete: () => {
-            current.remove();
-          }
-        });
-
-        CustomEase.create("parallax", "0.7, 0.05, 0.13, 1");
-
-        if (reducedMotion) {
-          return tl.set(current, { autoAlpha: 0 });
-        }
-
-        tl.set(transitionWrap, {
-          zIndex: 2
-        });
-
-        tl.fromTo(transitionDark, {
-          autoAlpha: 0
-        }, {
-          autoAlpha: 0.8,
-          duration: 1.2,
-          ease: "parallax"
-        }, 0);
-
-        tl.fromTo(current, {
-          y: "0vh"
-        }, {
-          y: "-25vh",
-          duration: 1.2,
-          ease: "parallax",
-        }, 0);
-
-        tl.set(transitionDark, {
-          autoAlpha: 0,
-        });
-
-        return tl;
-      }
-
-      function runPageEnterAnimation(next) {
-        const tl = gsap.timeline();
-
-        if (reducedMotion) {
-          tl.set(next, { autoAlpha: 1 });
-          tl.add("pageReady");
-          tl.call(resetPage, [next], "pageReady");
-          return new Promise(resolve => tl.call(resolve, null, "pageReady"));
-        }
-
-        tl.add("startEnter", 0);
-
-        tl.set(next, {
-          zIndex: 3
-        });
-
-        tl.fromTo(next, {
-          y: "100vh"
-        }, {
-          y: "0vh",
-          duration: 1.2,
-          clearProps: "all",
-          ease: "parallax"
-        }, "startEnter");
-
-        tl.add("pageReady");
-        tl.call(resetPage, [next], "pageReady");
-
-        return new Promise(resolve => {
-          tl.call(resolve, null, "pageReady");
-        });
-      }
-
-
-      // -----------------------------------------
-      // BARBA HOOKS + INIT
-      // -----------------------------------------
-
-      barba.hooks.beforeEnter(data => {
-        gsap.set(data.next.container, {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-        });
-
-        if (lenis && typeof lenis.stop === "function") {
-          lenis.stop();
-        }
-
-        initBeforeEnterFunctions(data.next.container);
-        applyThemeFrom(data.next.container);
-      });
-
-      barba.hooks.afterLeave(() => {
-        if (hasScrollTrigger) {
-          ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        }
-      });
-
-      barba.hooks.enter(data => {
-        initBarbaNavUpdate(data);
-      });
-
-      barba.hooks.afterEnter(data => {
-        initAfterEnterFunctions(data.next.container);
-
-        if (hasLenis) {
-          lenis.resize();
-          lenis.start();
-        }
-
-        if (hasScrollTrigger) {
-          ScrollTrigger.refresh();
-        }
-      });
-
-      barba.init({
-        debug: true,
-        timeout: 7000,
-        preventRunning: true,
-        transitions: [
-          {
-            name: "default",
-            sync: true,
-
-            async once(data) {
-              initOnceFunctions();
-              return runPageOnceAnimation(data.next.container);
-            },
-
-            async leave(data) {
-              return runPageLeaveAnimation(data.current.container, data.next.container);
-            },
-
-            async enter(data) {
-              return runPageEnterAnimation(data.next.container);
+                var isAbout = window.location.pathname.startsWith("/about");
+                if (isAbout) {
+                    initTextReveal(document.body);
+                    initMediaReveal(document.body);
+                    initRecognitionReveal(document.body);
+                } else {
+                    initTextReveal(document.body);
+                    initMediaReveal(document.body);
+                    initWorkItemReveal(document.body);
+                }
             }
-          }
-        ],
-      });
 
-
-      // -----------------------------------------
-      // GENERIC + HELPERS
-      // -----------------------------------------
-
-      const themeConfig = {
-        light: {
-          nav: "dark",
-          transition: "light"
-        },
-        dark: {
-          nav: "light",
-          transition: "dark"
-        }
-      };
-
-      function applyThemeFrom(container) {
-        const pageTheme = container?.dataset?.pageTheme || "light";
-        const config = themeConfig[pageTheme] || themeConfig.light;
-
-        document.body.dataset.pageTheme = pageTheme;
-        const transitionEl = document.querySelector('[data-theme-transition]');
-        if (transitionEl) {
-          transitionEl.dataset.themeTransition = config.transition;
-        }
-
-        const nav = document.querySelector('[data-theme-nav]');
-        if (nav) {
-          nav.dataset.themeNav = config.nav;
-        }
-      }
-
-      function initLenis() {
-        if (lenis) return;
-        if (!hasLenis) return;
-
-        lenis = new Lenis({
-          lerp: 0.165,
-          wheelMultiplier: 1.25,
-        });
-
-        if (hasScrollTrigger) {
-          lenis.on("scroll", ScrollTrigger.update);
-        }
-
-        gsap.ticker.add((time) => {
-          lenis.raf(time * 1000);
-        });
-
-        gsap.ticker.lagSmoothing(0);
-      }
-
-      function resetPage(container) {
-        window.scrollTo(0, 0);
-        gsap.set(container, { clearProps: "position,top,left,right" });
-
-        if (hasLenis) {
-          lenis.resize();
-          lenis.start();
-        }
-      }
-
-      function debounceOnWidthChange(fn, ms) {
-        let last = innerWidth,
-          timer;
-        return function (...args) {
-          clearTimeout(timer);
-          timer = setTimeout(() => {
-            if (innerWidth !== last) {
-              last = innerWidth;
-              fn.apply(this, args);
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", init);
+            } else {
+                init();
             }
-          }, ms);
-        };
-      }
 
-      function initBarbaNavUpdate(data) {
-        var tpl = document.createElement('template');
-        tpl.innerHTML = data.next.html.trim();
-        var nextNodes = tpl.content.querySelectorAll('[data-barba-update]');
-        var currentNodes = document.querySelectorAll('nav [data-barba-update]');
+            window.addEventListener("pageshow", function (e) {
+                if (e.persisted) {
+                    gsap.set(getNavAnimEls(), { yPercent: 110 });
+                    animateNavIn();
+                }
+            });
 
-        currentNodes.forEach(function (curr, index) {
-          var next = nextNodes[index];
-          if (!next) return;
+            // -----------------------------------------
+            // NAV ANIMATIONS
+            // -----------------------------------------
 
-          var newStatus = next.getAttribute('aria-current');
-          if (newStatus !== null) {
-            curr.setAttribute('aria-current', newStatus);
-          } else {
-            curr.removeAttribute('aria-current');
-          }
+            function getNavAnimEls() {
+                return document.querySelectorAll(".nav__clip > *");
+            }
 
-          var newClassList = next.getAttribute('class') || '';
-          curr.setAttribute('class', newClassList);
-        });
-      }
-    </script>
-  </body>
+            function animateNavIn() {
+                if (reducedMotion) return;
+                var els = getNavAnimEls();
+                if (!els.length) return;
+                gsap.to(els, {
+                    yPercent: 0,
+                    duration: 0.6,
+                    stagger: 0.06,
+                    ease: "expo.out",
+                    overwrite: true,
+                });
+            }
+
+            // -----------------------------------------
+            // SPLIT TEXT REVEAL
+            // -----------------------------------------
+
+            var splitInstances = [];
+
+            function initTextReveal(container) {
+                if (typeof SplitText === "undefined") return;
+                var scope = container || document;
+
+                scope
+                    .querySelectorAll('[data-split="title"]')
+                    .forEach(function (el) {
+                        if (reducedMotion) return;
+                        splitInstances.push(
+                            new SplitText(el, {
+                                type: "words, chars",
+                                autoSplit: true,
+                                mask: "chars",
+                                charsClass: "char",
+                                onSplit: function (self) {
+                                    gsap.set(self.elements, { autoAlpha: 1 });
+                                    return gsap.from(self.chars, {
+                                        duration: 1,
+                                        yPercent: -120,
+                                        scale: 1.2,
+                                        stagger: 0.01,
+                                        ease: "expo.out",
+                                    });
+                                },
+                            }),
+                        );
+                    });
+
+                scope
+                    .querySelectorAll('[data-split="paragraph"]')
+                    .forEach(function (el) {
+                        if (reducedMotion) return;
+                        splitInstances.push(
+                            new SplitText(el, {
+                                type: "lines, words",
+                                autoSplit: true,
+                                mask: "lines",
+                                linesClass: "line",
+                                onSplit: function (self) {
+                                    gsap.set(self.elements, { autoAlpha: 1 });
+                                    return gsap.from(self.lines, {
+                                        duration: 0.9,
+                                        yPercent: 105,
+                                        stagger: 0.04,
+                                        ease: "expo.out",
+                                    });
+                                },
+                            }),
+                        );
+                    });
+            }
+
+            function initWorkItemReveal(container) {
+                if (reducedMotion) return;
+                var items = (container || document).querySelectorAll(
+                    ".work-item",
+                );
+                if (!items.length) return;
+                gsap.fromTo(
+                    items,
+                    { yPercent: 100, autoAlpha: 0 },
+                    {
+                        yPercent: 0,
+                        autoAlpha: 1,
+                        duration: 0.8,
+                        ease: "power3.out",
+                        stagger: 0.1,
+                    },
+                );
+            }
+
+            function initMediaReveal(container) {
+                if (reducedMotion) return;
+                var els = (container || document).querySelectorAll(
+                    ".image-block, .video-section, .text-image-block__image",
+                );
+                if (!els.length) return;
+                gsap.fromTo(
+                    els,
+                    { yPercent: 100, autoAlpha: 0 },
+                    {
+                        yPercent: 0,
+                        autoAlpha: 1,
+                        duration: 0.8,
+                        ease: "power3.out",
+                        stagger: 0.1,
+                    },
+                );
+            }
+
+            function initRecognitionReveal(container) {
+                if (reducedMotion) return;
+                var rows = (container || document).querySelectorAll(
+                    "[data-recognition-row]",
+                );
+                if (!rows.length) return;
+                gsap.from(rows, {
+                    duration: 0.6,
+                    autoAlpha: 0,
+                    y: 10,
+                    stagger: 0.04,
+                    ease: "expo.out",
+                    delay: 0.4,
+                });
+            }
+
+            // -----------------------------------------
+            // WORK VIEW TOGGLE
+            // -----------------------------------------
+
+            document.addEventListener("click", function (e) {
+                var btn = e.target.closest("[data-view-btn]");
+                if (!btn) return;
+                applyWorkView(btn.dataset.viewBtn);
+            });
+
+            function applyWorkView(view) {
+                var section = document.getElementById("work-section");
+                if (section) section.dataset.view = view;
+                localStorage.setItem("workView", view);
+                document
+                    .querySelectorAll("[data-view-btn]")
+                    .forEach(function (btn) {
+                        btn.classList.toggle(
+                            "is-active",
+                            btn.dataset.viewBtn === view,
+                        );
+                    });
+            }
+
+            function initWorkView() {
+                var section = document.getElementById("work-section");
+                if (!section) return;
+                applyWorkView(localStorage.getItem("workView") || "grid");
+            }
+
+            // -----------------------------------------
+            // PAGE TRANSITIONS
+            // -----------------------------------------
+
+            function animatePageOut(onComplete) {
+                if (reducedMotion) {
+                    onComplete();
+                    return;
+                }
+
+                var navEls = getNavAnimEls();
+                var lines = document.querySelectorAll(
+                    '[data-split="paragraph"] .line',
+                );
+                var chars = document.querySelectorAll(
+                    '[data-split="title"] .char',
+                );
+                var rows = document.querySelectorAll("[data-recognition-row]");
+                var items = document.querySelectorAll(".work-item");
+                var media = document.querySelectorAll(
+                    ".image-block, .video-section, .text-image-block__image",
+                );
+
+                if (
+                    !navEls.length &&
+                    !chars.length &&
+                    !lines.length &&
+                    !rows.length &&
+                    !items.length &&
+                    !media.length
+                ) {
+                    onComplete();
+                    return;
+                }
+
+                var tl = gsap.timeline({ onComplete: onComplete });
+
+                if (navEls.length) {
+                    tl.to(
+                        navEls,
+                        {
+                            duration: 0.35,
+                            yPercent: -110,
+                            stagger: 0.06,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (chars.length) {
+                    tl.to(
+                        chars,
+                        {
+                            duration: 0.45,
+                            yPercent: -120,
+                            scale: 1.2,
+                            stagger: 0.008,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (lines.length) {
+                    tl.to(
+                        lines,
+                        {
+                            duration: 0.45,
+                            yPercent: 105,
+                            stagger: 0.025,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (rows.length) {
+                    tl.to(
+                        rows,
+                        {
+                            duration: 0.3,
+                            autoAlpha: 0,
+                            y: -8,
+                            stagger: 0.02,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (items.length) {
+                    tl.to(
+                        items,
+                        {
+                            duration: 0.4,
+                            yPercent: -15,
+                            autoAlpha: 0,
+                            stagger: 0.04,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (media.length) {
+                    tl.to(
+                        media,
+                        {
+                            duration: 0.4,
+                            yPercent: -15,
+                            autoAlpha: 0,
+                            stagger: 0.04,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+            }
+
+            document.addEventListener("click", function (e) {
+                var link = e.target.closest("a[href]");
+                if (!link) return;
+                var href = link.getAttribute("href");
+                if (
+                    !href ||
+                    href.startsWith("http") ||
+                    href.startsWith("//") ||
+                    href.startsWith("mailto") ||
+                    href.startsWith("#") ||
+                    link.target === "_blank"
+                )
+                    return;
+                e.preventDefault();
+                animatePageOut(function () {
+                    window.location.href = href;
+                });
+            });
+
+            // -----------------------------------------
+            // HELPERS
+            // -----------------------------------------
+
+            function initLenis() {
+                if (lenis || !hasLenis) return;
+                lenis = new Lenis({ lerp: 0.165, wheelMultiplier: 1.25 });
+                gsap.ticker.add(function (time) {
+                    lenis.raf(time * 1000);
+                });
+                gsap.ticker.lagSmoothing(0);
+            }
+        </script>
+    </body>
 </html>

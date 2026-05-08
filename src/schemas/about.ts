@@ -19,5 +19,19 @@ export const about = defineType({
       of: [{ type: 'string' }],
     }),
     defineField({ name: 'cvUrl', type: 'url', title: 'CV URL' }),
+    defineField({
+      name: 'recognitions',
+      type: 'array',
+      title: 'Recognitions',
+      of: [{
+        type: 'object',
+        name: 'recognition',
+        fields: [
+          { name: 'platform', type: 'string', title: 'Platform' },
+          { name: 'project', type: 'string', title: 'Project' },
+          { name: 'award', type: 'string', title: 'Award' },
+        ],
+      }],
+    }),
   ],
 });

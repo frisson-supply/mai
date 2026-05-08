@@ -9,8 +9,8 @@ const settings = await getSiteSettings();
 
 <Layout title="Contact — Mai" namespace="contact" pageTheme="dark">
   <section class="hero">
-    <h1>Contact</h1>
-    <p>Let's work together.</p>
+    <h1 data-split="title">Contact</h1>
+    <p data-split="paragraph">Let's work together.</p>
     {settings?.socialLinks && settings.socialLinks.length > 0 && (
       <div style="display:flex;gap:1.5rem;margin-top:2rem;flex-wrap:wrap;justify-content:center;">
         {settings.socialLinks.map((link: any) => (

@@ -24,25 +24,25 @@ if (!project) {
 <Layout title={`${project.title} — Mai`} namespace="project" pageTheme="dark">
   <article class="project-detail">
     <header class="project-detail__header">
-      <h1 style="font-size:clamp(2rem,5vw,5rem);">{project.title}</h1>
+      <h1 style="font-size:clamp(2rem,5vw,5rem);" data-split="title">{project.title}</h1>
 
       <div class="project-detail__meta">
         {project.client && (
           <div class="project-detail__meta-item">
-            <span class="project-detail__meta-label">Client</span>
-            <span class="project-detail__meta-value">{project.client}</span>
+            <span class="project-detail__meta-label" data-split="paragraph">Client</span>
+            <span class="project-detail__meta-value" data-split="paragraph">{project.client}</span>
           </div>
         )}
         {project.year && (
           <div class="project-detail__meta-item">
-            <span class="project-detail__meta-label">Year</span>
-            <span class="project-detail__meta-value">{project.year}</span>
+            <span class="project-detail__meta-label" data-split="paragraph">Year</span>
+            <span class="project-detail__meta-value" data-split="paragraph">{project.year}</span>
           </div>
         )}
         {project.role && (
           <div class="project-detail__meta-item">
-            <span class="project-detail__meta-label">Role</span>
-            <span class="project-detail__meta-value">{project.role}</span>
+            <span class="project-detail__meta-label" data-split="paragraph">Role</span>
+            <span class="project-detail__meta-value" data-split="paragraph">{project.role}</span>
           </div>
         )}
       </div>

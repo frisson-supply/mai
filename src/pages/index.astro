@@ -2,41 +2,34 @@
 export const prerender = true;
 
 import Layout from '../layouts/layout.astro';
-import { getSiteSettings, getFeaturedProjects } from '../lib/queries';
+import { getSiteSettings, getAllProjects } from '../lib/queries';
 import { urlFor } from '../lib/sanity';
 
 const settings = await getSiteSettings();
-const featured = await getFeaturedProjects();
+const projects = await getAllProjects();
 ---
 
-<Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="dark">
-  <section class="hero">
-    <h1>{settings?.siteTitle || 'Mai'}</h1>
-    <p>Video Editor</p>
-    {settings?.showreelUrl && (
-      <a href={settings.showreelUrl} target="_blank" rel="noopener noreferrer" style="color:#fff;margin-top:2rem;text-decoration:underline;">
-        Watch Showreel
+<Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="light">
+  <div class="work-toggle">
+    <button class="work-toggle__btn" data-view-btn="grid">Grid</button>
+    <span class="work-toggle__sep">/</span>
+    <button class="work-toggle__btn" data-view-btn="list">List</button>
+  </div>
+  <div class="work" id="work-section" data-view="grid">
+    {projects.map((project: any, i: number) => (
+      <a href={`/work/${project.slug}`} class="work-item">
+        <div class="work-item__thumb">
+          {project.thumbnail
+            ? <img src={urlFor(project.thumbnail).width(800).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
+            : <div class="work-item__thumb-placeholder" />
+          }
+        </div>
+        <div class="work-item__info">
+          <span class="work-item__index">{String(i + 1).padStart(2, '0')}</span>
+          <span class="work-item__title">{project.title}</span>
+          <span class="work-item__meta">{[project.client, project.year].filter(Boolean).join(' · ')}</span>
+        </div>
       </a>
-    )}
-  </section>
-
-  {featured.length > 0 && (
-    <section class="content">
-      <h2>Selected Work</h2>
-      <div class="work-grid" style="margin-top:2rem">
-        {featured.map((project: any) => (
-          <a href={`/work/${project.slug}`} class="work-card">
-            {project.thumbnail
-              ? <img class="work-card__thumb" src={urlFor(project.thumbnail).width(640).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
-              : <div class="work-card__thumb" />
-            }
-            <div class="work-card__info">
-              <div class="work-card__title">{project.title}</div>
-              <div class="work-card__meta">{project.client}{project.year ? ` · ${project.year}` : ''}</div>
-            </div>
-          </a>
-        ))}
-      </div>
-    </section>
-  )}
+    ))}
+  </div>
 </Layout>

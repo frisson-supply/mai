@@ -18,6 +18,10 @@ interface Block {
 interface Section {
   _type: string;
   _key: string;
+  // introSection
+  title?: string;
+  description?: string;
+  videoUrl?: string;
   // textSection
   text?: Block[];
   width?: 'narrow' | 'normal' | 'wide';
@@ -66,6 +70,31 @@ const imageSizeMap: Record<string, string> = {
 
 <div class="sections">
   {sections.map((section) => {
+    if (section._type === 'introSection' && section.title) {
+      const ratio = section.aspectRatio ?? '16/9';
+      return (
+        <div class="intro-section">
+          <div class="intro-section__text">
+            <h1 class="intro-section__title" data-split="title">{section.title}</h1>
+            {section.description && (
+              <p class="intro-section__description" data-split="paragraph">{section.description}</p>
+            )}
+          </div>
+          {section.videoUrl && (
+            <div class="intro-section__video">
+              <div class="intro-section__video-embed" style={`aspect-ratio: ${ratio}`}>
+                <iframe
+                  src={section.videoUrl}
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     if (section._type === 'projectDataSection') {
       const meta = [
         { label: 'Released', value: section.released },
@@ -100,9 +129,9 @@ const imageSizeMap: Record<string, string> = {
       return (
         <div class={`section-text section-text--${width}`}>
           {renderBlocks(section.text).map(({ tag, text }) => (
-            tag === 'h2' ? <h2>{text}</h2> :
-            tag === 'h3' ? <h3>{text}</h3> :
-            <p>{text}</p>
+            tag === 'h2' ? <h2 data-split="title">{text}</h2> :
+            tag === 'h3' ? <h3 data-split="title">{text}</h3> :
+            <p data-split="paragraph">{text}</p>
           ))}
         </div>
       );
@@ -133,9 +162,9 @@ const imageSizeMap: Record<string, string> = {
         >
           <div class="text-image-block__text">
             {renderBlocks(section.text).map(({ tag, text }) => (
-              tag === 'h2' ? <h2>{text}</h2> :
-              tag === 'h3' ? <h3>{text}</h3> :
-              <p>{text}</p>
+              tag === 'h2' ? <h2 data-split="title">{text}</h2> :
+              tag === 'h3' ? <h3 data-split="title">{text}</h3> :
+              <p data-split="paragraph">{text}</p>
             ))}
           </div>
           <div class="text-image-block__image">

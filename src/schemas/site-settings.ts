@@ -6,6 +6,8 @@ export const siteSettings = defineType({
   type: 'document',
   fields: [
     defineField({ name: 'siteTitle', type: 'string', title: 'Site Title' }),
+    defineField({ name: 'role', type: 'string', title: 'Role / Occupation' }),
+    defineField({ name: 'location', type: 'string', title: 'Location' }),
     defineField({ name: 'showreelUrl', type: 'url', title: 'Showreel URL' }),
     defineField({
       name: 'socialLinks', type: 'array', title: 'Social Links',

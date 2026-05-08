@@ -45,9 +45,9 @@ const imageSizeMap: Record<string, string> = {
   {blocks.map((block) => {
     if (block._type === 'block') {
       const text = renderText(block.children);
-      if (block.style === 'h2') return <h2>{text}</h2>;
-      if (block.style === 'h3') return <h3>{text}</h3>;
-      return <p>{text}</p>;
+      if (block.style === 'h2') return <h2 data-split="title">{text}</h2>;
+      if (block.style === 'h3') return <h3 data-split="title">{text}</h3>;
+      return <p data-split="paragraph">{text}</p>;
     }
 
     if (block._type === 'imageBlock' && block.image) {
@@ -76,9 +76,9 @@ const imageSizeMap: Record<string, string> = {
           <div class="text-image-block__text">
             {(block.text ?? []).map((inner) => {
               const t = renderText(inner.children);
-              if (inner.style === 'h2') return <h2>{t}</h2>;
-              if (inner.style === 'h3') return <h3>{t}</h3>;
-              return <p>{t}</p>;
+              if (inner.style === 'h2') return <h2 data-split="title">{t}</h2>;
+              if (inner.style === 'h3') return <h3 data-split="title">{t}</h3>;
+              return <p data-split="paragraph">{t}</p>;
             })}
           </div>
           <div class="text-image-block__image">

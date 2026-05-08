@@ -3,39 +3,52 @@ export const prerender = true;
 
 import Layout from '../layouts/layout.astro';
 import PortableTextRenderer from '../components/portable-text-renderer.astro';
-import { getAbout } from '../lib/queries';
-import { urlFor } from '../lib/sanity';
+import { getAbout, getSiteSettings } from '../lib/queries';
+import styles from './about.module.css';
 
 const about = await getAbout();
+const settings = await getSiteSettings();
 ---
 
-<Layout title="About — Mai" namespace="about" pageTheme="dark">
-  <section class="hero">
-    <article class="project-detail" style="padding-top:6rem">
-      {about?.photo && (
-        <img
-          src={urlFor(about.photo).width(400).url()}
-          alt={about.photo.alt || 'Profile photo'}
-          style="width:200px;height:200px;object-fit:cover;border-radius:50%;margin-bottom:2rem;"
-        />
-      )}
-      <h1 style="font-size:clamp(2rem,5vw,4rem);margin-bottom:2rem;">About</h1>
-      {about?.bio && <PortableTextRenderer blocks={about.bio} />}
-      {about?.skills && about.skills.length > 0 && (
-        <div style="margin-top:2rem;">
-          <h2 style="font-size:1.25rem;margin-bottom:1rem;">Skills</h2>
-          <div class="project-detail__tags">
-            {about.skills.map((skill: string) => (
-              <span class="project-detail__tag">{skill}</span>
-            ))}
+<Layout title="About — Mai" namespace="about" pageTheme="light">
+  <div class={styles['about']}>
+
+    <div class={styles['about-bio-section']}>
+      <div class={styles['about-bio']}>
+        {about?.bio ? (
+          <PortableTextRenderer blocks={about.bio} />
+        ) : (
+          <p data-split="paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        )}
+      </div>
+    </div>
+
+    <section class={styles['about-recognitions']}>
+      <h2 class={styles['about-recognitions-heading']} data-split="title">Recognizations &amp; brands</h2>
+      <div class={styles['about-recognition-list']}>
+        {about?.recognitions?.map((r: any) => (
+          <div class={styles['about-recognition-row']} data-recognition-row>
+            <span>{r.platform}</span>
+            <span>{r.project ?? ''}</span>
+            <span>{r.award}</span>
           </div>
-        </div>
-      )}
-      {about?.cvUrl && (
-        <a href={about.cvUrl} target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:2rem;color:#fff;text-decoration:underline;">
-          Download CV
-        </a>
-      )}
-    </article>
-  </section>
+        ))}
+      </div>
+    </section>
+
+    <footer class={styles['about-footer']}>
+      <div class={styles['about-footer-left']}>
+        {settings?.role && <span data-split="paragraph">{settings.role}</span>}
+        {settings?.location && <span data-split="paragraph">{settings.location}</span>}
+      </div>
+      <div class={styles['about-footer-right']}>
+        {settings?.socialLinks?.map((link: any) => (
+          <a href={link.url} target="_blank" rel="noopener noreferrer" data-split="paragraph">
+            {link.platform}
+          </a>
+        ))}
+      </div>
+    </footer>
+
+  </div>
 </Layout>

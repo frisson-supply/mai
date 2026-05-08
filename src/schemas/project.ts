@@ -25,6 +25,7 @@ export const project = defineType({
       type: 'array',
       title: 'Layout Sections',
       of: [
+        { type: 'introSection' },
         { type: 'projectDataSection' },
         { type: 'textSection' },
         { type: 'imageBlock' },

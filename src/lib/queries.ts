@@ -32,11 +32,12 @@ export async function getProjectBySlug(slug: string) {
       videoUrl,
       sections[] {
         _type, _key,
+        title, description,
         text, width,
         image { asset, alt },
         size, position, caption,
         imagePosition, imageSize,
-        url, aspectRatio,
+        url, videoUrl, aspectRatio,
         released, duration, client, role,
         heading,
         logos[] { "src": image.asset->url, "alt": image.alt, href }
@@ -54,12 +55,12 @@ export async function getAllProjectSlugs() {
 
 export async function getSiteSettings() {
   return safeFetch<any>(
-    `*[_type == "siteSettings"][0] { siteTitle, showreelUrl, socialLinks, seoDescription }`
+    `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription }`
   );
 }
 
 export async function getAbout() {
   return safeFetch<any>(
-    `*[_type == "about"][0] { bio, photo, skills, cvUrl }`
+    `*[_type == "about"][0] { bio, photo, skills, cvUrl, recognitions[] { platform, project, award } }`
   );
 }
