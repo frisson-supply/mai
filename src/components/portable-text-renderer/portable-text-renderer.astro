@@ -1,5 +1,7 @@
 ---
-import { urlFor } from '../lib/sanity';
+import { urlFor } from '@/lib/sanity';
+import { cn } from '@/utils/cn';
+import styles from '@/styles/blocks.module.css';
 
 interface TextSpan {
   _type: string;
@@ -51,10 +53,10 @@ const imageSizeMap: Record<string, string> = {
     }
 
     if (block._type === 'imageBlock' && block.image) {
-      const size     = block.size ?? 'full';
-      const position = size === 'full' ? '' : ` image-block--${block.position ?? 'center'}`;
+      const size = block.size ?? 'full';
+      const pos  = size !== 'full' ? block.position ?? 'center' : null;
       return (
-        <figure class={`image-block image-block--${size}${position}`}>
+        <figure class={cn(styles['image-block'], styles[`image-block--${size}`], pos && styles[`image-block--${pos}`])} data-reveal>
           <img
             src={urlFor(block.image).width(1200).url()}
             alt={block.image.alt || ''}
@@ -70,10 +72,10 @@ const imageSizeMap: Record<string, string> = {
       const imgWidth  = imageSizeMap[size] ?? '50%';
       return (
         <div
-          class={`text-image-block text-image-block--image-${position}`}
+          class={cn(styles['text-image-block'], styles[`text-image-block--image-${position}`])}
           style={`--image-width: ${imgWidth}`}
         >
-          <div class="text-image-block__text">
+          <div class={styles['text-image-block__text']}>
             {(block.text ?? []).map((inner) => {
               const t = renderText(inner.children);
               if (inner.style === 'h2') return <h2 data-split="title">{t}</h2>;
@@ -81,7 +83,7 @@ const imageSizeMap: Record<string, string> = {
               return <p data-split="paragraph">{t}</p>;
             })}
           </div>
-          <div class="text-image-block__image">
+          <div class={styles['text-image-block__image']} data-reveal>
             <img
               src={urlFor(block.image).width(800).url()}
               alt={block.image.alt || ''}

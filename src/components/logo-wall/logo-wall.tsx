@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useEffect, useRef } from 'react';
+import styles from './logo-wall.module.css';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -62,27 +63,20 @@ export function LogoWall({ heading, logos }: Props) {
       );
       patternIndexRef.current = 0;
 
-      items.forEach(item => {
-        item.querySelectorAll('[data-logo-wall-target]').forEach(old => old.remove());
-      });
+      poolRef.current = originalTargets
+        .filter(t => !visibleItemsRef.current.some(item => item.contains(t)))
+        .concat(
+          visibleItemsRef.current
+            .map(item => item.querySelector<HTMLDivElement>('[data-logo-wall-target]'))
+            .filter(Boolean) as HTMLDivElement[]
+        );
 
-      poolRef.current = originalTargets.map(n => n.cloneNode(true) as HTMLDivElement);
-
-      const front = poolRef.current.slice(0, visibleCountRef.current);
-      const rest  = shuffleArray(poolRef.current.slice(visibleCountRef.current));
-      poolRef.current = front.concat(rest);
-
-      for (let i = 0; i < visibleCountRef.current; i++) {
-        const parent =
-          visibleItemsRef.current[i].querySelector<HTMLDivElement>('[data-logo-wall-target-parent]') ||
-          visibleItemsRef.current[i];
-        const logo = poolRef.current.shift();
-        if (logo) parent.appendChild(logo);
-      }
+      poolRef.current = shuffleArray(originalTargets.slice());
 
       timelineRef.current = gsap.timeline({ repeat: -1, repeatDelay: LOOP_DELAY });
-      timelineRef.current.call(swapNext);
-      timelineRef.current.play();
+      timelineRef.current.call(swapNext, [], `+=${LOOP_DELAY}`);
+      timelineRef.current.addLabel('loop', LOOP_DELAY);
+      timelineRef.current.to({}, { duration: LOOP_DELAY }, 'loop');
     };
 
     const swapNext = () => {
@@ -157,21 +151,21 @@ export function LogoWall({ heading, logos }: Props) {
   }, []);
 
   return (
-    <section className="logo-wall-section">
-      {heading && <h2 className="logo-wall-section__heading">{heading}</h2>}
-      <div ref={rootRef} className="logo-wall">
-        <div ref={listRef} className="logo-wall__list">
+    <section className={styles['logo-wall-section']}>
+      {heading && <h2 className={styles['logo-wall-section__heading']}>{heading}</h2>}
+      <div ref={rootRef} className={styles['logo-wall']}>
+        <div ref={listRef} className={styles['logo-wall__list']}>
           {logos.map((logo, index) => (
-            <div key={index} data-logo-wall-item="" className="logo-wall__item">
-              <div data-logo-wall-target-parent="" className="logo-wall__logo">
-                <div className="logo-wall__logo-sizer" />
-                <div data-logo-wall-target="" className="logo-wall__logo-target">
+            <div key={index} data-logo-wall-item="" className={styles['logo-wall__item']}>
+              <div data-logo-wall-target-parent="" className={styles['logo-wall__logo']}>
+                <div className={styles['logo-wall__logo-sizer']} />
+                <div data-logo-wall-target="" className={styles['logo-wall__logo-target']}>
                   {logo.href ? (
                     <a href={logo.href} target="_blank" rel="noopener noreferrer" aria-label={logo.alt}>
-                      <img src={logo.src} alt={logo.alt} className="logo-wall__logo-img" />
+                      <img src={logo.src} alt={logo.alt} className={styles['logo-wall__logo-img']} />
                     </a>
                   ) : (
-                    <img src={logo.src} alt={logo.alt} className="logo-wall__logo-img" />
+                    <img src={logo.src} alt={logo.alt} className={styles['logo-wall__logo-img']} />
                   )}
                 </div>
               </div>

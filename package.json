@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint src",
+    "lint:css": "stylelint \"src/**/*.css\"",
     "prepare": "husky"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.183.1",
     "astro": "^5.17.1",
+    "clsx": "^2.1.1",
     "gsap": "^3.14.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -38,6 +40,10 @@
     "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-check-file": "^3.3.1",
     "husky": "^9.1.7",
+    "stylelint": "^17.11.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-order": "^8.1.1",
+    "stylelint-plugin-use-baseline": "^1.4.1",
     "typescript": "^5.9.3"
   }
 }

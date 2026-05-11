@@ -1,35 +1,45 @@
 ---
 export const prerender = true;
 
-import Layout from '../layouts/layout.astro';
-import { getSiteSettings, getAllProjects } from '../lib/queries';
-import { urlFor } from '../lib/sanity';
+import Layout from '@/layouts/layout.astro';
+import { getSiteSettings, getAllProjects } from '@/lib/queries';
+import { urlFor } from '@/lib/sanity';
+import styles from './index.module.css';
 
 const settings = await getSiteSettings();
 const projects = await getAllProjects();
 ---
 
 <Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="light">
-  <div class="work-toggle">
-    <button class="work-toggle__btn" data-view-btn="grid">Grid</button>
-    <span class="work-toggle__sep">/</span>
-    <button class="work-toggle__btn" data-view-btn="list">List</button>
+  <div class={styles['work-toggle']}>
+    <button class={styles['work-toggle__btn']} data-view-btn="grid">Grid</button>
+    <span class={styles['work-toggle__sep']}>/</span>
+    <button class={styles['work-toggle__btn']} data-view-btn="list">List</button>
   </div>
-  <div class="work" id="work-section" data-view="grid">
-    {projects.map((project: any, i: number) => (
-      <a href={`/work/${project.slug}`} class="work-item">
-        <div class="work-item__thumb">
-          {project.thumbnail
-            ? <img src={urlFor(project.thumbnail).width(800).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
-            : <div class="work-item__thumb-placeholder" />
-          }
-        </div>
-        <div class="work-item__info">
-          <span class="work-item__index">{String(i + 1).padStart(2, '0')}</span>
-          <span class="work-item__title">{project.title}</span>
-          <span class="work-item__meta">{[project.client, project.year].filter(Boolean).join(' · ')}</span>
-        </div>
-      </a>
-    ))}
+  <div class={styles['work-layout']} id="work-layout">
+    <div class={styles['work']} id="work-section" data-view="grid">
+      {projects.map((project: any, i: number) => (
+        <a href={`/works/${project.slug}`} class={styles['work-item']} data-item-index={i} data-work-item>
+          <div class={styles['work-item__thumb']}>
+            {project.thumbnail
+              ? <img src={urlFor(project.thumbnail).width(800).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
+              : <div />
+            }
+          </div>
+          <div class={styles['work-item__info']}>
+            <span class={styles['work-item__index']}>{String(i + 1).padStart(2, '0')}</span>
+            <span class={styles['work-item__title']}>{project.title}</span>
+            <span class={styles['work-item__meta']}>{[project.client, project.year].filter(Boolean).join(' · ')}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+    <nav class={styles['work-list-names']} id="work-list-names">
+      {projects.map((project: any, i: number) => (
+        <a href={`/works/${project.slug}`} class={styles['work-list-name']} data-name-index={i} data-work-list-name>
+          {project.title}
+        </a>
+      ))}
+    </nav>
   </div>
 </Layout>

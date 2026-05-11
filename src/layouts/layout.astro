@@ -1,14 +1,15 @@
 ---
-import "../styles/global.css";
-import { getSiteSettings } from "../lib/queries";
+import "@/styles/global.css";
+import styles from "./layout.module.css";
+import { getSiteSettings } from "@/lib/queries";
 
 interface Props {
     title?: string;
-    // namespace: string;
+    namespace?: string;
     pageTheme?: "light" | "dark";
 }
 
-const { title = "Mai", pageTheme = "dark" } = Astro.props;
+const { title = "Mai", namespace, pageTheme = "dark" } = Astro.props;
 const path = Astro.url.pathname;
 const showBack = path !== "/";
 const settings = await getSiteSettings();
@@ -35,51 +36,45 @@ function isActive(href: string) {
             }
         </script>
     </head>
-    <body data-page-theme={pageTheme}>
+    <body data-page-theme={pageTheme} data-namespace={namespace}>
         {path === "/" && (
-            <div id="page-loader" class="page-loader">
-                <div class="page-loader__bg">
-                    <div class="page-loader__bar"></div>
+            <div id="page-loader" class={styles['page-loader']}>
+                <div class={styles['page-loader__bg']} data-loader="bg">
+                    <div class={styles['page-loader__bar']} data-loader="bar"></div>
                 </div>
-                <div class="page-loader__content">
-                    <div class="page-loader__name-wrap">
-                        <span class="page-loader__name-base">{siteName}</span>
-                        <span class="page-loader__name-top">{siteName}</span>
+                <div class={styles['page-loader__content']} data-loader="content">
+                    <div class={styles['page-loader__name-wrap']}>
+                        <span class={styles['page-loader__name-base']}>{siteName}</span>
+                        <span class={styles['page-loader__name-top']} data-loader="name-top">{siteName}</span>
                     </div>
-                    <div class="page-loader__text-wrap">
-                        <span class="page-loader__text page-loader__text--1">Hold tight</span>
-                        <span class="page-loader__text page-loader__text--2">Hi there!</span>
+                    <div class={styles['page-loader__text-wrap']}>
+                        <span class={styles['page-loader__text']} data-loader-text="1">Hold tight</span>
+                        <span class={styles['page-loader__text']} data-loader-text="2">Hi there!</span>
                     </div>
                 </div>
             </div>
         )}
-        <nav data-theme-nav>
+        <nav data-site-nav data-theme-nav>
             <a
                 href="/"
-                class="nav__name"
+                class={styles['nav__name']}
                 aria-current={isActive("/") ? "page" : undefined}
             >
                 {siteName}
             </a>
-            <div class="nav__col">
-                <a href="/about" class="nav__link">About</a>
+            <div class={styles['nav__col']}>
+                <a href="/about" class={styles['nav__link']}>About</a>
             </div>
         </nav>
 
-        <div class="page-meta">
+        <div class={styles['page-meta']}>
             {!showBack ? (
                 <>
-                    <a
-                        href="/contact"
-                        class="page-meta__link"
-                        aria-current={isActive("/contact") ? "page" : undefined}
-                        data-split="paragraph"
-                    >Contact</a>
                     {siteRole && <span data-split="paragraph">{siteRole}</span>}
                     {siteLocation && <span data-split="paragraph">{siteLocation}</span>}
                 </>
             ) : (
-                <a href="/" class="page-meta__link" data-split="paragraph">← Back</a>
+                <a href="/" class={styles['page-meta__link']} data-split="paragraph">← Back</a>
             )}
         </div>
 
@@ -131,11 +126,9 @@ function isActive(href: string) {
             gsap.set(document.querySelectorAll("[data-recognition-row]"), {
                 autoAlpha: 0,
             });
-            gsap.set(document.querySelectorAll(".work-item"), { autoAlpha: 0 });
+            gsap.set(document.querySelectorAll("[data-work-item]"), { autoAlpha: 0 });
             gsap.set(
-                document.querySelectorAll(
-                    ".image-block, .video-section, .text-image-block__image",
-                ),
+                document.querySelectorAll("[data-reveal]"),
                 { autoAlpha: 0 },
             );
 
@@ -185,12 +178,12 @@ function isActive(href: string) {
                 sessionStorage.setItem("mai_loaded", "1");
 
                 CustomEase.create("loader", "0.65, 0.01, 0.05, 0.99");
-                var bar     = loader.querySelector(".page-loader__bar");
-                var bg      = loader.querySelector(".page-loader__bg");
-                var content = loader.querySelector(".page-loader__content");
-                var nameTop = loader.querySelector(".page-loader__name-top");
-                var text1   = loader.querySelector(".page-loader__text--1");
-                var text2   = loader.querySelector(".page-loader__text--2");
+                var bar     = loader.querySelector("[data-loader='bar']");
+                var bg      = loader.querySelector("[data-loader='bg']");
+                var content = loader.querySelector("[data-loader='content']");
+                var nameTop = loader.querySelector("[data-loader='name-top']");
+                var text1   = loader.querySelector("[data-loader-text='1']");
+                var text2   = loader.querySelector("[data-loader-text='2']");
 
                 if (!bar || !bg || !content || !nameTop || !text1 || !text2) {
                     onDone();
@@ -318,7 +311,7 @@ function isActive(href: string) {
             function initWorkItemReveal(container) {
                 if (reducedMotion) return;
                 var items = (container || document).querySelectorAll(
-                    ".work-item",
+                    "[data-work-item]",
                 );
                 if (!items.length) return;
                 gsap.fromTo(
@@ -336,9 +329,7 @@ function isActive(href: string) {
 
             function initMediaReveal(container) {
                 if (reducedMotion) return;
-                var els = (container || document).querySelectorAll(
-                    ".image-block, .video-section, .text-image-block__image",
-                );
+                var els = (container || document).querySelectorAll("[data-reveal]");
                 if (!els.length) return;
                 gsap.fromTo(
                     els,
@@ -381,7 +372,9 @@ function isActive(href: string) {
 
             function applyWorkView(view) {
                 var section = document.getElementById("work-section");
+                var layout = document.getElementById("work-layout");
                 if (section) section.dataset.view = view;
+                if (layout) layout.dataset.view = view;
                 localStorage.setItem("workView", view);
                 document
                     .querySelectorAll("[data-view-btn]")
@@ -391,6 +384,48 @@ function isActive(href: string) {
                             btn.dataset.viewBtn === view,
                         );
                     });
+                initListHover();
+            }
+
+            function initListHover() {
+                var section = document.getElementById("work-section");
+                if (!section || section.dataset.view !== "list") return;
+
+                var items = section.querySelectorAll("[data-work-item]");
+                var names = document.querySelectorAll("[data-work-list-name]");
+
+                function setActive(index) {
+                    section.classList.add("has-active");
+                    items.forEach(function (el, i) {
+                        el.classList.toggle("is-active", i === index);
+                    });
+                    names.forEach(function (el, i) {
+                        el.classList.toggle("is-active", i === index);
+                    });
+                }
+
+                function clearActive() {
+                    section.classList.remove("has-active");
+                    items.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
+                    names.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
+                }
+
+                items.forEach(function (el, i) {
+                    el.addEventListener("mouseenter", function () {
+                        setActive(i);
+                    });
+                    el.addEventListener("mouseleave", clearActive);
+                });
+                names.forEach(function (el, i) {
+                    el.addEventListener("mouseenter", function () {
+                        setActive(i);
+                    });
+                    el.addEventListener("mouseleave", clearActive);
+                });
             }
 
             function initWorkView() {
@@ -417,10 +452,8 @@ function isActive(href: string) {
                     '[data-split="title"] .char',
                 );
                 var rows = document.querySelectorAll("[data-recognition-row]");
-                var items = document.querySelectorAll(".work-item");
-                var media = document.querySelectorAll(
-                    ".image-block, .video-section, .text-image-block__image",
-                );
+                var items = document.querySelectorAll("[data-work-item]");
+                var media = document.querySelectorAll("[data-reveal]");
 
                 if (
                     !navEls.length &&

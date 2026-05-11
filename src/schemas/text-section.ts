@@ -26,8 +26,22 @@ export const textSection = defineType({
       },
       initialValue: 'normal',
     }),
+    defineField({
+      name: 'align',
+      type: 'string',
+      title: 'Alignment',
+      options: {
+        list: [
+          { title: 'Left',   value: 'left' },
+          { title: 'Center', value: 'center' },
+          { title: 'Right',  value: 'right' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'left',
+    }),
   ],
-  initialValue: { width: 'normal' },
+  initialValue: { width: 'normal', align: 'left' },
   preview: {
     select: { subtitle: 'width' },
     prepare: ({ subtitle }: { subtitle: string }) => ({

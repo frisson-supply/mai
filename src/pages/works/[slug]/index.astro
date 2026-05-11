@@ -1,0 +1,92 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/layout.astro';
+import SectionsRenderer from '@/components/sections-renderer/sections-renderer.astro';
+import NextProject from '@/components/next-project/next-project.astro';
+import { getAllProjectSlugs, getProjectBySlug, getNextProject } from '@/lib/queries';
+import { urlFor } from '@/lib/sanity';
+import styles from './slug.module.css';
+
+export async function getStaticPaths() {
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((item: { slug: string }) => ({
+    params: { slug: item.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const [project, nextProject] = await Promise.all([
+  getProjectBySlug(slug!),
+  getNextProject(slug!),
+]);
+
+if (!project) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title={`${project.title} — Mai`} namespace="project" pageTheme="light">
+  <article class={styles['project-detail']}>
+    <header class={styles['project-detail__header']}>
+      <h1 style="font-size:clamp(2rem,5vw,5rem);" data-split="title">{project.title}</h1>
+
+      <div class={styles['project-detail__meta']}>
+        {project.client && (
+          <div class={styles['project-detail__meta-item']}>
+            <span class={styles['project-detail__meta-label']} data-split="paragraph">Client</span>
+            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.client}</span>
+          </div>
+        )}
+        {project.year && (
+          <div class={styles['project-detail__meta-item']}>
+            <span class={styles['project-detail__meta-label']} data-split="paragraph">Year</span>
+            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.year}</span>
+          </div>
+        )}
+        {project.role && (
+          <div class={styles['project-detail__meta-item']}>
+            <span class={styles['project-detail__meta-label']} data-split="paragraph">Role</span>
+            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.role}</span>
+          </div>
+        )}
+      </div>
+
+      {project.tags && project.tags.length > 0 && (
+        <div class={styles['project-detail__tags']}>
+          {project.tags.map((tag: string) => (
+            <span class={styles['project-detail__tag']}>{tag}</span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    {project.videoUrl && (
+      <div class={styles['project-detail__video']} data-reveal>
+        <iframe
+          src={project.videoUrl}
+          title={project.title}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+    )}
+
+    {project.thumbnail && !project.videoUrl && (
+      <img
+        src={urlFor(project.thumbnail).width(1200).url()}
+        alt={project.thumbnail.alt || project.title}
+        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:3rem;"
+      />
+    )}
+
+    {project.sections && project.sections.length > 0 && (
+      <div class={styles['project-detail__sections']}>
+        <SectionsRenderer sections={project.sections} />
+      </div>
+    )}
+
+  </article>
+
+  {nextProject && <NextProject project={nextProject} />}
+</Layout>

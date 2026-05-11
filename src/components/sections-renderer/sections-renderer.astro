@@ -1,6 +1,8 @@
 ---
-import { urlFor } from '../lib/sanity';
-import { LogoWall } from './logo-wall';
+import { urlFor } from '@/lib/sanity';
+import { LogoWall } from '@/components/logo-wall/logo-wall';
+import { cn } from '@/utils/cn';
+import styles from '@/styles/blocks.module.css';
 
 interface TextSpan {
   _type: string;
@@ -68,21 +70,21 @@ const imageSizeMap: Record<string, string> = {
 };
 ---
 
-<div class="sections">
+<div class={styles['sections']}>
   {sections.map((section) => {
     if (section._type === 'introSection' && section.title) {
       const ratio = section.aspectRatio ?? '16/9';
       return (
-        <div class="intro-section">
-          <div class="intro-section__text">
-            <h1 class="intro-section__title" data-split="title">{section.title}</h1>
+        <div class={styles['intro-section']}>
+          <div class={styles['intro-section__text']}>
+            <h1 class={styles['intro-section__title']} data-split="title">{section.title}</h1>
             {section.description && (
-              <p class="intro-section__description" data-split="paragraph">{section.description}</p>
+              <p class={styles['intro-section__description']} data-split="paragraph">{section.description}</p>
             )}
           </div>
           {section.videoUrl && (
-            <div class="intro-section__video">
-              <div class="intro-section__video-embed" style={`aspect-ratio: ${ratio}`}>
+            <div class={styles['intro-section__video']} data-reveal>
+              <div class={styles['intro-section__video-embed']} style={`aspect-ratio: ${ratio}`}>
                 <iframe
                   src={section.videoUrl}
                   allow="autoplay; fullscreen; picture-in-picture"
@@ -103,17 +105,17 @@ const imageSizeMap: Record<string, string> = {
         { label: 'Role',     value: section.role },
       ].filter(m => m.value);
       return (
-        <div class="project-data-section">
-          <dl class="project-data-section__meta">
+        <div class={styles['project-data-section']}>
+          <dl class={styles['project-data-section__meta']}>
             {meta.map(({ label, value }) => (
-              <div class="project-data-section__item">
+              <div class={styles['project-data-section__item']}>
                 <dt>{label}</dt>
                 <dd>{value}</dd>
               </div>
             ))}
           </dl>
           {section.image && (
-            <div class="project-data-section__image">
+            <div class={styles['project-data-section__image']}>
               <img
                 src={urlFor(section.image).width(1200).url()}
                 alt={section.image.alt || ''}
@@ -126,8 +128,9 @@ const imageSizeMap: Record<string, string> = {
 
     if (section._type === 'textSection') {
       const width = section.width ?? 'normal';
+      const align = (section as any).align ?? 'left';
       return (
-        <div class={`section-text section-text--${width}`}>
+        <div class={cn(styles['section-text'], styles[`section-text--${width}`], styles[`section-text--${align}`])}>
           {renderBlocks(section.text).map(({ tag, text }) => (
             tag === 'h2' ? <h2 data-split="title">{text}</h2> :
             tag === 'h3' ? <h3 data-split="title">{text}</h3> :
@@ -138,10 +141,10 @@ const imageSizeMap: Record<string, string> = {
     }
 
     if (section._type === 'imageBlock' && section.image) {
-      const size     = section.size ?? 'full';
-      const position = size === 'full' ? '' : ` image-block--${section.position ?? 'center'}`;
+      const size = section.size ?? 'full';
+      const pos  = size !== 'full' ? section.position ?? 'center' : null;
       return (
-        <figure class={`image-block image-block--${size}${position}`}>
+        <figure class={cn(styles['image-block'], styles[`image-block--${size}`], pos && styles[`image-block--${pos}`])} data-reveal>
           <img
             src={urlFor(section.image).width(1200).url()}
             alt={section.image.alt || ''}
@@ -157,17 +160,17 @@ const imageSizeMap: Record<string, string> = {
       const imgWidth = imageSizeMap[size] ?? '50%';
       return (
         <div
-          class={`text-image-block text-image-block--image-${position}`}
+          class={cn(styles['text-image-block'], styles[`text-image-block--image-${position}`])}
           style={`--image-width: ${imgWidth}`}
         >
-          <div class="text-image-block__text">
+          <div class={styles['text-image-block__text']}>
             {renderBlocks(section.text).map(({ tag, text }) => (
               tag === 'h2' ? <h2 data-split="title">{text}</h2> :
               tag === 'h3' ? <h3 data-split="title">{text}</h3> :
               <p data-split="paragraph">{text}</p>
             ))}
           </div>
-          <div class="text-image-block__image">
+          <div class={styles['text-image-block__image']} data-reveal>
             <img
               src={urlFor(section.image).width(800).url()}
               alt={section.image.alt || ''}
@@ -180,8 +183,8 @@ const imageSizeMap: Record<string, string> = {
     if (section._type === 'videoSection' && section.url) {
       const ratio = section.aspectRatio ?? '16/9';
       return (
-        <figure class="video-section">
-          <div class="video-section__embed" style={`aspect-ratio: ${ratio}`}>
+        <figure class={styles['video-section']} data-reveal>
+          <div class={styles['video-section__embed']} style={`aspect-ratio: ${ratio}`}>
             <iframe
               src={section.url}
               allow="autoplay; fullscreen; picture-in-picture"

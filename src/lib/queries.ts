@@ -47,6 +47,31 @@ export async function getProjectBySlug(slug: string) {
   );
 }
 
+export async function getNextProject(currentSlug: string) {
+  const current = await safeFetch<{ order: number }>(
+    `*[_type == "project" && slug.current == $slug][0] { order }`,
+    { slug: currentSlug }
+  );
+
+  if (!current) return null;
+
+  const next = await safeFetch<any>(
+    `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {
+      _id, title, "slug": slug.current, client, year, tags, thumbnail
+    }`,
+    { order: current.order, slug: currentSlug }
+  );
+
+  if (next) return next;
+
+  return safeFetch<any>(
+    `*[_type == "project" && slug.current != $slug] | order(order asc) [0] {
+      _id, title, "slug": slug.current, client, year, tags, thumbnail
+    }`,
+    { slug: currentSlug }
+  );
+}
+
 export async function getAllProjectSlugs() {
   return safeFetch<{ slug: string }[]>(
     `*[_type == "project"] { "slug": slug.current }`
