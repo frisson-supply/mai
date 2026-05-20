@@ -20,17 +20,51 @@ export const about = defineType({
     }),
     defineField({ name: 'cvUrl', type: 'url', title: 'CV URL' }),
     defineField({
+      name: 'brands',
+      type: 'array',
+      title: 'Brands',
+      of: [{
+        type: 'object',
+        name: 'brand',
+        fields: [
+          defineField({ name: 'text', type: 'string', title: 'Name' }),
+          defineField({
+            name: 'image',
+            type: 'image',
+            title: 'Logo',
+            options: { hotspot: false },
+            fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+          }),
+          defineField({ name: 'link', type: 'url', title: 'Link (optional)' }),
+        ],
+        preview: {
+          select: { title: 'text', media: 'image', subtitle: 'link' },
+          prepare: ({ title, media, subtitle }: { title?: string; media: any; subtitle?: string }) => ({
+            title: title ?? 'Brand',
+            media,
+            subtitle: subtitle ?? 'No link',
+          }),
+        },
+      }],
+    }),
+    defineField({
       name: 'recognitions',
       type: 'array',
-      title: 'Recognitions',
+      title: 'Recognitions / Awards',
       of: [{
         type: 'object',
         name: 'recognition',
         fields: [
-          { name: 'platform', type: 'string', title: 'Platform' },
-          { name: 'project', type: 'string', title: 'Project' },
-          { name: 'award', type: 'string', title: 'Award' },
+          defineField({ name: 'title', type: 'string', title: 'Title' }),
+          defineField({ name: 'url', type: 'url', title: 'Link (optional)' }),
         ],
+        preview: {
+          select: { title: 'title', subtitle: 'url' },
+          prepare: ({ title, subtitle }: { title?: string; subtitle?: string }) => ({
+            title: title ?? 'Recognition',
+            subtitle: subtitle ?? 'No link',
+          }),
+        },
       }],
     }),
   ],

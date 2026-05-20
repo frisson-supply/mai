@@ -1,0 +1,31 @@
+---
+import { cn } from '@/utils/cn';
+import styles from './text-section.module.css';
+
+interface TextSpan { _type: string; text: string; marks?: string[]; }
+interface Block { _type: string; _key: string; style?: string; children?: TextSpan[]; }
+
+interface Props {
+  text: Block[];
+  width?: 'narrow' | 'normal' | 'wide' | 'full';
+  position?: 'left' | 'off-left-centre' | 'centre' | 'off-right-centre' | 'right';
+}
+
+const { text = [], width = 'normal', position } = Astro.props;
+const pos = width !== 'full' ? (position ?? 'left') : null;
+
+const blocks = text.map(block => {
+  const t = (block.children ?? []).map(s => s.text || '').join('');
+  if (block.style === 'h2') return { tag: 'h2', text: t };
+  if (block.style === 'h3') return { tag: 'h3', text: t };
+  return { tag: 'p', text: t };
+});
+---
+
+<div class={cn(styles['section-text'], styles[`section-text--${width}`], pos && styles[`section-text--${pos}`])}>
+  {blocks.map(({ tag, text }) => (
+    tag === 'h2' ? <h2 data-split="title">{text}</h2> :
+    tag === 'h3' ? <h3 data-split="title">{text}</h3> :
+    <p data-split="paragraph">{text}</p>
+  ))}
+</div>

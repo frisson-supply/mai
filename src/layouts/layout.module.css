@@ -34,6 +34,47 @@
         text-decoration: none;
     }
 
+    /* ── Progressive Blur ── */
+    .nav-blur {
+        height: var(--nav-h);
+        left: 0;
+        pointer-events: none;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 49;
+    }
+
+    .nav-blur__layer {
+        inset: 0;
+        position: absolute;
+    }
+
+    .nav-blur__layer:nth-child(1) {
+        backdrop-filter: blur(2px);
+        mask-image: linear-gradient(to bottom, black 0%, transparent 20%);
+    }
+
+    .nav-blur__layer:nth-child(2) {
+        backdrop-filter: blur(6px);
+        mask-image: linear-gradient(to bottom, black 20%, transparent 40%);
+    }
+
+    .nav-blur__layer:nth-child(3) {
+        backdrop-filter: blur(12px);
+        mask-image: linear-gradient(to bottom, black 40%, transparent 60%);
+    }
+
+    .nav-blur__layer:nth-child(4) {
+        backdrop-filter: blur(20px);
+        mask-image: linear-gradient(to bottom, black 60%, transparent 80%);
+    }
+
+    .nav-blur__layer:nth-child(5) {
+        backdrop-filter: blur(36px);
+        mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    }
+
     /* ── Page Loader ── */
     .page-loader {
         color: hsl(0deg 0% 96%);

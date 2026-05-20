@@ -1,5 +1,5 @@
 ---
-import "@/styles/global.css";
+import "@/global.css";
 import styles from "./layout.module.css";
 import { getSiteSettings } from "@/lib/queries";
 
@@ -54,6 +54,13 @@ function isActive(href: string) {
                 </div>
             </div>
         )}
+        <div class={styles['nav-blur']} aria-hidden="true">
+            <div class={styles['nav-blur__layer']}></div>
+            <div class={styles['nav-blur__layer']}></div>
+            <div class={styles['nav-blur__layer']}></div>
+            <div class={styles['nav-blur__layer']}></div>
+            <div class={styles['nav-blur__layer']}></div>
+        </div>
         <nav data-site-nav data-theme-nav>
             <a
                 href="/"

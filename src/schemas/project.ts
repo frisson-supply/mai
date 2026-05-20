@@ -14,6 +14,15 @@ export const project = defineType({
     defineField({ name: 'client', type: 'string', title: 'Client' }),
     defineField({ name: 'year', type: 'number', title: 'Year' }),
     defineField({ name: 'role', type: 'string', title: 'Role' }),
+    defineField({ name: 'description', type: 'text', title: 'Description' }),
+    defineField({ name: 'released', type: 'string', title: 'Released' }),
+    defineField({ name: 'duration', type: 'string', title: 'Duration' }),
+    defineField({ name: 'genre', type: 'string', title: 'Genre' }),
+    defineField({
+      name: 'infoImage', type: 'image', title: 'Info Image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
     defineField({ name: 'videoUrl', type: 'url', title: 'Video URL' }),
     defineField({
       name: 'thumbnail', type: 'image', title: 'Thumbnail',
@@ -25,8 +34,6 @@ export const project = defineType({
       type: 'array',
       title: 'Layout Sections',
       of: [
-        { type: 'introSection' },
-        { type: 'projectDataSection' },
         { type: 'textSection' },
         { type: 'imageBlock' },
         { type: 'textImageBlock' },

@@ -18,30 +18,34 @@ export const textSection = defineType({
       title: 'Width',
       options: {
         list: [
-          { title: 'Narrow',  value: 'narrow' },
-          { title: 'Normal',  value: 'normal' },
-          { title: 'Wide',    value: 'wide' },
+          { title: 'Narrow',     value: 'narrow' },
+          { title: 'Normal',     value: 'normal' },
+          { title: 'Wide',       value: 'wide' },
+          { title: 'Full width', value: 'full' },
         ],
         layout: 'radio',
       },
       initialValue: 'normal',
     }),
     defineField({
-      name: 'align',
+      name: 'position',
       type: 'string',
-      title: 'Alignment',
+      title: 'Position',
       options: {
         list: [
-          { title: 'Left',   value: 'left' },
-          { title: 'Center', value: 'center' },
-          { title: 'Right',  value: 'right' },
+          { title: 'Left',             value: 'left' },
+          { title: 'Off left centre',  value: 'off-left-centre' },
+          { title: 'Centre',           value: 'centre' },
+          { title: 'Off right centre', value: 'off-right-centre' },
+          { title: 'Right',            value: 'right' },
         ],
         layout: 'radio',
       },
       initialValue: 'left',
+      hidden: ({ parent }: any) => parent?.width === 'full',
     }),
   ],
-  initialValue: { width: 'normal', align: 'left' },
+  initialValue: { width: 'normal', position: 'left' },
   preview: {
     select: { subtitle: 'width' },
     prepare: ({ subtitle }: { subtitle: string }) => ({

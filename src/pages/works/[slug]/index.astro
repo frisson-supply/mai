@@ -28,36 +28,11 @@ if (!project) {
 
 <Layout title={`${project.title} — Mai`} namespace="project" pageTheme="light">
   <article class={styles['project-detail']}>
+
     <header class={styles['project-detail__header']}>
       <h1 style="font-size:clamp(2rem,5vw,5rem);" data-split="title">{project.title}</h1>
-
-      <div class={styles['project-detail__meta']}>
-        {project.client && (
-          <div class={styles['project-detail__meta-item']}>
-            <span class={styles['project-detail__meta-label']} data-split="paragraph">Client</span>
-            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.client}</span>
-          </div>
-        )}
-        {project.year && (
-          <div class={styles['project-detail__meta-item']}>
-            <span class={styles['project-detail__meta-label']} data-split="paragraph">Year</span>
-            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.year}</span>
-          </div>
-        )}
-        {project.role && (
-          <div class={styles['project-detail__meta-item']}>
-            <span class={styles['project-detail__meta-label']} data-split="paragraph">Role</span>
-            <span class={styles['project-detail__meta-value']} data-split="paragraph">{project.role}</span>
-          </div>
-        )}
-      </div>
-
-      {project.tags && project.tags.length > 0 && (
-        <div class={styles['project-detail__tags']}>
-          {project.tags.map((tag: string) => (
-            <span class={styles['project-detail__tag']}>{tag}</span>
-          ))}
-        </div>
+      {project.description && (
+        <p class={styles['project-detail__description']} data-split="paragraph">{project.description}</p>
       )}
     </header>
 
@@ -76,9 +51,46 @@ if (!project) {
       <img
         src={urlFor(project.thumbnail).width(1200).url()}
         alt={project.thumbnail.alt || project.title}
-        style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:3rem;"
+        class={styles['project-detail__hero-img']}
       />
     )}
+
+    <div class={styles['project-detail__info']}>
+      <dl class={styles['project-detail__info-meta']}>
+        {project.released && (
+          <div class={styles['project-detail__info-item']}>
+            <dt>Released</dt>
+            <dd>{project.released}</dd>
+          </div>
+        )}
+        {project.duration && (
+          <div class={styles['project-detail__info-item']}>
+            <dt>Duration</dt>
+            <dd>{project.duration}</dd>
+          </div>
+        )}
+        {project.genre && (
+          <div class={styles['project-detail__info-item']}>
+            <dt>Genre</dt>
+            <dd>{project.genre}</dd>
+          </div>
+        )}
+        {project.role && (
+          <div class={styles['project-detail__info-item']}>
+            <dt>Role</dt>
+            <dd>{project.role}</dd>
+          </div>
+        )}
+      </dl>
+      {project.infoImage && (
+        <div class={styles['project-detail__info-image']}>
+          <img
+            src={urlFor(project.infoImage).width(1200).url()}
+            alt={project.infoImage.alt || project.title}
+          />
+        </div>
+      )}
+    </div>
 
     {project.sections && project.sections.length > 0 && (
       <div class={styles['project-detail__sections']}>

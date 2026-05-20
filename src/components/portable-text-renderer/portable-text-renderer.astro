@@ -1,7 +1,6 @@
 ---
-import { urlFor } from '@/lib/sanity';
-import { cn } from '@/utils/cn';
-import styles from '@/styles/blocks.module.css';
+import ImageBlock from '@/components/blocks/image-block/image-block.astro';
+import TextImageBlock from '@/components/blocks/text-image-block/text-image-block.astro';
 
 interface TextSpan {
   _type: string;
@@ -14,12 +13,10 @@ interface Block {
   _key: string;
   style?: string;
   children?: TextSpan[];
-  // imageBlock fields
   image?: { asset: any; alt?: string };
   size?: string;
   position?: string;
   caption?: string;
-  // textImageBlock fields
   text?: Block[];
   imagePosition?: 'left' | 'right';
   imageSize?: 'one-third' | 'half' | 'two-thirds';
@@ -32,15 +29,8 @@ interface Props {
 const { blocks = [] } = Astro.props;
 
 function renderText(children: Block['children']) {
-  if (!children) return '';
-  return children.map(span => span.text || '').join('');
+  return (children ?? []).map(s => s.text || '').join('');
 }
-
-const imageSizeMap: Record<string, string> = {
-  'one-third':  '33.33%',
-  'half':       '50%',
-  'two-thirds': '66.66%',
-};
 ---
 
 <div class="portable-text">
@@ -52,46 +42,11 @@ const imageSizeMap: Record<string, string> = {
       return <p data-split="paragraph">{text}</p>;
     }
 
-    if (block._type === 'imageBlock' && block.image) {
-      const size = block.size ?? 'full';
-      const pos  = size !== 'full' ? block.position ?? 'center' : null;
-      return (
-        <figure class={cn(styles['image-block'], styles[`image-block--${size}`], pos && styles[`image-block--${pos}`])} data-reveal>
-          <img
-            src={urlFor(block.image).width(1200).url()}
-            alt={block.image.alt || ''}
-          />
-          {block.caption && <figcaption>{block.caption}</figcaption>}
-        </figure>
-      );
-    }
+    if (block._type === 'imageBlock' && block.image)
+      return <ImageBlock image={block.image} size={block.size} position={block.position} caption={block.caption} />;
 
-    if (block._type === 'textImageBlock' && block.image) {
-      const position  = block.imagePosition ?? 'right';
-      const size      = block.imageSize ?? 'half';
-      const imgWidth  = imageSizeMap[size] ?? '50%';
-      return (
-        <div
-          class={cn(styles['text-image-block'], styles[`text-image-block--image-${position}`])}
-          style={`--image-width: ${imgWidth}`}
-        >
-          <div class={styles['text-image-block__text']}>
-            {(block.text ?? []).map((inner) => {
-              const t = renderText(inner.children);
-              if (inner.style === 'h2') return <h2 data-split="title">{t}</h2>;
-              if (inner.style === 'h3') return <h3 data-split="title">{t}</h3>;
-              return <p data-split="paragraph">{t}</p>;
-            })}
-          </div>
-          <div class={styles['text-image-block__image']} data-reveal>
-            <img
-              src={urlFor(block.image).width(800).url()}
-              alt={block.image.alt || ''}
-            />
-          </div>
-        </div>
-      );
-    }
+    if (block._type === 'textImageBlock' && block.image)
+      return <TextImageBlock text={block.text ?? []} image={block.image} imagePosition={block.imagePosition} imageSize={block.imageSize} />;
 
     return null;
   })}

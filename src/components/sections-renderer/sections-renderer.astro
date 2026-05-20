@@ -1,209 +1,99 @@
 ---
-import { urlFor } from '@/lib/sanity';
 import { LogoWall } from '@/components/logo-wall/logo-wall';
-import { cn } from '@/utils/cn';
-import styles from '@/styles/blocks.module.css';
+import ImageBlock from '@/components/blocks/image-block/image-block.astro';
+import TextSection from '@/components/blocks/text-section/text-section.astro';
+import TextImageBlock from '@/components/blocks/text-image-block/text-image-block.astro';
+import VideoSection from '@/components/blocks/video-section/video-section.astro';
+import styles from './sections-renderer.module.css';
 
-interface TextSpan {
-  _type: string;
-  text: string;
-  marks?: string[];
-}
+interface TextSpan { _type: string; text: string; marks?: string[]; }
+interface Block { _type: string; _key: string; style?: string; children?: TextSpan[]; }
+interface SanityImage { asset: any; alt?: string; }
+interface Logo { src: string; alt: string; href?: string; }
 
-interface Block {
-  _type: string;
+interface TextSectionData {
+  _type: 'textSection';
   _key: string;
-  style?: string;
-  children?: TextSpan[];
-}
-
-interface Section {
-  _type: string;
-  _key: string;
-  // introSection
-  title?: string;
-  description?: string;
-  videoUrl?: string;
-  // textSection
   text?: Block[];
-  width?: 'narrow' | 'normal' | 'wide';
-  // imageBlock
-  image?: { asset: any; alt?: string };
+  width?: 'narrow' | 'normal' | 'wide' | 'full';
+  position?: 'left' | 'off-left-centre' | 'centre' | 'off-right-centre' | 'right';
+}
+
+interface ImageBlockData {
+  _type: 'imageBlock';
+  _key: string;
+  image?: SanityImage;
   size?: string;
   position?: string;
   caption?: string;
-  // textImageBlock
+}
+
+interface TextImageBlockData {
+  _type: 'textImageBlock';
+  _key: string;
+  text?: Block[];
+  image?: SanityImage;
   imagePosition?: 'left' | 'right';
   imageSize?: 'one-third' | 'half' | 'two-thirds';
-  // videoSection
+}
+
+interface VideoSectionData {
+  _type: 'videoSection';
+  _key: string;
   url?: string;
   aspectRatio?: string;
-  // projectDataSection
-  released?: string;
-  duration?: string;
-  client?: string;
-  role?: string;
-  // logoWallSection
-  heading?: string;
-  logos?: { src: string; alt: string; href?: string }[];
+  caption?: string;
 }
+
+interface LogoWallSectionData {
+  _type: 'logoWallSection';
+  _key: string;
+  heading?: string;
+  logos?: Logo[];
+}
+
+type Section =
+  | TextSectionData
+  | ImageBlockData
+  | TextImageBlockData
+  | VideoSectionData
+  | LogoWallSectionData
+  | { _type: string; _key: string };
 
 interface Props {
   sections: Section[];
 }
 
 const { sections = [] } = Astro.props;
-
-function renderBlocks(blocks: Block[] = []) {
-  return blocks.map(block => {
-    const text = (block.children ?? []).map(s => s.text || '').join('');
-    if (block.style === 'h2') return { tag: 'h2', text };
-    if (block.style === 'h3') return { tag: 'h3', text };
-    return { tag: 'p', text };
-  });
-}
-
-const imageSizeMap: Record<string, string> = {
-  'one-third':  '33.33%',
-  'half':       '50%',
-  'two-thirds': '66.66%',
-};
 ---
 
 <div class={styles['sections']}>
   {sections.map((section) => {
-    if (section._type === 'introSection' && section.title) {
-      const ratio = section.aspectRatio ?? '16/9';
-      return (
-        <div class={styles['intro-section']}>
-          <div class={styles['intro-section__text']}>
-            <h1 class={styles['intro-section__title']} data-split="title">{section.title}</h1>
-            {section.description && (
-              <p class={styles['intro-section__description']} data-split="paragraph">{section.description}</p>
-            )}
-          </div>
-          {section.videoUrl && (
-            <div class={styles['intro-section__video']} data-reveal>
-              <div class={styles['intro-section__video-embed']} style={`aspect-ratio: ${ratio}`}>
-                <iframe
-                  src={section.videoUrl}
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowfullscreen
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    if (section._type === 'projectDataSection') {
-      const meta = [
-        { label: 'Released', value: section.released },
-        { label: 'Duration', value: section.duration },
-        { label: 'Client',   value: section.client },
-        { label: 'Role',     value: section.role },
-      ].filter(m => m.value);
-      return (
-        <div class={styles['project-data-section']}>
-          <dl class={styles['project-data-section__meta']}>
-            {meta.map(({ label, value }) => (
-              <div class={styles['project-data-section__item']}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-          {section.image && (
-            <div class={styles['project-data-section__image']}>
-              <img
-                src={urlFor(section.image).width(1200).url()}
-                alt={section.image.alt || ''}
-              />
-            </div>
-          )}
-        </div>
-      );
-    }
+    if (section._type === 'introSection' || section._type === 'projectDataSection') return null;
 
     if (section._type === 'textSection') {
-      const width = section.width ?? 'normal';
-      const align = (section as any).align ?? 'left';
-      return (
-        <div class={cn(styles['section-text'], styles[`section-text--${width}`], styles[`section-text--${align}`])}>
-          {renderBlocks(section.text).map(({ tag, text }) => (
-            tag === 'h2' ? <h2 data-split="title">{text}</h2> :
-            tag === 'h3' ? <h3 data-split="title">{text}</h3> :
-            <p data-split="paragraph">{text}</p>
-          ))}
-        </div>
-      );
+      const s = section as TextSectionData;
+      return <TextSection text={s.text ?? []} width={s.width} position={s.position} />;
     }
 
-    if (section._type === 'imageBlock' && section.image) {
-      const size = section.size ?? 'full';
-      const pos  = size !== 'full' ? section.position ?? 'center' : null;
-      return (
-        <figure class={cn(styles['image-block'], styles[`image-block--${size}`], pos && styles[`image-block--${pos}`])} data-reveal>
-          <img
-            src={urlFor(section.image).width(1200).url()}
-            alt={section.image.alt || ''}
-          />
-          {section.caption && <figcaption>{section.caption}</figcaption>}
-        </figure>
-      );
+    if (section._type === 'imageBlock') {
+      const s = section as ImageBlockData;
+      return s.image ? <ImageBlock image={s.image} size={s.size} position={s.position} caption={s.caption} /> : null;
     }
 
-    if (section._type === 'textImageBlock' && section.image) {
-      const position = section.imagePosition ?? 'right';
-      const size     = section.imageSize ?? 'half';
-      const imgWidth = imageSizeMap[size] ?? '50%';
-      return (
-        <div
-          class={cn(styles['text-image-block'], styles[`text-image-block--image-${position}`])}
-          style={`--image-width: ${imgWidth}`}
-        >
-          <div class={styles['text-image-block__text']}>
-            {renderBlocks(section.text).map(({ tag, text }) => (
-              tag === 'h2' ? <h2 data-split="title">{text}</h2> :
-              tag === 'h3' ? <h3 data-split="title">{text}</h3> :
-              <p data-split="paragraph">{text}</p>
-            ))}
-          </div>
-          <div class={styles['text-image-block__image']} data-reveal>
-            <img
-              src={urlFor(section.image).width(800).url()}
-              alt={section.image.alt || ''}
-            />
-          </div>
-        </div>
-      );
+    if (section._type === 'textImageBlock') {
+      const s = section as TextImageBlockData;
+      return s.image ? <TextImageBlock text={s.text ?? []} image={s.image} imagePosition={s.imagePosition} imageSize={s.imageSize} /> : null;
     }
 
-    if (section._type === 'videoSection' && section.url) {
-      const ratio = section.aspectRatio ?? '16/9';
-      return (
-        <figure class={styles['video-section']} data-reveal>
-          <div class={styles['video-section__embed']} style={`aspect-ratio: ${ratio}`}>
-            <iframe
-              src={section.url}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowfullscreen
-            />
-          </div>
-          {section.caption && <figcaption>{section.caption}</figcaption>}
-        </figure>
-      );
+    if (section._type === 'videoSection') {
+      const s = section as VideoSectionData;
+      return s.url ? <VideoSection url={s.url} aspectRatio={s.aspectRatio} caption={s.caption} /> : null;
     }
 
-    if (section._type === 'logoWallSection' && section.logos?.length) {
-      return (
-        <LogoWall
-          client:visible
-          heading={section.heading}
-          logos={section.logos}
-        />
-      );
+    if (section._type === 'logoWallSection') {
+      const s = section as LogoWallSectionData;
+      return s.logos?.length ? <LogoWall client:visible heading={s.heading} logos={s.logos} /> : null;
     }
 
     return null;

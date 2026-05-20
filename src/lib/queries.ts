@@ -29,6 +29,7 @@ export async function getProjectBySlug(slug: string) {
   return safeFetch<any>(
     `*[_type == "project" && slug.current == $slug][0] {
       _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured,
+      description, released, duration, genre, infoImage,
       videoUrl,
       sections[] {
         _type, _key,
@@ -86,6 +87,6 @@ export async function getSiteSettings() {
 
 export async function getAbout() {
   return safeFetch<any>(
-    `*[_type == "about"][0] { bio, photo, skills, cvUrl, recognitions[] { platform, project, award } }`
+    `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url } }`
   );
 }
