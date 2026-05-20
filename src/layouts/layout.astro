@@ -5,11 +5,19 @@ import { getSiteSettings } from "@/lib/queries";
 
 interface Props {
     title?: string;
+    description?: string;
+    ogImage?: string;
     namespace?: string;
     pageTheme?: "light" | "dark";
 }
 
-const { title = "Mai", namespace, pageTheme = "dark" } = Astro.props;
+const {
+    title = "Mai",
+    description,
+    ogImage,
+    namespace,
+    pageTheme = "dark",
+} = Astro.props;
 const path = Astro.url.pathname;
 const showBack = path !== "/";
 const settings = await getSiteSettings();
@@ -30,59 +38,126 @@ function isActive(href: string) {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
+        {
+            settings?.faviconUrl ? (
+                <link rel="icon" href={settings.faviconUrl} />
+            ) : (
+                <link rel="icon" href="/favicon.svg" />
+            )
+        }
+        {description && <meta name="description" content={description} />}
+        <meta property="og:title" content={title} />
+        {
+            description && (
+                <meta property="og:description" content={description} />
+            )
+        }
+        {ogImage && <meta property="og:image" content={ogImage} />}
+        <meta property="og:type" content="website" />
+        <meta
+            name="twitter:card"
+            content={ogImage ? "summary_large_image" : "summary"}
+        />
+        <meta name="twitter:title" content={title} />
+        {
+            description && (
+                <meta name="twitter:description" content={description} />
+            )
+        }
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
         <script is:inline>
-            if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("mai_loaded")) {
+            if (
+                typeof sessionStorage !== "undefined" &&
+                sessionStorage.getItem("mai_loaded")
+            ) {
                 document.documentElement.classList.add("loader-done");
             }
         </script>
     </head>
     <body data-page-theme={pageTheme} data-namespace={namespace}>
-        {path === "/" && (
-            <div id="page-loader" class={styles['page-loader']}>
-                <div class={styles['page-loader__bg']} data-loader="bg">
-                    <div class={styles['page-loader__bar']} data-loader="bar"></div>
-                </div>
-                <div class={styles['page-loader__content']} data-loader="content">
-                    <div class={styles['page-loader__name-wrap']}>
-                        <span class={styles['page-loader__name-base']}>{siteName}</span>
-                        <span class={styles['page-loader__name-top']} data-loader="name-top">{siteName}</span>
+        {
+            path === "/" && (
+                <div id="page-loader" class={styles["page-loader"]}>
+                    <div class={styles["page-loader__bg"]} data-loader="bg">
+                        <div
+                            class={styles["page-loader__bar"]}
+                            data-loader="bar"
+                        />
                     </div>
-                    <div class={styles['page-loader__text-wrap']}>
-                        <span class={styles['page-loader__text']} data-loader-text="1">Hold tight</span>
-                        <span class={styles['page-loader__text']} data-loader-text="2">Hi there!</span>
+                    <div
+                        class={styles["page-loader__content"]}
+                        data-loader="content"
+                    >
+                        <div class={styles["page-loader__name-wrap"]}>
+                            <span class={styles["page-loader__name-base"]}>
+                                {siteName}
+                            </span>
+                            <span
+                                class={styles["page-loader__name-top"]}
+                                data-loader="name-top"
+                            >
+                                {siteName}
+                            </span>
+                        </div>
+                        <div class={styles["page-loader__text-wrap"]}>
+                            <span
+                                class={styles["page-loader__text"]}
+                                data-loader-text="1"
+                            >
+                                Hold tight
+                            </span>
+                            <span
+                                class={styles["page-loader__text"]}
+                                data-loader-text="2"
+                            >
+                                Hi there!
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )}
-        <div class={styles['nav-blur']} aria-hidden="true">
-            <div class={styles['nav-blur__layer']}></div>
-            <div class={styles['nav-blur__layer']}></div>
-            <div class={styles['nav-blur__layer']}></div>
-            <div class={styles['nav-blur__layer']}></div>
-            <div class={styles['nav-blur__layer']}></div>
+            )
+        }
+        <div class={styles["nav-blur"]} aria-hidden="true">
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
         </div>
         <nav data-site-nav data-theme-nav>
             <a
                 href="/"
-                class={styles['nav__name']}
+                class={styles["nav__name"]}
                 aria-current={isActive("/") ? "page" : undefined}
             >
                 {siteName}
             </a>
-            <div class={styles['nav__col']}>
-                <a href="/about" class={styles['nav__link']}>About</a>
+            <div class={styles["nav__col"]}>
+                <a href="/about" class={styles["nav__link"]}>About</a>
             </div>
         </nav>
 
-        <div class={styles['page-meta']}>
-            {!showBack ? (
-                <>
-                    {siteRole && <span data-split="paragraph">{siteRole}</span>}
-                    {siteLocation && <span data-split="paragraph">{siteLocation}</span>}
-                </>
-            ) : (
-                <a href="/" class={styles['page-meta__link']} data-split="paragraph">← Back</a>
-            )}
+        <div class={styles["page-meta"]}>
+            {
+                !showBack ? (
+                    <>
+                        {siteRole && (
+                            <span data-split="paragraph">{siteRole}</span>
+                        )}
+                        {siteLocation && (
+                            <span data-split="paragraph">{siteLocation}</span>
+                        )}
+                    </>
+                ) : (
+                    <a
+                        href="/"
+                        class={styles["page-meta__link"]}
+                        data-split="paragraph"
+                    >
+                        ← Back
+                    </a>
+                )
+            }
         </div>
 
         <main data-page-theme={pageTheme}>
@@ -133,11 +208,12 @@ function isActive(href: string) {
             gsap.set(document.querySelectorAll("[data-recognition-row]"), {
                 autoAlpha: 0,
             });
-            gsap.set(document.querySelectorAll("[data-work-item]"), { autoAlpha: 0 });
-            gsap.set(
-                document.querySelectorAll("[data-reveal]"),
-                { autoAlpha: 0 },
-            );
+            gsap.set(document.querySelectorAll("[data-work-item]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll("[data-reveal]"), {
+                autoAlpha: 0,
+            });
 
             // -----------------------------------------
             // INITIAL PAGE LOAD
@@ -174,7 +250,10 @@ function isActive(href: string) {
 
             function runLoader(onDone) {
                 var loader = document.getElementById("page-loader");
-                if (!loader) { onDone(); return; }
+                if (!loader) {
+                    onDone();
+                    return;
+                }
 
                 if (sessionStorage.getItem("mai_loaded")) {
                     gsap.set(loader, { display: "none" });
@@ -185,44 +264,98 @@ function isActive(href: string) {
                 sessionStorage.setItem("mai_loaded", "1");
 
                 CustomEase.create("loader", "0.65, 0.01, 0.05, 0.99");
-                var bar     = loader.querySelector("[data-loader='bar']");
-                var bg      = loader.querySelector("[data-loader='bg']");
+                var bar = loader.querySelector("[data-loader='bar']");
+                var bg = loader.querySelector("[data-loader='bg']");
                 var content = loader.querySelector("[data-loader='content']");
                 var nameTop = loader.querySelector("[data-loader='name-top']");
-                var text1   = loader.querySelector("[data-loader-text='1']");
-                var text2   = loader.querySelector("[data-loader-text='2']");
+                var text1 = loader.querySelector("[data-loader-text='1']");
+                var text2 = loader.querySelector("[data-loader-text='2']");
 
                 if (!bar || !bg || !content || !nameTop || !text1 || !text2) {
                     onDone();
                     return;
                 }
 
-                var tl = gsap.timeline({
-                    defaults: { ease: "loader", duration: 3 },
-                    onComplete: onDone
-                })
-                .to(bar, { scaleX: 1 })
-                .to(nameTop, { clipPath: "inset(0% 0% 0% 0%)" }, "<")
-                .to(content, { autoAlpha: 0, duration: 0.5 })
-                .to(bar, { scaleX: 0, transformOrigin: "right center", duration: 0.5 }, "<")
-                .add("hideContent", "<")
-                .to(bg, { yPercent: -101, duration: 1 }, "hideContent")
-                .set(loader, { display: "none" });
+                var tl = gsap
+                    .timeline({
+                        defaults: { ease: "loader", duration: 3 },
+                        onComplete: onDone,
+                    })
+                    .to(bar, { scaleX: 1 })
+                    .to(nameTop, { clipPath: "inset(0% 0% 0% 0%)" }, "<")
+                    .to(content, { autoAlpha: 0, duration: 0.5 })
+                    .to(
+                        bar,
+                        {
+                            scaleX: 0,
+                            transformOrigin: "right center",
+                            duration: 0.5,
+                        },
+                        "<",
+                    )
+                    .add("hideContent", "<")
+                    .to(bg, { yPercent: -101, duration: 1 }, "hideContent")
+                    .set(loader, { display: "none" });
 
                 if (typeof SplitText !== "undefined") {
-                    var split1 = new SplitText(text1, { type: "lines,chars", mask: "lines" });
-                    var split2 = new SplitText(text2, { type: "lines,chars", mask: "lines" });
-                    gsap.set([split1.chars, split2.chars], { autoAlpha: 0, yPercent: 125 });
+                    var split1 = new SplitText(text1, {
+                        type: "lines,chars",
+                        mask: "lines",
+                    });
+                    var split2 = new SplitText(text2, {
+                        type: "lines,chars",
+                        mask: "lines",
+                    });
+                    gsap.set([split1.chars, split2.chars], {
+                        autoAlpha: 0,
+                        yPercent: 125,
+                    });
                     gsap.set([text1, text2], { autoAlpha: 1 });
-                    tl.to(split1.chars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: { each: 0.02 } }, 0);
-                    tl.to(split1.chars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: { each: 0.02 } }, ">+=0.4");
-                    tl.to(split2.chars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: { each: 0.02 } }, "<");
-                    tl.to(split2.chars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: { each: 0.02 } }, "hideContent-=0.5");
+                    tl.to(
+                        split1.chars,
+                        {
+                            autoAlpha: 1,
+                            yPercent: 0,
+                            duration: 0.6,
+                            stagger: { each: 0.02 },
+                        },
+                        0,
+                    );
+                    tl.to(
+                        split1.chars,
+                        {
+                            autoAlpha: 0,
+                            yPercent: -125,
+                            duration: 0.4,
+                            stagger: { each: 0.02 },
+                        },
+                        ">+=0.4",
+                    );
+                    tl.to(
+                        split2.chars,
+                        {
+                            autoAlpha: 1,
+                            yPercent: 0,
+                            duration: 0.6,
+                            stagger: { each: 0.02 },
+                        },
+                        "<",
+                    );
+                    tl.to(
+                        split2.chars,
+                        {
+                            autoAlpha: 0,
+                            yPercent: -125,
+                            duration: 0.4,
+                            stagger: { each: 0.02 },
+                        },
+                        "hideContent-=0.5",
+                    );
                 }
             }
 
             if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", function() {
+                document.addEventListener("DOMContentLoaded", function () {
                     runLoader(init);
                 });
             } else {
@@ -323,30 +456,32 @@ function isActive(href: string) {
                 if (!items.length) return;
                 gsap.fromTo(
                     items,
-                    { yPercent: 100, autoAlpha: 0 },
+                    { y: 16, autoAlpha: 0 },
                     {
-                        yPercent: 0,
+                        y: 0,
                         autoAlpha: 1,
-                        duration: 0.8,
+                        duration: 0.7,
                         ease: "power3.out",
-                        stagger: 0.1,
+                        stagger: 0.06,
                     },
                 );
             }
 
             function initMediaReveal(container) {
                 if (reducedMotion) return;
-                var els = (container || document).querySelectorAll("[data-reveal]");
+                var els = (container || document).querySelectorAll(
+                    "[data-reveal]",
+                );
                 if (!els.length) return;
                 gsap.fromTo(
                     els,
-                    { yPercent: 100, autoAlpha: 0 },
+                    { y: 16, autoAlpha: 0 },
                     {
-                        yPercent: 0,
+                        y: 0,
                         autoAlpha: 1,
-                        duration: 0.8,
+                        duration: 0.7,
                         ease: "power3.out",
-                        stagger: 0.1,
+                        stagger: 0.08,
                     },
                 );
             }
@@ -530,10 +665,10 @@ function isActive(href: string) {
                     tl.to(
                         items,
                         {
-                            duration: 0.4,
-                            yPercent: -15,
+                            duration: 0.35,
+                            y: -8,
                             autoAlpha: 0,
-                            stagger: 0.04,
+                            stagger: 0.03,
                             ease: "power2.in",
                         },
                         0,
@@ -543,8 +678,8 @@ function isActive(href: string) {
                     tl.to(
                         media,
                         {
-                            duration: 0.4,
-                            yPercent: -15,
+                            duration: 0.35,
+                            y: -8,
                             autoAlpha: 0,
                             stagger: 0.04,
                             ease: "power2.in",

@@ -26,7 +26,13 @@ if (!project) {
 }
 ---
 
-<Layout title={`${project.title} — Mai`} namespace="project" pageTheme="light">
+<Layout
+  title={project.metaTitle || `${project.title} — Mai`}
+  description={project.metaDescription || project.description}
+  ogImage={project.metaImageUrl}
+  namespace="project"
+  pageTheme="light"
+>
   <article class={styles['project-detail']}>
 
     <header class={styles['project-detail__header']}>
@@ -52,6 +58,7 @@ if (!project) {
         src={urlFor(project.thumbnail).width(1200).url()}
         alt={project.thumbnail.alt || project.title}
         class={styles['project-detail__hero-img']}
+        data-reveal
       />
     )}
 
@@ -59,31 +66,31 @@ if (!project) {
       <dl class={styles['project-detail__info-meta']}>
         {project.released && (
           <div class={styles['project-detail__info-item']}>
-            <dt>Released</dt>
-            <dd>{project.released}</dd>
+            <dt data-split="paragraph">Released</dt>
+            <dd data-split="paragraph">{project.released}</dd>
           </div>
         )}
         {project.duration && (
           <div class={styles['project-detail__info-item']}>
-            <dt>Duration</dt>
-            <dd>{project.duration}</dd>
+            <dt data-split="paragraph">Duration</dt>
+            <dd data-split="paragraph">{project.duration}</dd>
           </div>
         )}
         {project.genre && (
           <div class={styles['project-detail__info-item']}>
-            <dt>Genre</dt>
-            <dd>{project.genre}</dd>
+            <dt data-split="paragraph">Genre</dt>
+            <dd data-split="paragraph">{project.genre}</dd>
           </div>
         )}
         {project.role && (
           <div class={styles['project-detail__info-item']}>
-            <dt>Role</dt>
-            <dd>{project.role}</dd>
+            <dt data-split="paragraph">Role</dt>
+            <dd data-split="paragraph">{project.role}</dd>
           </div>
         )}
       </dl>
       {project.infoImage && (
-        <div class={styles['project-detail__info-image']}>
+        <div class={styles['project-detail__info-image']} data-reveal>
           <img
             src={urlFor(project.infoImage).width(1200).url()}
             alt={project.infoImage.alt || project.title}

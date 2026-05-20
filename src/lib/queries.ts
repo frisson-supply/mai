@@ -31,6 +31,7 @@ export async function getProjectBySlug(slug: string) {
       _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured,
       description, released, duration, genre, infoImage,
       videoUrl,
+      metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url,
       sections[] {
         _type, _key,
         title, description,
@@ -81,12 +82,12 @@ export async function getAllProjectSlugs() {
 
 export async function getSiteSettings() {
   return safeFetch<any>(
-    `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription }`
+    `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription, "faviconUrl": favicon.asset->url }`
   );
 }
 
 export async function getAbout() {
   return safeFetch<any>(
-    `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url } }`
+    `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url }, metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url }`
   );
 }

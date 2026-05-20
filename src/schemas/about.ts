@@ -4,25 +4,40 @@ export const about = defineType({
   name: 'about',
   title: 'About',
   type: 'document',
+  preview: {
+    prepare: () => ({ title: 'About' }),
+  },
+  groups: [
+    { name: 'content',  title: 'Content',  default: true },
+    { name: 'credits',  title: 'Credits' },
+    { name: 'seo',      title: 'SEO' },
+  ],
   fields: [
+    // ── Content ──
     defineField({
       name: 'bio', type: 'array', title: 'Bio',
       of: [{ type: 'block' }],
+      group: 'content',
     }),
     defineField({
       name: 'photo', type: 'image', title: 'Photo',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+      group: 'content',
     }),
     defineField({
       name: 'skills', type: 'array', title: 'Skills',
       of: [{ type: 'string' }],
+      group: 'content',
     }),
-    defineField({ name: 'cvUrl', type: 'url', title: 'CV URL' }),
+    defineField({ name: 'cvUrl', type: 'url', title: 'CV URL', group: 'content' }),
+
+    // ── Credits ──
     defineField({
       name: 'brands',
       type: 'array',
       title: 'Brands',
+      group: 'credits',
       of: [{
         type: 'object',
         name: 'brand',
@@ -51,6 +66,7 @@ export const about = defineType({
       name: 'recognitions',
       type: 'array',
       title: 'Recognitions / Awards',
+      group: 'credits',
       of: [{
         type: 'object',
         name: 'recognition',
@@ -66,6 +82,21 @@ export const about = defineType({
           }),
         },
       }],
+    }),
+
+    // ── SEO ──
+    defineField({ name: 'metaTitle', type: 'string', title: 'Meta Title', group: 'seo' }),
+    defineField({
+      name: 'metaDescription', type: 'text', title: 'Meta Description',
+      validation: r => r.max(160),
+      group: 'seo',
+    }),
+    defineField({
+      name: 'metaImage', type: 'image', title: 'Social Image',
+      description: 'Used for OG / Twitter cards. Recommended: 1200×630px.',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+      group: 'seo',
     }),
   ],
 });

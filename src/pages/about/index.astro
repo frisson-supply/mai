@@ -11,7 +11,13 @@ const about = await getAbout();
 const settings = await getSiteSettings();
 ---
 
-<Layout title="About — Mai" namespace="about" pageTheme="light">
+<Layout
+  title={about?.metaTitle || "About — Mai"}
+  description={about?.metaDescription}
+  ogImage={about?.metaImageUrl}
+  namespace="about"
+  pageTheme="light"
+>
   <div class={styles['about']}>
 
     <div class={styles['about-bio-section']}>
