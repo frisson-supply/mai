@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import sanity from '@sanity/astro';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
@@ -21,7 +21,7 @@ try {
 
 export default defineConfig({
   output: 'server',
-  adapter: node({ mode: 'standalone' }),
+  adapter: vercel(),
   vite: {
     ssr: {
       noExternal: ['gsap', 'three'],
