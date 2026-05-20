@@ -1,0 +1,111 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/layout.astro';
+import SectionsRenderer from '@/components/sections-renderer/sections-renderer.astro';
+import NextProject from '@/components/next-project/next-project.astro';
+import { getAllProjectSlugs, getProjectBySlug, getNextProject } from '@/lib/queries';
+import { urlFor } from '@/lib/sanity';
+import styles from './slug.module.css';
+
+export async function getStaticPaths() {
+  const slugs = await getAllProjectSlugs();
+  return slugs.map((item: { slug: string }) => ({
+    params: { slug: item.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const [project, nextProject] = await Promise.all([
+  getProjectBySlug(slug!),
+  getNextProject(slug!),
+]);
+
+if (!project) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout
+  title={project.metaTitle || `${project.title} — Mai`}
+  description={project.metaDescription || project.description}
+  ogImage={project.metaImageUrl}
+  namespace="project"
+  pageTheme="light"
+>
+  <article class={styles['project-detail']}>
+
+    <header class={styles['project-detail__header']}>
+      <h1 style="font-size:clamp(2rem,5vw,5rem);" data-split="title">{project.title}</h1>
+      {project.description && (
+        <p class={styles['project-detail__description']} data-split="paragraph">{project.description}</p>
+      )}
+    </header>
+
+    {project.videoUrl && (
+      <div class={styles['project-detail__video']} data-reveal>
+        <iframe
+          src={project.videoUrl}
+          title={project.title}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+    )}
+
+    {project.thumbnail && !project.videoUrl && (
+      <img
+        src={urlFor(project.thumbnail).width(1200).url()}
+        alt={project.thumbnail.alt || project.title}
+        class={styles['project-detail__hero-img']}
+        data-reveal
+      />
+    )}
+
+    <div class={styles['project-detail__info']}>
+      <dl class={styles['project-detail__info-meta']}>
+        {project.released && (
+          <div class={styles['project-detail__info-item']}>
+            <dt data-split="paragraph">Released</dt>
+            <dd data-split="paragraph">{project.released}</dd>
+          </div>
+        )}
+        {project.duration && (
+          <div class={styles['project-detail__info-item']}>
+            <dt data-split="paragraph">Duration</dt>
+            <dd data-split="paragraph">{project.duration}</dd>
+          </div>
+        )}
+        {project.genre && (
+          <div class={styles['project-detail__info-item']}>
+            <dt data-split="paragraph">Genre</dt>
+            <dd data-split="paragraph">{project.genre}</dd>
+          </div>
+        )}
+        {project.role && (
+          <div class={styles['project-detail__info-item']}>
+            <dt data-split="paragraph">Role</dt>
+            <dd data-split="paragraph">{project.role}</dd>
+          </div>
+        )}
+      </dl>
+      {project.infoImage && (
+        <div class={styles['project-detail__info-image']} data-reveal>
+          <img
+            src={urlFor(project.infoImage).width(1200).url()}
+            alt={project.infoImage.alt || project.title}
+          />
+        </div>
+      )}
+    </div>
+
+    {project.sections && project.sections.length > 0 && (
+      <div class={styles['project-detail__sections']}>
+        <SectionsRenderer sections={project.sections} />
+      </div>
+    )}
+
+  </article>
+
+  {nextProject && <NextProject project={nextProject} />}
+</Layout>

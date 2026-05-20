@@ -1,0 +1,101 @@
+---
+import { LogoWall } from '@/components/logo-wall/logo-wall';
+import ImageBlock from '@/components/blocks/image-block/image-block.astro';
+import TextSection from '@/components/blocks/text-section/text-section.astro';
+import TextImageBlock from '@/components/blocks/text-image-block/text-image-block.astro';
+import VideoSection from '@/components/blocks/video-section/video-section.astro';
+import styles from './sections-renderer.module.css';
+
+interface TextSpan { _type: string; text: string; marks?: string[]; }
+interface Block { _type: string; _key: string; style?: string; children?: TextSpan[]; }
+interface SanityImage { asset: any; alt?: string; }
+interface Logo { src: string; alt: string; href?: string; }
+
+interface TextSectionData {
+  _type: 'textSection';
+  _key: string;
+  text?: Block[];
+  width?: 'narrow' | 'normal' | 'wide' | 'full';
+  position?: 'left' | 'off-left-centre' | 'centre' | 'off-right-centre' | 'right';
+}
+
+interface ImageBlockData {
+  _type: 'imageBlock';
+  _key: string;
+  image?: SanityImage;
+  size?: string;
+  position?: string;
+  caption?: string;
+}
+
+interface TextImageBlockData {
+  _type: 'textImageBlock';
+  _key: string;
+  text?: Block[];
+  image?: SanityImage;
+  imagePosition?: 'left' | 'right';
+  imageSize?: 'one-third' | 'half' | 'two-thirds';
+}
+
+interface VideoSectionData {
+  _type: 'videoSection';
+  _key: string;
+  url?: string;
+  aspectRatio?: string;
+  caption?: string;
+}
+
+interface LogoWallSectionData {
+  _type: 'logoWallSection';
+  _key: string;
+  heading?: string;
+  logos?: Logo[];
+}
+
+type Section =
+  | TextSectionData
+  | ImageBlockData
+  | TextImageBlockData
+  | VideoSectionData
+  | LogoWallSectionData
+  | { _type: string; _key: string };
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections = [] } = Astro.props;
+---
+
+<div class={styles['sections']}>
+  {sections.map((section) => {
+    if (section._type === 'introSection' || section._type === 'projectDataSection') return null;
+
+    if (section._type === 'textSection') {
+      const s = section as TextSectionData;
+      return <TextSection text={s.text ?? []} width={s.width} position={s.position} />;
+    }
+
+    if (section._type === 'imageBlock') {
+      const s = section as ImageBlockData;
+      return s.image ? <ImageBlock image={s.image} size={s.size} position={s.position} caption={s.caption} /> : null;
+    }
+
+    if (section._type === 'textImageBlock') {
+      const s = section as TextImageBlockData;
+      return s.image ? <TextImageBlock text={s.text ?? []} image={s.image} imagePosition={s.imagePosition} imageSize={s.imageSize} /> : null;
+    }
+
+    if (section._type === 'videoSection') {
+      const s = section as VideoSectionData;
+      return s.url ? <VideoSection url={s.url} aspectRatio={s.aspectRatio} caption={s.caption} /> : null;
+    }
+
+    if (section._type === 'logoWallSection') {
+      const s = section as LogoWallSectionData;
+      return s.logos?.length ? <LogoWall client:visible heading={s.heading} logos={s.logos} /> : null;
+    }
+
+    return null;
+  })}
+</div>

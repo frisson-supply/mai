@@ -29,20 +29,48 @@ export async function getProjectBySlug(slug: string) {
   return safeFetch<any>(
     `*[_type == "project" && slug.current == $slug][0] {
       _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured,
+      description, released, duration, genre, infoImage,
       videoUrl,
+      metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url,
       sections[] {
         _type, _key,
+        title, description,
         text, width,
         image { asset, alt },
         size, position, caption,
         imagePosition, imageSize,
-        url, aspectRatio,
+        url, videoUrl, aspectRatio,
         released, duration, client, role,
         heading,
         logos[] { "src": image.asset->url, "alt": image.alt, href }
       }
     }`,
     { slug }
+  );
+}
+
+export async function getNextProject(currentSlug: string) {
+  const current = await safeFetch<{ order: number }>(
+    `*[_type == "project" && slug.current == $slug][0] { order }`,
+    { slug: currentSlug }
+  );
+
+  if (!current) return null;
+
+  const next = await safeFetch<any>(
+    `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {
+      _id, title, "slug": slug.current, client, year, tags, thumbnail
+    }`,
+    { order: current.order, slug: currentSlug }
+  );
+
+  if (next) return next;
+
+  return safeFetch<any>(
+    `*[_type == "project" && slug.current != $slug] | order(order asc) [0] {
+      _id, title, "slug": slug.current, client, year, tags, thumbnail
+    }`,
+    { slug: currentSlug }
   );
 }
 
@@ -54,12 +82,12 @@ export async function getAllProjectSlugs() {
 
 export async function getSiteSettings() {
   return safeFetch<any>(
-    `*[_type == "siteSettings"][0] { siteTitle, showreelUrl, socialLinks, seoDescription }`
+    `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription, "faviconUrl": favicon.asset->url }`
   );
 }
 
 export async function getAbout() {
   return safeFetch<any>(
-    `*[_type == "about"][0] { bio, photo, skills, cvUrl }`
+    `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url }, metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url }`
   );
 }

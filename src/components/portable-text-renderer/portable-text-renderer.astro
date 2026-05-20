@@ -1,0 +1,53 @@
+---
+import ImageBlock from '@/components/blocks/image-block/image-block.astro';
+import TextImageBlock from '@/components/blocks/text-image-block/text-image-block.astro';
+
+interface TextSpan {
+  _type: string;
+  text: string;
+  marks?: string[];
+}
+
+interface Block {
+  _type: string;
+  _key: string;
+  style?: string;
+  children?: TextSpan[];
+  image?: { asset: any; alt?: string };
+  size?: string;
+  position?: string;
+  caption?: string;
+  text?: Block[];
+  imagePosition?: 'left' | 'right';
+  imageSize?: 'one-third' | 'half' | 'two-thirds';
+}
+
+interface Props {
+  blocks: Block[];
+}
+
+const { blocks = [] } = Astro.props;
+
+function renderText(children: Block['children']) {
+  return (children ?? []).map(s => s.text || '').join('');
+}
+---
+
+<div class="portable-text">
+  {blocks.map((block) => {
+    if (block._type === 'block') {
+      const text = renderText(block.children);
+      if (block.style === 'h2') return <h2 data-split="title">{text}</h2>;
+      if (block.style === 'h3') return <h3 data-split="title">{text}</h3>;
+      return <p data-split="paragraph">{text}</p>;
+    }
+
+    if (block._type === 'imageBlock' && block.image)
+      return <ImageBlock image={block.image} size={block.size} position={block.position} caption={block.caption} />;
+
+    if (block._type === 'textImageBlock' && block.image)
+      return <TextImageBlock text={block.text ?? []} image={block.image} imagePosition={block.imagePosition} imageSize={block.imageSize} />;
+
+    return null;
+  })}
+</div>

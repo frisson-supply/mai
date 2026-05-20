@@ -1,12 +1,25 @@
-import { defineConfig } from 'sanity';
+import { defineConfig, definePlugin } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './src/schemas';
+import { Dashboard } from './src/studio/dashboard';
+
+const dashboardPlugin = definePlugin({
+  name: 'studio-dashboard',
+  tools: [
+    {
+      name: 'dashboard',
+      title: 'Dashboard',
+      component: Dashboard,
+    },
+  ],
+});
 
 export default defineConfig({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
   plugins: [
+    dashboardPlugin(),
     structureTool({
       structure: (S) =>
         S.list()

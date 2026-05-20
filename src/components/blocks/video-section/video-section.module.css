@@ -1,0 +1,26 @@
+@layer components {
+    .video-section {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+
+    .video-section figcaption {
+        color: hsl(0deg 0% 40%);
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+
+    .video-section__embed {
+        border-radius: 2px;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .video-section__embed iframe {
+        border: none;
+        display: block;
+        height: 100%;
+        width: 100%;
+    }
+}

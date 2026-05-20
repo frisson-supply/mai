@@ -1,0 +1,43 @@
+---
+import { urlFor } from '@/lib/sanity';
+import styles from './next-project.module.css';
+
+interface Props {
+  project: {
+    title: string;
+    slug: string;
+    client?: string;
+    year?: number;
+    tags?: string[];
+    thumbnail?: any;
+  };
+}
+
+const { project } = Astro.props;
+const href = `/works/${project.slug}`;
+const thumbUrl = project.thumbnail ? urlFor(project.thumbnail).width(1600).url() : null;
+---
+
+<section class={styles['next-project']}>
+  <a href={href} class={styles['next-project__link']}>
+    <div class={styles['next-project__top']}>
+      <span class={styles['next-project__label']}>Next up</span>
+      {(project.client || project.year) && (
+        <span class={styles['next-project__meta']}>
+          {project.client}{project.client && project.year && ' · '}{project.year}
+        </span>
+      )}
+    </div>
+
+    <div class={styles['next-project__body']}>
+      <h2 class={styles['next-project__title']} data-split="title">{project.title}</h2>
+      <span class={styles['next-project__arrow']} aria-hidden="true">→</span>
+    </div>
+
+    {thumbUrl && (
+      <div class={styles['next-project__thumb']}>
+        <img src={thumbUrl} alt={project.thumbnail?.alt || project.title} />
+      </div>
+    )}
+  </a>
+</section>

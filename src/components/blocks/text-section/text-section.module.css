@@ -1,0 +1,26 @@
+@layer components {
+    .section-text {
+        color: hsl(0deg 0% 80%);
+        grid-column: 1 / -1;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    .section-text p {
+        color: hsl(0deg 0% 80%);
+        margin-bottom: 1rem;
+        max-width: none;
+        text-align: left;
+    }
+
+    .section-text--narrow { max-width: 60ch; }
+    .section-text--normal { max-width: 75ch; }
+    .section-text--wide   { max-width: 100%; }
+    .section-text--full   { max-width: none; }
+
+    .section-text--left             { grid-column: 1 / 9; }
+    .section-text--off-left-centre  { grid-column: 3 / 11; }
+    .section-text--centre           { grid-column: 5 / 13; }
+    .section-text--off-right-centre { grid-column: 7 / 15; }
+    .section-text--right            { grid-column: 9 / -1; }
+}

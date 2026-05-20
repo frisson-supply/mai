@@ -1,372 +1,725 @@
 ---
-import '../styles/global.css';
+import "@/global.css";
+import styles from "./layout.module.css";
+import { getSiteSettings } from "@/lib/queries";
 
 interface Props {
-  title?: string;
-  namespace: string;
-  pageTheme?: 'light' | 'dark';
+    title?: string;
+    description?: string;
+    ogImage?: string;
+    namespace?: string;
+    pageTheme?: "light" | "dark";
 }
 
-const { title = 'Mai', namespace, pageTheme = 'dark' } = Astro.props;
+const {
+    title = "Mai",
+    description,
+    ogImage,
+    namespace,
+    pageTheme = "dark",
+} = Astro.props;
 const path = Astro.url.pathname;
+const showBack = path !== "/";
+const settings = await getSiteSettings();
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/work', label: 'Work' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-];
+const siteName = settings?.siteTitle ?? "Mai";
+const siteRole = settings?.role ?? "";
+const siteLocation = settings?.location ?? "";
 
 function isActive(href: string) {
-  if (href === '/') return path === '/';
-  return path.startsWith(href);
+    if (href === "/") return path === "/";
+    return path.startsWith(href);
 }
 ---
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-
-  </head>
-  <body data-barba="wrapper" data-page-theme={pageTheme}>
-    <nav data-theme-nav>
-      {navLinks.map(({ href, label }) => (
-        <a
-          href={href}
-          data-barba-update
-          aria-current={isActive(href) ? 'page' : undefined}
-        >
-          {label}
-        </a>
-      ))}
-    </nav>
-
-    <div data-transition-wrap data-theme-transition class="transition">
-      <div data-transition-dark class="transition__dark"></div>
-    </div>
-
-    <main data-barba="container" data-barba-namespace={namespace} data-page-theme={pageTheme}>
-      <slot />
-    </main>
-
-    <!-- CDN: Lenis, GSAP, Barba -->
-    <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js"></script>
-    <script is:inline src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3/dist/barba.umd.min.js"></script>
-
-    <script is:inline>
-      gsap.registerPlugin(CustomEase);
-
-      history.scrollRestoration = "manual";
-
-      let lenis = null;
-      let nextPage = document;
-      let onceFunctionsInitialized = false;
-
-      const hasLenis = typeof window.Lenis !== "undefined";
-      const hasScrollTrigger = typeof window.ScrollTrigger !== "undefined";
-
-      const rmMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-      let reducedMotion = rmMQ.matches;
-      rmMQ.addEventListener?.("change", e => (reducedMotion = e.matches));
-      rmMQ.addListener?.(e => (reducedMotion = e.matches));
-
-      const has = (s) => !!nextPage.querySelector(s);
-
-      let staggerDefault = 0.05;
-      let durationDefault = 0.6;
-
-      CustomEase.create("osmo", "0.625, 0.05, 0, 1");
-      gsap.defaults({ ease: "osmo", duration: durationDefault });
-
-
-      // -----------------------------------------
-      // FUNCTION REGISTRY
-      // -----------------------------------------
-
-      function initOnceFunctions() {
-        initLenis();
-        if (onceFunctionsInitialized) return;
-        onceFunctionsInitialized = true;
-      }
-
-      function initBeforeEnterFunctions(next) {
-        nextPage = next || document;
-      }
-
-      function initAfterEnterFunctions(next) {
-        nextPage = next || document;
-
-        if (hasLenis) {
-          lenis.resize();
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title}</title>
+        {
+            settings?.faviconUrl ? (
+                <link rel="icon" href={settings.faviconUrl} />
+            ) : (
+                <link rel="icon" href="/favicon.svg" />
+            )
         }
-
-        if (hasScrollTrigger) {
-          ScrollTrigger.refresh();
+        {description && <meta name="description" content={description} />}
+        <meta property="og:title" content={title} />
+        {
+            description && (
+                <meta property="og:description" content={description} />
+            )
         }
-      }
-
-
-      // -----------------------------------------
-      // PAGE TRANSITIONS
-      // -----------------------------------------
-
-      function runPageOnceAnimation(next) {
-        const tl = gsap.timeline();
-
-        tl.call(() => {
-          resetPage(next);
-        }, null, 0);
-
-        return tl;
-      }
-
-      function runPageLeaveAnimation(current, next) {
-        const transitionWrap = document.querySelector("[data-transition-wrap]");
-        const transitionDark = transitionWrap.querySelector("[data-transition-dark]");
-
-        const tl = gsap.timeline({
-          onComplete: () => {
-            current.remove();
-          }
-        });
-
-        CustomEase.create("parallax", "0.7, 0.05, 0.13, 1");
-
-        if (reducedMotion) {
-          return tl.set(current, { autoAlpha: 0 });
+        {ogImage && <meta property="og:image" content={ogImage} />}
+        <meta property="og:type" content="website" />
+        <meta
+            name="twitter:card"
+            content={ogImage ? "summary_large_image" : "summary"}
+        />
+        <meta name="twitter:title" content={title} />
+        {
+            description && (
+                <meta name="twitter:description" content={description} />
+            )
         }
-
-        tl.set(transitionWrap, {
-          zIndex: 2
-        });
-
-        tl.fromTo(transitionDark, {
-          autoAlpha: 0
-        }, {
-          autoAlpha: 0.8,
-          duration: 1.2,
-          ease: "parallax"
-        }, 0);
-
-        tl.fromTo(current, {
-          y: "0vh"
-        }, {
-          y: "-25vh",
-          duration: 1.2,
-          ease: "parallax",
-        }, 0);
-
-        tl.set(transitionDark, {
-          autoAlpha: 0,
-        });
-
-        return tl;
-      }
-
-      function runPageEnterAnimation(next) {
-        const tl = gsap.timeline();
-
-        if (reducedMotion) {
-          tl.set(next, { autoAlpha: 1 });
-          tl.add("pageReady");
-          tl.call(resetPage, [next], "pageReady");
-          return new Promise(resolve => tl.call(resolve, null, "pageReady"));
-        }
-
-        tl.add("startEnter", 0);
-
-        tl.set(next, {
-          zIndex: 3
-        });
-
-        tl.fromTo(next, {
-          y: "100vh"
-        }, {
-          y: "0vh",
-          duration: 1.2,
-          clearProps: "all",
-          ease: "parallax"
-        }, "startEnter");
-
-        tl.add("pageReady");
-        tl.call(resetPage, [next], "pageReady");
-
-        return new Promise(resolve => {
-          tl.call(resolve, null, "pageReady");
-        });
-      }
-
-
-      // -----------------------------------------
-      // BARBA HOOKS + INIT
-      // -----------------------------------------
-
-      barba.hooks.beforeEnter(data => {
-        gsap.set(data.next.container, {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-        });
-
-        if (lenis && typeof lenis.stop === "function") {
-          lenis.stop();
-        }
-
-        initBeforeEnterFunctions(data.next.container);
-        applyThemeFrom(data.next.container);
-      });
-
-      barba.hooks.afterLeave(() => {
-        if (hasScrollTrigger) {
-          ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        }
-      });
-
-      barba.hooks.enter(data => {
-        initBarbaNavUpdate(data);
-      });
-
-      barba.hooks.afterEnter(data => {
-        initAfterEnterFunctions(data.next.container);
-
-        if (hasLenis) {
-          lenis.resize();
-          lenis.start();
-        }
-
-        if (hasScrollTrigger) {
-          ScrollTrigger.refresh();
-        }
-      });
-
-      barba.init({
-        debug: true,
-        timeout: 7000,
-        preventRunning: true,
-        transitions: [
-          {
-            name: "default",
-            sync: true,
-
-            async once(data) {
-              initOnceFunctions();
-              return runPageOnceAnimation(data.next.container);
-            },
-
-            async leave(data) {
-              return runPageLeaveAnimation(data.current.container, data.next.container);
-            },
-
-            async enter(data) {
-              return runPageEnterAnimation(data.next.container);
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
+        <script is:inline>
+            if (
+                typeof sessionStorage !== "undefined" &&
+                sessionStorage.getItem("mai_loaded")
+            ) {
+                document.documentElement.classList.add("loader-done");
             }
-          }
-        ],
-      });
-
-
-      // -----------------------------------------
-      // GENERIC + HELPERS
-      // -----------------------------------------
-
-      const themeConfig = {
-        light: {
-          nav: "dark",
-          transition: "light"
-        },
-        dark: {
-          nav: "light",
-          transition: "dark"
+        </script>
+    </head>
+    <body data-page-theme={pageTheme} data-namespace={namespace}>
+        {
+            path === "/" && (
+                <div id="page-loader" class={styles["page-loader"]}>
+                    <div class={styles["page-loader__bg"]} data-loader="bg">
+                        <div
+                            class={styles["page-loader__bar"]}
+                            data-loader="bar"
+                        />
+                    </div>
+                    <div
+                        class={styles["page-loader__content"]}
+                        data-loader="content"
+                    >
+                        <div class={styles["page-loader__name-wrap"]}>
+                            <span class={styles["page-loader__name-base"]}>
+                                {siteName}
+                            </span>
+                            <span
+                                class={styles["page-loader__name-top"]}
+                                data-loader="name-top"
+                            >
+                                {siteName}
+                            </span>
+                        </div>
+                        <div class={styles["page-loader__text-wrap"]}>
+                            <span
+                                class={styles["page-loader__text"]}
+                                data-loader-text="1"
+                            >
+                                Hold tight
+                            </span>
+                            <span
+                                class={styles["page-loader__text"]}
+                                data-loader-text="2"
+                            >
+                                Hi there!
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )
         }
-      };
+        <div class={styles["nav-blur"]} aria-hidden="true">
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+            <div class={styles["nav-blur__layer"]}></div>
+        </div>
+        <nav data-site-nav data-theme-nav>
+            <a
+                href="/"
+                class={styles["nav__name"]}
+                aria-current={isActive("/") ? "page" : undefined}
+            >
+                {siteName}
+            </a>
+            <div class={styles["nav__col"]}>
+                <a href="/about" class={styles["nav__link"]}>About</a>
+            </div>
+        </nav>
 
-      function applyThemeFrom(container) {
-        const pageTheme = container?.dataset?.pageTheme || "light";
-        const config = themeConfig[pageTheme] || themeConfig.light;
-
-        document.body.dataset.pageTheme = pageTheme;
-        const transitionEl = document.querySelector('[data-theme-transition]');
-        if (transitionEl) {
-          transitionEl.dataset.themeTransition = config.transition;
-        }
-
-        const nav = document.querySelector('[data-theme-nav]');
-        if (nav) {
-          nav.dataset.themeNav = config.nav;
-        }
-      }
-
-      function initLenis() {
-        if (lenis) return;
-        if (!hasLenis) return;
-
-        lenis = new Lenis({
-          lerp: 0.165,
-          wheelMultiplier: 1.25,
-        });
-
-        if (hasScrollTrigger) {
-          lenis.on("scroll", ScrollTrigger.update);
-        }
-
-        gsap.ticker.add((time) => {
-          lenis.raf(time * 1000);
-        });
-
-        gsap.ticker.lagSmoothing(0);
-      }
-
-      function resetPage(container) {
-        window.scrollTo(0, 0);
-        gsap.set(container, { clearProps: "position,top,left,right" });
-
-        if (hasLenis) {
-          lenis.resize();
-          lenis.start();
-        }
-      }
-
-      function debounceOnWidthChange(fn, ms) {
-        let last = innerWidth,
-          timer;
-        return function (...args) {
-          clearTimeout(timer);
-          timer = setTimeout(() => {
-            if (innerWidth !== last) {
-              last = innerWidth;
-              fn.apply(this, args);
+        <div class={styles["page-meta"]}>
+            {
+                !showBack ? (
+                    <>
+                        {siteRole && (
+                            <span data-split="paragraph">{siteRole}</span>
+                        )}
+                        {siteLocation && (
+                            <span data-split="paragraph">{siteLocation}</span>
+                        )}
+                    </>
+                ) : (
+                    <a
+                        href="/"
+                        class={styles["page-meta__link"]}
+                        data-split="paragraph"
+                    >
+                        ← Back
+                    </a>
+                )
             }
-          }, ms);
-        };
-      }
+        </div>
 
-      function initBarbaNavUpdate(data) {
-        var tpl = document.createElement('template');
-        tpl.innerHTML = data.next.html.trim();
-        var nextNodes = tpl.content.querySelectorAll('[data-barba-update]');
-        var currentNodes = document.querySelectorAll('nav [data-barba-update]');
+        <main data-page-theme={pageTheme}>
+            <slot />
+        </main>
 
-        currentNodes.forEach(function (curr, index) {
-          var next = nextNodes[index];
-          if (!next) return;
+        <!-- CDN: Lenis, GSAP -->
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js"
+        ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js"
+        ></script>
 
-          var newStatus = next.getAttribute('aria-current');
-          if (newStatus !== null) {
-            curr.setAttribute('aria-current', newStatus);
-          } else {
-            curr.removeAttribute('aria-current');
-          }
+        <script is:inline>
+            gsap.registerPlugin(CustomEase);
+            if (typeof SplitText !== "undefined")
+                gsap.registerPlugin(SplitText);
 
-          var newClassList = next.getAttribute('class') || '';
-          curr.setAttribute('class', newClassList);
-        });
-      }
-    </script>
-  </body>
+            var lenis = null;
+            var hasLenis = typeof window.Lenis !== "undefined";
+
+            var rmMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+            var reducedMotion = rmMQ.matches;
+            rmMQ.addEventListener("change", function (e) {
+                reducedMotion = e.matches;
+            });
+
+            CustomEase.create("osmo", "0.625, 0.05, 0, 1");
+            gsap.defaults({ ease: "osmo" });
+
+            gsap.set(document.querySelectorAll(".nav__clip > *"), {
+                yPercent: 110,
+            });
+            gsap.set(document.querySelectorAll("[data-split]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll("[data-recognition-row]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll("[data-work-item]"), {
+                autoAlpha: 0,
+            });
+            gsap.set(document.querySelectorAll("[data-reveal]"), {
+                autoAlpha: 0,
+            });
+
+            // -----------------------------------------
+            // INITIAL PAGE LOAD
+            // -----------------------------------------
+
+            function init() {
+                var navEl = document.querySelector("nav");
+                if (navEl) {
+                    document.documentElement.style.setProperty(
+                        "--nav-h",
+                        navEl.offsetHeight + "px",
+                    );
+                }
+
+                initLenis();
+                initWorkView();
+                animateNavIn();
+
+                var isAbout = window.location.pathname.startsWith("/about");
+                if (isAbout) {
+                    initTextReveal(document.body);
+                    initMediaReveal(document.body);
+                    initRecognitionReveal(document.body);
+                } else {
+                    initTextReveal(document.body);
+                    initMediaReveal(document.body);
+                    initWorkItemReveal(document.body);
+                }
+            }
+
+            // -----------------------------------------
+            // PAGE LOADER (homepage, first visit only)
+            // -----------------------------------------
+
+            function runLoader(onDone) {
+                var loader = document.getElementById("page-loader");
+                if (!loader) {
+                    onDone();
+                    return;
+                }
+
+                if (sessionStorage.getItem("mai_loaded")) {
+                    gsap.set(loader, { display: "none" });
+                    onDone();
+                    return;
+                }
+
+                sessionStorage.setItem("mai_loaded", "1");
+
+                CustomEase.create("loader", "0.65, 0.01, 0.05, 0.99");
+                var bar = loader.querySelector("[data-loader='bar']");
+                var bg = loader.querySelector("[data-loader='bg']");
+                var content = loader.querySelector("[data-loader='content']");
+                var nameTop = loader.querySelector("[data-loader='name-top']");
+                var text1 = loader.querySelector("[data-loader-text='1']");
+                var text2 = loader.querySelector("[data-loader-text='2']");
+
+                if (!bar || !bg || !content || !nameTop || !text1 || !text2) {
+                    onDone();
+                    return;
+                }
+
+                var tl = gsap
+                    .timeline({
+                        defaults: { ease: "loader", duration: 3 },
+                        onComplete: onDone,
+                    })
+                    .to(bar, { scaleX: 1 })
+                    .to(nameTop, { clipPath: "inset(0% 0% 0% 0%)" }, "<")
+                    .to(content, { autoAlpha: 0, duration: 0.5 })
+                    .to(
+                        bar,
+                        {
+                            scaleX: 0,
+                            transformOrigin: "right center",
+                            duration: 0.5,
+                        },
+                        "<",
+                    )
+                    .add("hideContent", "<")
+                    .to(bg, { yPercent: -101, duration: 1 }, "hideContent")
+                    .set(loader, { display: "none" });
+
+                if (typeof SplitText !== "undefined") {
+                    var split1 = new SplitText(text1, {
+                        type: "lines,chars",
+                        mask: "lines",
+                    });
+                    var split2 = new SplitText(text2, {
+                        type: "lines,chars",
+                        mask: "lines",
+                    });
+                    gsap.set([split1.chars, split2.chars], {
+                        autoAlpha: 0,
+                        yPercent: 125,
+                    });
+                    gsap.set([text1, text2], { autoAlpha: 1 });
+                    tl.to(
+                        split1.chars,
+                        {
+                            autoAlpha: 1,
+                            yPercent: 0,
+                            duration: 0.6,
+                            stagger: { each: 0.02 },
+                        },
+                        0,
+                    );
+                    tl.to(
+                        split1.chars,
+                        {
+                            autoAlpha: 0,
+                            yPercent: -125,
+                            duration: 0.4,
+                            stagger: { each: 0.02 },
+                        },
+                        ">+=0.4",
+                    );
+                    tl.to(
+                        split2.chars,
+                        {
+                            autoAlpha: 1,
+                            yPercent: 0,
+                            duration: 0.6,
+                            stagger: { each: 0.02 },
+                        },
+                        "<",
+                    );
+                    tl.to(
+                        split2.chars,
+                        {
+                            autoAlpha: 0,
+                            yPercent: -125,
+                            duration: 0.4,
+                            stagger: { each: 0.02 },
+                        },
+                        "hideContent-=0.5",
+                    );
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", function () {
+                    runLoader(init);
+                });
+            } else {
+                runLoader(init);
+            }
+
+            window.addEventListener("pageshow", function (e) {
+                if (e.persisted) {
+                    gsap.set(getNavAnimEls(), { yPercent: 110 });
+                    animateNavIn();
+                }
+            });
+
+            // -----------------------------------------
+            // NAV ANIMATIONS
+            // -----------------------------------------
+
+            function getNavAnimEls() {
+                return document.querySelectorAll(".nav__clip > *");
+            }
+
+            function animateNavIn() {
+                if (reducedMotion) return;
+                var els = getNavAnimEls();
+                if (!els.length) return;
+                gsap.to(els, {
+                    yPercent: 0,
+                    duration: 0.6,
+                    stagger: 0.06,
+                    ease: "expo.out",
+                    overwrite: true,
+                });
+            }
+
+            // -----------------------------------------
+            // SPLIT TEXT REVEAL
+            // -----------------------------------------
+
+            var splitInstances = [];
+
+            function initTextReveal(container) {
+                if (typeof SplitText === "undefined") return;
+                var scope = container || document;
+
+                scope
+                    .querySelectorAll('[data-split="title"]')
+                    .forEach(function (el) {
+                        if (reducedMotion) return;
+                        splitInstances.push(
+                            new SplitText(el, {
+                                type: "words, chars",
+                                autoSplit: true,
+                                mask: "chars",
+                                charsClass: "char",
+                                onSplit: function (self) {
+                                    gsap.set(self.elements, { autoAlpha: 1 });
+                                    return gsap.from(self.chars, {
+                                        duration: 1,
+                                        yPercent: -120,
+                                        scale: 1.2,
+                                        stagger: 0.01,
+                                        ease: "expo.out",
+                                    });
+                                },
+                            }),
+                        );
+                    });
+
+                scope
+                    .querySelectorAll('[data-split="paragraph"]')
+                    .forEach(function (el) {
+                        if (reducedMotion) return;
+                        splitInstances.push(
+                            new SplitText(el, {
+                                type: "lines, words",
+                                autoSplit: true,
+                                mask: "lines",
+                                linesClass: "line",
+                                onSplit: function (self) {
+                                    gsap.set(self.elements, { autoAlpha: 1 });
+                                    return gsap.from(self.lines, {
+                                        duration: 0.9,
+                                        yPercent: 105,
+                                        stagger: 0.04,
+                                        ease: "expo.out",
+                                    });
+                                },
+                            }),
+                        );
+                    });
+            }
+
+            function initWorkItemReveal(container) {
+                if (reducedMotion) return;
+                var items = (container || document).querySelectorAll(
+                    "[data-work-item]",
+                );
+                if (!items.length) return;
+                gsap.fromTo(
+                    items,
+                    { y: 16, autoAlpha: 0 },
+                    {
+                        y: 0,
+                        autoAlpha: 1,
+                        duration: 0.7,
+                        ease: "power3.out",
+                        stagger: 0.06,
+                    },
+                );
+            }
+
+            function initMediaReveal(container) {
+                if (reducedMotion) return;
+                var els = (container || document).querySelectorAll(
+                    "[data-reveal]",
+                );
+                if (!els.length) return;
+                gsap.fromTo(
+                    els,
+                    { y: 16, autoAlpha: 0 },
+                    {
+                        y: 0,
+                        autoAlpha: 1,
+                        duration: 0.7,
+                        ease: "power3.out",
+                        stagger: 0.08,
+                    },
+                );
+            }
+
+            function initRecognitionReveal(container) {
+                if (reducedMotion) return;
+                var rows = (container || document).querySelectorAll(
+                    "[data-recognition-row]",
+                );
+                if (!rows.length) return;
+                gsap.from(rows, {
+                    duration: 0.6,
+                    autoAlpha: 0,
+                    y: 10,
+                    stagger: 0.04,
+                    ease: "expo.out",
+                    delay: 0.4,
+                });
+            }
+
+            // -----------------------------------------
+            // WORK VIEW TOGGLE
+            // -----------------------------------------
+
+            document.addEventListener("click", function (e) {
+                var btn = e.target.closest("[data-view-btn]");
+                if (!btn) return;
+                applyWorkView(btn.dataset.viewBtn);
+            });
+
+            function applyWorkView(view) {
+                var section = document.getElementById("work-section");
+                var layout = document.getElementById("work-layout");
+                if (section) section.dataset.view = view;
+                if (layout) layout.dataset.view = view;
+                localStorage.setItem("workView", view);
+                document
+                    .querySelectorAll("[data-view-btn]")
+                    .forEach(function (btn) {
+                        btn.classList.toggle(
+                            "is-active",
+                            btn.dataset.viewBtn === view,
+                        );
+                    });
+                initListHover();
+            }
+
+            function initListHover() {
+                var section = document.getElementById("work-section");
+                if (!section || section.dataset.view !== "list") return;
+
+                var items = section.querySelectorAll("[data-work-item]");
+                var names = document.querySelectorAll("[data-work-list-name]");
+
+                function setActive(index) {
+                    section.classList.add("has-active");
+                    items.forEach(function (el, i) {
+                        el.classList.toggle("is-active", i === index);
+                    });
+                    names.forEach(function (el, i) {
+                        el.classList.toggle("is-active", i === index);
+                    });
+                }
+
+                function clearActive() {
+                    section.classList.remove("has-active");
+                    items.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
+                    names.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
+                }
+
+                items.forEach(function (el, i) {
+                    el.addEventListener("mouseenter", function () {
+                        setActive(i);
+                    });
+                    el.addEventListener("mouseleave", clearActive);
+                });
+                names.forEach(function (el, i) {
+                    el.addEventListener("mouseenter", function () {
+                        setActive(i);
+                    });
+                    el.addEventListener("mouseleave", clearActive);
+                });
+            }
+
+            function initWorkView() {
+                var section = document.getElementById("work-section");
+                if (!section) return;
+                applyWorkView(localStorage.getItem("workView") || "grid");
+            }
+
+            // -----------------------------------------
+            // PAGE TRANSITIONS
+            // -----------------------------------------
+
+            function animatePageOut(onComplete) {
+                if (reducedMotion) {
+                    onComplete();
+                    return;
+                }
+
+                var navEls = getNavAnimEls();
+                var lines = document.querySelectorAll(
+                    '[data-split="paragraph"] .line',
+                );
+                var chars = document.querySelectorAll(
+                    '[data-split="title"] .char',
+                );
+                var rows = document.querySelectorAll("[data-recognition-row]");
+                var items = document.querySelectorAll("[data-work-item]");
+                var media = document.querySelectorAll("[data-reveal]");
+
+                if (
+                    !navEls.length &&
+                    !chars.length &&
+                    !lines.length &&
+                    !rows.length &&
+                    !items.length &&
+                    !media.length
+                ) {
+                    onComplete();
+                    return;
+                }
+
+                var tl = gsap.timeline({ onComplete: onComplete });
+
+                if (navEls.length) {
+                    tl.to(
+                        navEls,
+                        {
+                            duration: 0.35,
+                            yPercent: -110,
+                            stagger: 0.06,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (chars.length) {
+                    tl.to(
+                        chars,
+                        {
+                            duration: 0.45,
+                            yPercent: -120,
+                            scale: 1.2,
+                            stagger: 0.008,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (lines.length) {
+                    tl.to(
+                        lines,
+                        {
+                            duration: 0.45,
+                            yPercent: 105,
+                            stagger: 0.025,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (rows.length) {
+                    tl.to(
+                        rows,
+                        {
+                            duration: 0.3,
+                            autoAlpha: 0,
+                            y: -8,
+                            stagger: 0.02,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (items.length) {
+                    tl.to(
+                        items,
+                        {
+                            duration: 0.35,
+                            y: -8,
+                            autoAlpha: 0,
+                            stagger: 0.03,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (media.length) {
+                    tl.to(
+                        media,
+                        {
+                            duration: 0.35,
+                            y: -8,
+                            autoAlpha: 0,
+                            stagger: 0.04,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+            }
+
+            document.addEventListener("click", function (e) {
+                var link = e.target.closest("a[href]");
+                if (!link) return;
+                var href = link.getAttribute("href");
+                if (
+                    !href ||
+                    href.startsWith("http") ||
+                    href.startsWith("//") ||
+                    href.startsWith("mailto") ||
+                    href.startsWith("#") ||
+                    link.target === "_blank"
+                )
+                    return;
+                e.preventDefault();
+                animatePageOut(function () {
+                    window.location.href = href;
+                });
+            });
+
+            // -----------------------------------------
+            // HELPERS
+            // -----------------------------------------
+
+            function initLenis() {
+                if (lenis || !hasLenis) return;
+                lenis = new Lenis({ lerp: 0.165, wheelMultiplier: 1.25 });
+                gsap.ticker.add(function (time) {
+                    lenis.raf(time * 1000);
+                });
+                gsap.ticker.lagSmoothing(0);
+            }
+        </script>
+    </body>
 </html>

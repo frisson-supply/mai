@@ -1,0 +1,116 @@
+@layer reset, preflight, global, pages, components, overrides;
+
+@layer reset {
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@layer global {
+    :root {
+        --nav-h: 4rem;
+    }
+
+    html {
+        scrollbar-width: thin;
+        scrollbar-color: gray transparent;
+    }
+
+    body {
+        background: hsl(0deg 0% 4%);
+        color: hsl(0deg 0% 96%);
+        font-family:
+            system-ui,
+            -apple-system,
+            sans-serif;
+    }
+
+    section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1 {
+        font-size: clamp(3rem, 8vw, 8rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+
+    h2 {
+        font-size: clamp(1.5rem, 4vw, 3rem);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    h3 {
+        font-size: clamp(1.25rem, 3vw, 2rem);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: hsl(0deg 0% 60%);
+        font-size: 1.125rem;
+        line-height: 1.6;
+        max-width: 40ch;
+        text-align: center;
+    }
+
+    /* Nav element rule in global so page-layer CSS module classes can override via cascade */
+    nav[data-site-nav] {
+        align-items: start;
+        display: grid;
+        grid-template-areas: "name . . . . . . . . . about . . . . end";
+        grid-template-columns: repeat(16, 1fr);
+        left: 0;
+        padding: 1.5rem 2rem;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 50;
+    }
+
+    nav a {
+        color: inherit;
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+
+    nav a[aria-current="page"] {
+        opacity: 1;
+    }
+
+    /* SplitText adds this class dynamically — must stay global */
+    .char {
+        display: inline-block;
+    }
+}
+
+@layer overrides {
+    body[data-page-theme="light"] {
+        background: hsl(0deg 0% 96%);
+        color: hsl(0deg 0% 4%);
+    }
+
+    html.loader-done #page-loader {
+        display: none;
+    }
+
+    nav[data-theme-nav="dark"] {
+        color: hsl(0deg 0% 4%);
+    }
+
+    nav[data-theme-nav="light"] {
+        color: hsl(0deg 0% 96%);
+    }
+
+    @media (width <= 768px) {
+        nav[data-site-nav] {
+            grid-template-areas: "name about . end";
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}

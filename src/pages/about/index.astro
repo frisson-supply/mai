@@ -1,0 +1,104 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/layout.astro';
+import PortableTextRenderer from '@/components/portable-text-renderer/portable-text-renderer.astro';
+import { getAbout, getSiteSettings } from '@/lib/queries';
+import { urlFor } from '@/lib/sanity';
+import styles from './about.module.css';
+
+const about = await getAbout();
+const settings = await getSiteSettings();
+---
+
+<Layout
+  title={about?.metaTitle || "About — Mai"}
+  description={about?.metaDescription}
+  ogImage={about?.metaImageUrl}
+  namespace="about"
+  pageTheme="light"
+>
+  <div class={styles['about']}>
+
+    <div class={styles['about-bio-section']}>
+      <div class={styles['about-bio']}>
+        {about?.bio ? (
+          <PortableTextRenderer blocks={about.bio} />
+        ) : (
+          <p data-split="paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        )}
+      </div>
+    </div>
+
+    {about?.brands && about.brands.length > 0 && (
+      <section class={styles['about-brands']}>
+        <h2 class={styles['about-section-heading']} data-split="title">Brands</h2>
+        <div class={styles['about-brands-list']}>
+          {about.brands.map((brand: any) => {
+            const inner = (
+              <div class={styles['about-brand-item']}>
+                {brand.image ? (
+                  <img
+                    src={urlFor(brand.image).width(80).url()}
+                    alt={brand.image.alt || brand.text || ''}
+                    class={styles['about-brand-image']}
+                  />
+                ) : (
+                  <div class={styles['about-brand-fallback']} aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m3 16 5-5 4 4 3-3 6 6"/>
+                    </svg>
+                  </div>
+                )}
+                {brand.text && <span class={styles['about-brand-text']}>{brand.text}</span>}
+              </div>
+            );
+            return brand.link ? (
+              <a href={brand.link} target="_blank" rel="noopener noreferrer" class={styles['about-brand-link']}>
+                {inner}
+              </a>
+            ) : (
+              <div class={styles['about-brand-link']}>
+                {inner}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <section class={styles['about-recognitions']}>
+      <h2 class={styles['about-section-heading']} data-split="title">Recognitions &amp; Awards</h2>
+      <div class={styles['about-recognition-list']}>
+        {about?.recognitions?.map((r: any) => (
+          <div class={styles['about-recognition-row']} data-recognition-row>
+            {r.url ? (
+              <a href={r.url} target="_blank" rel="noopener noreferrer" class={styles['about-recognition-link']}>
+                {r.title}
+              </a>
+            ) : (
+              <span>{r.title}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <footer class={styles['about-footer']}>
+      <div class={styles['about-footer-left']}>
+        {settings?.role && <span data-split="paragraph">{settings.role}</span>}
+        {settings?.location && <span data-split="paragraph">{settings.location}</span>}
+      </div>
+      <div class={styles['about-footer-right']}>
+        {settings?.socialLinks?.map((link: any) => (
+          <a href={link.url} target="_blank" rel="noopener noreferrer" data-split="paragraph">
+            {link.platform}
+          </a>
+        ))}
+      </div>
+    </footer>
+
+  </div>
+</Layout>

@@ -1,0 +1,38 @@
+@layer components {
+    .image-block {
+        grid-column: 1 / -1;
+        margin: 2rem 0;
+    }
+
+    .image-block figcaption {
+        color: hsl(0deg 0% 40%);
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+
+    .image-block img {
+        border-radius: 2px;
+        display: block;
+        height: auto;
+        width: 100%;
+    }
+
+    .image-block--center    { margin-left: auto; margin-right: auto; }
+    .image-block--full      { width: 100%; }
+    .image-block--half      { width: 50%; }
+    .image-block--two-thirds { width: 66.66%; }
+    .image-block--left      { margin-right: auto; }
+    .image-block--right     { margin-left: auto; }
+}
+
+@layer overrides {
+    @media (width <= 768px) {
+        .image-block--half,
+        .image-block--two-thirds {
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+        }
+    }
+}
