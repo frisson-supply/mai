@@ -30,7 +30,10 @@
     }
 
     .page-meta__link {
+        align-items: center;
         color: inherit;
+        display: flex;
+        gap: 0.3em;
         text-decoration: none;
     }
 

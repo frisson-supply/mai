@@ -12,10 +12,11 @@ const projects = await getAllProjects();
 
 <Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="light">
   <div class={styles['work-toggle']}>
-    <button class={styles['work-toggle__btn']} data-view-btn="grid">Grid</button>
-    <span class={styles['work-toggle__sep']}>/</span>
-    <button class={styles['work-toggle__btn']} data-view-btn="list">List</button>
+    <button class={styles['work-toggle__btn']} data-view-btn="grid" data-split="paragraph">Grid</button>
+    <span class={styles['work-toggle__sep']} data-split="paragraph">/</span>
+    <button class={styles['work-toggle__btn']} data-view-btn="list" data-split="paragraph">List</button>
   </div>
+  <div class={styles['cases-label']}>Cases</div>
   <div class={styles['work-layout']} id="work-layout">
     <div class={styles['work']} id="work-section" data-view="grid">
       {projects.map((project: any, i: number) => (
@@ -37,7 +38,7 @@ const projects = await getAllProjects();
     <nav class={styles['work-list-names']} id="work-list-names">
       {projects.map((project: any, i: number) => (
         <a href={`/works/${project.slug}`} class={styles['work-list-name']} data-name-index={i} data-work-list-name>
-          {project.title}
+          <span>{project.title}</span>
         </a>
       ))}
     </nav>

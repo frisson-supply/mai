@@ -62,6 +62,7 @@
     /* Nav element rule in global so page-layer CSS module classes can override via cascade */
     nav[data-site-nav] {
         align-items: start;
+        background: hsl(0deg 0% 4%);
         display: grid;
         grid-template-areas: "name . . . . . . . . . about . . . . end";
         grid-template-columns: repeat(16, 1fr);
@@ -93,6 +94,10 @@
     body[data-page-theme="light"] {
         background: hsl(0deg 0% 96%);
         color: hsl(0deg 0% 4%);
+    }
+
+    body[data-page-theme="light"] nav[data-site-nav] {
+        background: hsl(0deg 0% 96%);
     }
 
     html.loader-done #page-loader {

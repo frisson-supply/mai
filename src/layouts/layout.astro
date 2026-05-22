@@ -117,13 +117,6 @@ function isActive(href: string) {
                 </div>
             )
         }
-        <div class={styles["nav-blur"]} aria-hidden="true">
-            <div class={styles["nav-blur__layer"]}></div>
-            <div class={styles["nav-blur__layer"]}></div>
-            <div class={styles["nav-blur__layer"]}></div>
-            <div class={styles["nav-blur__layer"]}></div>
-            <div class={styles["nav-blur__layer"]}></div>
-        </div>
         <nav data-site-nav data-theme-nav>
             <a
                 href="/"
@@ -152,9 +145,8 @@ function isActive(href: string) {
                     <a
                         href="/"
                         class={styles["page-meta__link"]}
-                        data-split="paragraph"
                     >
-                        ← Back
+                        <span data-split="paragraph">←</span> <span data-split="paragraph" data-split-delay="0.08">Back</span>
                     </a>
                 )
             }
@@ -428,6 +420,7 @@ function isActive(href: string) {
                     .querySelectorAll('[data-split="paragraph"]')
                     .forEach(function (el) {
                         if (reducedMotion) return;
+                        var delay = parseFloat(el.dataset.splitDelay || "0");
                         splitInstances.push(
                             new SplitText(el, {
                                 type: "lines, words",
@@ -437,10 +430,14 @@ function isActive(href: string) {
                                 onSplit: function (self) {
                                     gsap.set(self.elements, { autoAlpha: 1 });
                                     return gsap.from(self.lines, {
+                                        delay: delay,
                                         duration: 0.9,
                                         yPercent: 105,
                                         stagger: 0.04,
                                         ease: "expo.out",
+                                        onComplete: function () {
+                                            gsap.set(self.elements, { clearProps: "opacity,visibility" });
+                                        },
                                     });
                                 },
                             }),
@@ -531,10 +528,18 @@ function isActive(href: string) {
 
             function initListHover() {
                 var section = document.getElementById("work-section");
+
+                if (section && section._scrollObserver) {
+                    section._scrollObserver.disconnect();
+                    section._scrollObserver = null;
+                }
+
                 if (!section || section.dataset.view !== "list") return;
 
                 var items = section.querySelectorAll("[data-work-item]");
                 var names = document.querySelectorAll("[data-work-list-name]");
+                var isHovering = false;
+                var visibilityMap = new Map();
 
                 function setActive(index) {
                     section.classList.add("has-active");
@@ -556,18 +561,57 @@ function isActive(href: string) {
                     });
                 }
 
+                function applyScrollActive() {
+                    var best = null;
+                    var bestRatio = 0;
+                    visibilityMap.forEach(function (ratio, el) {
+                        if (ratio > bestRatio) {
+                            bestRatio = ratio;
+                            best = el;
+                        }
+                    });
+                    if (best && bestRatio > 0) {
+                        setActive(parseInt(best.dataset.itemIndex, 10));
+                    } else {
+                        clearActive();
+                    }
+                }
+
                 items.forEach(function (el, i) {
                     el.addEventListener("mouseenter", function () {
+                        isHovering = true;
                         setActive(i);
                     });
-                    el.addEventListener("mouseleave", clearActive);
+                    el.addEventListener("mouseleave", function () {
+                        isHovering = false;
+                        applyScrollActive();
+                    });
                 });
                 names.forEach(function (el, i) {
                     el.addEventListener("mouseenter", function () {
+                        isHovering = true;
                         setActive(i);
                     });
-                    el.addEventListener("mouseleave", clearActive);
+                    el.addEventListener("mouseleave", function () {
+                        isHovering = false;
+                        applyScrollActive();
+                    });
                 });
+
+                var observer = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        visibilityMap.set(entry.target, entry.intersectionRatio);
+                    });
+                    if (!isHovering) {
+                        applyScrollActive();
+                    }
+                }, {
+                    rootMargin: "-30% 0px -30% 0px",
+                    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+                });
+
+                items.forEach(function (el) { observer.observe(el); });
+                section._scrollObserver = observer;
             }
 
             function initWorkView() {
