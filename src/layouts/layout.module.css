@@ -1,9 +1,9 @@
 @layer components {
     .nav__col {
-        left: 50%;
+        left: calc(1rem + (10 / 16) * (100% - 2rem));
         position: absolute;
         top: calc(var(--nav-h) / 2);
-        transform: translate(-50%, -50%);
+        transform: translateY(-50%);
     }
 
     .nav__link {

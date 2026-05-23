@@ -592,6 +592,16 @@ function isActive(href: string) {
                             overwrite: true,
                         });
                     }
+                    // Pre-hide name texts so they don't flash visible when the
+                    // list panel becomes CSS-visible on the next line
+                    if (!toGrid && nameTexts.length) {
+                        gsap.set(nameTexts, { yPercent: 105 });
+                    }
+                    // Pre-activate the first item so Flip animates directly to
+                    // the expanded (600px) active width — no post-animation grow
+                    if (!toGrid && items.length) {
+                        items[0].classList.add("is-active");
+                    }
                 }
 
                 if (section) section.dataset.view = view;
@@ -609,6 +619,13 @@ function isActive(href: string) {
                 if (flipState) {
                     if (toGrid && infoLines.length) {
                         gsap.set(infoLines, { yPercent: 105, overwrite: true });
+                    }
+                    // Clean up active state when returning to grid
+                    if (toGrid) {
+                        if (section) section.classList.remove("has-active");
+                        items.forEach(function (item) {
+                            item.classList.remove("is-active");
+                        });
                     }
 
                     if (section) section.style.overflow = "visible";
@@ -644,18 +661,14 @@ function isActive(href: string) {
                                 });
                             }
                             if (!toGrid && nameTexts.length) {
-                                // Entering list: reveal name texts from behind their masks
-                                gsap.fromTo(
-                                    nameTexts,
-                                    { yPercent: 105 },
-                                    {
-                                        yPercent: 0,
-                                        duration: 0.9,
-                                        ease: "expo.out",
-                                        stagger: 0.04,
-                                        overwrite: true,
-                                    },
-                                );
+                                // Entering list: reveal name texts (already hidden by gsap.set above)
+                                gsap.to(nameTexts, {
+                                    yPercent: 0,
+                                    duration: 0.9,
+                                    ease: "expo.out",
+                                    stagger: 0.04,
+                                    overwrite: true,
+                                });
                             }
                             initListHover();
                         },
