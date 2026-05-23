@@ -11,6 +11,7 @@
 @layer global {
     :root {
         --nav-h: 4rem;
+        --color-accent: hsl(20deg 80% 70%);
     }
 
     html {
@@ -61,12 +62,11 @@
 
     /* Nav element rule in global so page-layer CSS module classes can override via cascade */
     nav[data-site-nav] {
-        align-items: start;
-        display: grid;
-        grid-template-areas: "name . . . . . . . . . about . . . . end";
-        grid-template-columns: repeat(16, 1fr);
+        align-items: center;
+        background: hsl(0deg 0% 4%);
+        display: flex;
         left: 0;
-        padding: 1.5rem 2rem;
+        padding: 1.5rem 1rem;
         position: fixed;
         right: 0;
         top: 0;
@@ -93,6 +93,10 @@
     body[data-page-theme="light"] {
         background: hsl(0deg 0% 96%);
         color: hsl(0deg 0% 4%);
+    }
+
+    body[data-page-theme="light"] nav[data-site-nav] {
+        background: hsl(0deg 0% 96%);
     }
 
     html.loader-done #page-loader {

@@ -43,9 +43,17 @@ if (!project) {
     </header>
 
     {project.videoUrl && (
-      <div class={styles['project-detail__video']} data-reveal>
+      <div class={styles['project-detail__video']} data-reveal data-video-wrapper>
+        {project.thumbnail && (
+          <button class={styles['project-detail__video-poster']} aria-label="Play video" data-video-poster>
+            <img
+              src={urlFor(project.thumbnail).width(1200).url()}
+              alt={project.thumbnail.alt || project.title}
+            />
+          </button>
+        )}
         <iframe
-          src={project.videoUrl}
+          data-src={project.videoUrl}
           title={project.title}
           allow="autoplay; fullscreen; picture-in-picture"
           allowfullscreen
@@ -109,3 +117,17 @@ if (!project) {
 
   {nextProject && <NextProject project={nextProject} />}
 </Layout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video-wrapper]').forEach(wrapper => {
+    const poster = wrapper.querySelector<HTMLElement>('[data-video-poster]');
+    const iframe = wrapper.querySelector<HTMLIFrameElement>('iframe');
+    if (!poster || !iframe) return;
+    poster.addEventListener('click', () => {
+      const base = iframe.dataset.src ?? '';
+      iframe.src = base + (base.includes('?') ? '&' : '?') + 'autoplay=1';
+      poster.style.opacity = '0';
+      poster.style.pointerEvents = 'none';
+    });
+  });
+</script>

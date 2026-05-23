@@ -86,6 +86,22 @@ export async function getSiteSettings() {
   );
 }
 
+export async function getHomeGrid() {
+  return safeFetch<any>(
+    `*[_type == "homeGrid" && _id == "homeGrid"][0] {
+      items[defined(project->_id)] {
+        _key,
+        featured,
+        columnStart,
+        columnSpan,
+        rowStart,
+        rowSpan,
+        project->{ _id, title, "slug": slug.current, client, year, thumbnail }
+      }
+    }`
+  );
+}
+
 export async function getAbout() {
   return safeFetch<any>(
     `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url }, metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url }`

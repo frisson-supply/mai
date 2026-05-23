@@ -1,45 +1,112 @@
 ---
 export const prerender = true;
 
-import Layout from '@/layouts/layout.astro';
-import { getSiteSettings, getAllProjects } from '@/lib/queries';
-import { urlFor } from '@/lib/sanity';
-import styles from './index.module.css';
+import Layout from "@/layouts/layout.astro";
+import { getSiteSettings, getHomeGrid } from "@/lib/queries";
+import { urlFor } from "@/lib/sanity";
+import styles from "./index.module.css";
 
 const settings = await getSiteSettings();
-const projects = await getAllProjects();
+const homeGrid = await getHomeGrid();
+const gridItems = homeGrid?.items ?? [];
 ---
 
-<Layout title={settings?.siteTitle || 'Mai'} namespace="home" pageTheme="light">
-  <div class={styles['work-toggle']}>
-    <button class={styles['work-toggle__btn']} data-view-btn="grid">Grid</button>
-    <span class={styles['work-toggle__sep']}>/</span>
-    <button class={styles['work-toggle__btn']} data-view-btn="list">List</button>
-  </div>
-  <div class={styles['work-layout']} id="work-layout">
-    <div class={styles['work']} id="work-section" data-view="grid">
-      {projects.map((project: any, i: number) => (
-        <a href={`/works/${project.slug}`} class={styles['work-item']} data-item-index={i} data-work-item>
-          <div class={styles['work-item__thumb']}>
-            {project.thumbnail
-              ? <img src={urlFor(project.thumbnail).width(800).url()} alt={project.thumbnail.alt || project.title} loading="lazy" />
-              : <div />
-            }
-          </div>
-          <div class={styles['work-item__info']}>
-            <span class={styles['work-item__index']}>{String(i + 1).padStart(2, '0')}</span>
-            <span class={styles['work-item__title']}>{project.title}</span>
-            <span class={styles['work-item__meta']}>{[project.client, project.year].filter(Boolean).join(' · ')}</span>
-          </div>
-        </a>
-      ))}
+<Layout title={settings?.siteTitle || "Mai"} namespace="home" pageTheme="light">
+    <div class={styles["work-toggle"]}>
+        <button
+            class={styles["work-toggle__btn"]}
+            data-view-btn="grid"
+            data-split="paragraph">Grid</button
+        >
+        <span class={styles["work-toggle__sep"]} data-split="paragraph">/</span>
+        <button
+            class={styles["work-toggle__btn"]}
+            data-view-btn="list"
+            data-split="paragraph">List</button
+        >
     </div>
-    <nav class={styles['work-list-names']} id="work-list-names">
-      {projects.map((project: any, i: number) => (
-        <a href={`/works/${project.slug}`} class={styles['work-list-name']} data-name-index={i} data-work-list-name>
-          {project.title}
-        </a>
-      ))}
-    </nav>
-  </div>
+    <div class={styles["cases-label"]} data-split="title">Cases</div>
+    <div class={styles["work-layout"]} id="work-layout">
+        <div class={styles["work"]} id="work-section" data-view="grid">
+            {
+                gridItems.map(
+                    (item: any, i: number) =>
+                        item.project && (
+                            <a
+                                href={`/works/${item.project.slug}`}
+                                class={styles["work-item"]}
+                                data-featured={i === 0 ? "" : undefined}
+                                style={`--col-start:${i === 0 ? 1 : (item.columnStart ?? 1)};--col-span:${i === 0 ? 2 : 1};--row-start:${i === 0 ? 1 : (item.rowStart ?? "auto")};--row-span:1;`}
+                                data-item-index={i}
+                                data-project-slug={item.project.slug}
+                                data-work-item
+                            >
+                                <div
+                                    class={styles["work-item__thumb"]}
+                                    data-work-thumb
+                                >
+                                    {item.project.thumbnail ? (
+                                        <img
+                                            src={urlFor(item.project.thumbnail)
+                                                .width(800)
+                                                .url()}
+                                            alt={
+                                                item.project.thumbnail.alt ||
+                                                item.project.title
+                                            }
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div />
+                                    )}
+                                </div>
+                                <div class={styles["work-item__info"]}>
+                                    <span
+                                        class={styles["work-item__title"]}
+                                        data-work-line
+                                    >
+                                        {item.project.title}
+                                    </span>
+                                    <span
+                                        class={styles["work-item__meta"]}
+                                        data-work-line
+                                    >
+                                        {[
+                                            item.project.client,
+                                            item.project.year,
+                                        ]
+                                            .filter(Boolean)
+                                            .join(" · ")}
+                                    </span>
+                                </div>
+                            </a>
+                        ),
+                )
+            }
+        </div>
+        <nav class={styles["work-list-names"]} id="work-list-names">
+            {
+                gridItems
+                    .filter((item: any) => item.project)
+                    .map((item: any, i: number) => (
+                        <a
+                            href={`/works/${item.project.slug}`}
+                            class={styles["work-list-name"]}
+                            data-name-index={i}
+                            data-project-slug={item.project.slug}
+                            data-work-list-name
+                        >
+                            <span class={styles["work-list-name__label"]}>
+                                <span
+                                    class={styles["work-list-name__text"]}
+                                    data-work-list-text
+                                >
+                                    {item.project.title}
+                                </span>
+                            </span>
+                        </a>
+                    ))
+            }
+        </nav>
+    </div>
 </Layout>
