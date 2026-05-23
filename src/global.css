@@ -11,6 +11,7 @@
 @layer global {
     :root {
         --nav-h: 4rem;
+        --color-accent: hsl(20deg 80% 70%);
     }
 
     html {

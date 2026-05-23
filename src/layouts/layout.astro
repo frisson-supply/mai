@@ -23,6 +23,9 @@ const showBack = path !== "/";
 const settings = await getSiteSettings();
 
 const siteName = settings?.siteTitle ?? "Mai";
+const siteNameParts = siteName.split(" ");
+const siteFirstName = siteNameParts[0];
+const siteLastName = siteNameParts.slice(1).join(" ") || "";
 const siteRole = settings?.role ?? "";
 const siteLocation = settings?.location ?? "";
 
@@ -90,13 +93,27 @@ function isActive(href: string) {
                     >
                         <div class={styles["page-loader__name-wrap"]}>
                             <span class={styles["page-loader__name-base"]}>
-                                {siteName}
+                                {siteFirstName}
+                                {siteLastName && (
+                                    <span class={styles["page-loader__dot"]}>
+                                        {" "}
+                                        •{" "}
+                                    </span>
+                                )}
+                                {siteLastName}
                             </span>
                             <span
                                 class={styles["page-loader__name-top"]}
                                 data-loader="name-top"
                             >
-                                {siteName}
+                                {siteFirstName}
+                                {siteLastName && (
+                                    <span class={styles["page-loader__dot"]}>
+                                        {" "}
+                                        •{" "}
+                                    </span>
+                                )}
+                                {siteLastName}
                             </span>
                         </div>
                         <div class={styles["page-loader__text-wrap"]}>
@@ -126,7 +143,11 @@ function isActive(href: string) {
                 {siteName}
             </a>
             <div class={styles["nav__col"]}>
-                <a href="/about" class={styles["nav__link"]}>About</a>
+                <a
+                    href="/about"
+                    class={styles["nav__link"]}
+                    aria-current={isActive("/about") ? "page" : undefined}
+                >About<span class={styles["nav__link-line"]} data-nav-line aria-hidden="true" /></a>
             </div>
         </nav>
 
@@ -134,19 +155,17 @@ function isActive(href: string) {
             {
                 !showBack ? (
                     <>
-                        {siteRole && (
-                            <span data-split="paragraph">{siteRole}</span>
-                        )}
+                        {siteRole && <span data-split="title">{siteRole}</span>}
                         {siteLocation && (
-                            <span data-split="paragraph">{siteLocation}</span>
+                            <span data-split="title">{siteLocation}</span>
                         )}
                     </>
                 ) : (
-                    <a
-                        href="/"
-                        class={styles["page-meta__link"]}
-                    >
-                        <span data-split="paragraph">←</span> <span data-split="paragraph" data-split-delay="0.08">Back</span>
+                    <a href="/" class={styles["page-meta__link"]}>
+                        <span data-split="title">←</span>{" "}
+                        <span data-split="title" data-split-delay="0.08">
+                            Back
+                        </span>
                     </a>
                 )
             }
@@ -441,7 +460,10 @@ function isActive(href: string) {
                                         stagger: 0.04,
                                         ease: "expo.out",
                                         onComplete: function () {
-                                            gsap.set(self.elements, { clearProps: "opacity,visibility" });
+                                            gsap.set(self.elements, {
+                                                clearProps:
+                                                    "opacity,visibility",
+                                            });
                                         },
                                     });
                                 },
@@ -481,10 +503,15 @@ function isActive(href: string) {
             function initInfoSplits() {
                 if (typeof SplitText === "undefined" || reducedMotion) return;
                 infoLines = [];
-                document.querySelectorAll("[data-work-line]").forEach(function (el) {
-                    var s = new SplitText(el, { type: "lines, words", mask: "lines" });
-                    infoLines = infoLines.concat(Array.from(s.lines));
-                });
+                document
+                    .querySelectorAll("[data-work-line]")
+                    .forEach(function (el) {
+                        var s = new SplitText(el, {
+                            type: "lines, words",
+                            mask: "lines",
+                        });
+                        infoLines = infoLines.concat(Array.from(s.lines));
+                    });
             }
 
             function initMediaReveal(container) {
@@ -534,30 +561,50 @@ function isActive(href: string) {
 
             function applyWorkView(view, instant) {
                 var section = document.getElementById("work-section");
-                var layout  = document.getElementById("work-layout");
-                var items   = document.querySelectorAll("[data-work-item]");
-                var thumbs  = document.querySelectorAll("[data-work-thumb]");
-                var names     = document.querySelectorAll("[data-work-list-name]");
-                var nameTexts = document.querySelectorAll("[data-work-list-text]");
-                var toGrid  = view === "grid";
+                var layout = document.getElementById("work-layout");
+                var items = document.querySelectorAll("[data-work-item]");
+                var thumbs = document.querySelectorAll("[data-work-thumb]");
+                var names = document.querySelectorAll("[data-work-list-name]");
+                var nameTexts = document.querySelectorAll(
+                    "[data-work-list-text]",
+                );
+                var toGrid = view === "grid";
 
-                var flipState = (!instant && !reducedMotion && typeof Flip !== "undefined" && items.length)
-                    ? Flip.getState([...Array.from(items), ...Array.from(thumbs)])
-                    : null;
+                var flipState =
+                    !instant &&
+                    !reducedMotion &&
+                    typeof Flip !== "undefined" &&
+                    items.length
+                        ? Flip.getState([
+                              ...Array.from(items),
+                              ...Array.from(thumbs),
+                          ])
+                        : null;
 
                 if (flipState) {
                     if (!toGrid && infoLines.length) {
                         // Leaving grid: slide info lines behind mask
-                        gsap.to(infoLines, { yPercent: 105, duration: 0.25, ease: "power2.in", stagger: 0.02, overwrite: true });
+                        gsap.to(infoLines, {
+                            yPercent: 105,
+                            duration: 0.25,
+                            ease: "power2.in",
+                            stagger: 0.02,
+                            overwrite: true,
+                        });
                     }
                 }
 
                 if (section) section.dataset.view = view;
-                if (layout)  layout.dataset.view  = view;
+                if (layout) layout.dataset.view = view;
                 localStorage.setItem("workView", view);
-                document.querySelectorAll("[data-view-btn]").forEach(function (btn) {
-                    btn.classList.toggle("is-active", btn.dataset.viewBtn === view);
-                });
+                document
+                    .querySelectorAll("[data-view-btn]")
+                    .forEach(function (btn) {
+                        btn.classList.toggle(
+                            "is-active",
+                            btn.dataset.viewBtn === view,
+                        );
+                    });
 
                 if (flipState) {
                     if (toGrid && infoLines.length) {
@@ -565,8 +612,12 @@ function isActive(href: string) {
                     }
 
                     if (section) section.style.overflow = "visible";
-                    items.forEach(function (item)  { item.style.overflow = "visible"; });
-                    thumbs.forEach(function (thumb) { thumb.style.overflow = "visible"; });
+                    items.forEach(function (item) {
+                        item.style.overflow = "visible";
+                    });
+                    thumbs.forEach(function (thumb) {
+                        thumb.style.overflow = "visible";
+                    });
 
                     Flip.from(flipState, {
                         duration: 0.55,
@@ -574,18 +625,36 @@ function isActive(href: string) {
                         stagger: 0.04,
                         nested: true,
                         onComplete: function () {
-                            if (section) section.style.removeProperty("overflow");
-                            items.forEach(function (item)  { item.style.removeProperty("overflow"); });
-                            thumbs.forEach(function (thumb) { thumb.style.removeProperty("overflow"); });
+                            if (section)
+                                section.style.removeProperty("overflow");
+                            items.forEach(function (item) {
+                                item.style.removeProperty("overflow");
+                            });
+                            thumbs.forEach(function (thumb) {
+                                thumb.style.removeProperty("overflow");
+                            });
                             if (toGrid && infoLines.length) {
                                 // Entering grid: reveal info lines from mask
-                                gsap.to(infoLines, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: 0.03, overwrite: true });
+                                gsap.to(infoLines, {
+                                    yPercent: 0,
+                                    duration: 0.55,
+                                    ease: "expo.out",
+                                    stagger: 0.03,
+                                    overwrite: true,
+                                });
                             }
                             if (!toGrid && nameTexts.length) {
                                 // Entering list: reveal name texts from behind their masks
-                                gsap.fromTo(nameTexts,
+                                gsap.fromTo(
+                                    nameTexts,
                                     { yPercent: 105 },
-                                    { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.04, overwrite: true }
+                                    {
+                                        yPercent: 0,
+                                        duration: 0.9,
+                                        ease: "expo.out",
+                                        stagger: 0.04,
+                                        overwrite: true,
+                                    },
                                 );
                             }
                             initListHover();
@@ -618,14 +687,21 @@ function isActive(href: string) {
                         el.classList.toggle("is-active", el === itemEl);
                     });
                     names.forEach(function (el) {
-                        el.classList.toggle("is-active", el.dataset.projectSlug === slug);
+                        el.classList.toggle(
+                            "is-active",
+                            el.dataset.projectSlug === slug,
+                        );
                     });
                 }
 
                 function clearActive() {
                     section.classList.remove("has-active");
-                    items.forEach(function (el) { el.classList.remove("is-active"); });
-                    names.forEach(function (el) { el.classList.remove("is-active"); });
+                    items.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
+                    names.forEach(function (el) {
+                        el.classList.remove("is-active");
+                    });
                 }
 
                 function applyScrollActive() {
@@ -657,9 +733,14 @@ function isActive(href: string) {
                 names.forEach(function (el) {
                     el.addEventListener("mouseenter", function () {
                         isHovering = true;
-                        var matchingItem = Array.from(items).find(function (it) {
-                            return it.dataset.projectSlug === el.dataset.projectSlug;
-                        });
+                        var matchingItem = Array.from(items).find(
+                            function (it) {
+                                return (
+                                    it.dataset.projectSlug ===
+                                    el.dataset.projectSlug
+                                );
+                            },
+                        );
                         if (matchingItem) setActive(matchingItem);
                     });
                     el.addEventListener("mouseleave", function () {
@@ -668,19 +749,27 @@ function isActive(href: string) {
                     });
                 });
 
-                var observer = new IntersectionObserver(function (entries) {
-                    entries.forEach(function (entry) {
-                        visibilityMap.set(entry.target, entry.intersectionRatio);
-                    });
-                    if (!isHovering) {
-                        applyScrollActive();
-                    }
-                }, {
-                    rootMargin: "-30% 0px -30% 0px",
-                    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-                });
+                var observer = new IntersectionObserver(
+                    function (entries) {
+                        entries.forEach(function (entry) {
+                            visibilityMap.set(
+                                entry.target,
+                                entry.intersectionRatio,
+                            );
+                        });
+                        if (!isHovering) {
+                            applyScrollActive();
+                        }
+                    },
+                    {
+                        rootMargin: "-30% 0px -30% 0px",
+                        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+                    },
+                );
 
-                items.forEach(function (el) { observer.observe(el); });
+                items.forEach(function (el) {
+                    observer.observe(el);
+                });
                 section._scrollObserver = observer;
             }
 
@@ -701,6 +790,9 @@ function isActive(href: string) {
                 }
 
                 var navEls = getNavAnimEls();
+                var navLine = document.querySelector(
+                    'nav a[aria-current="page"] [data-nav-line]',
+                );
                 var lines = document.querySelectorAll(
                     '[data-split="paragraph"] .line',
                 );
@@ -710,10 +802,13 @@ function isActive(href: string) {
                 var rows = document.querySelectorAll("[data-recognition-row]");
                 var items = document.querySelectorAll("[data-work-item]");
                 var media = document.querySelectorAll("[data-reveal]");
-                var nameTexts = document.querySelectorAll("[data-work-list-text]");
+                var nameTexts = document.querySelectorAll(
+                    "[data-work-list-text]",
+                );
 
                 if (
                     !navEls.length &&
+                    !navLine &&
                     !chars.length &&
                     !lines.length &&
                     !rows.length &&
@@ -726,6 +821,21 @@ function isActive(href: string) {
                 }
 
                 var tl = gsap.timeline({ onComplete: onComplete });
+
+                if (navLine) {
+                    navLine.style.animation = "none";
+                    gsap.set(navLine, { scaleX: 1 });
+                    tl.to(
+                        navLine,
+                        {
+                            duration: 0.3,
+                            ease: "power2.in",
+                            scaleX: 0,
+                            transformOrigin: "right center",
+                        },
+                        0,
+                    );
+                }
 
                 if (navEls.length) {
                     tl.to(
