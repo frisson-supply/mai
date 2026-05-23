@@ -62,13 +62,11 @@
 
     /* Nav element rule in global so page-layer CSS module classes can override via cascade */
     nav[data-site-nav] {
-        align-items: start;
+        align-items: center;
         background: hsl(0deg 0% 4%);
-        display: grid;
-        grid-template-areas: "name . . . . . . . . . about . . . . end";
-        grid-template-columns: repeat(16, 1fr);
+        display: flex;
         left: 0;
-        padding: 1.5rem 2rem;
+        padding: 1.5rem 1rem;
         position: fixed;
         right: 0;
         top: 0;

@@ -1,6 +1,9 @@
 @layer components {
     .nav__col {
-        grid-area: about;
+        left: 50%;
+        position: absolute;
+        top: calc(var(--nav-h) / 2);
+        transform: translate(-50%, -50%);
     }
 
     .nav__link {
@@ -46,8 +49,9 @@
         font-size: 0.875rem;
         gap: 0.1em;
         position: fixed;
-        right: 2rem;
-        top: 1.5rem;
+        right: 1rem;
+        top: calc(var(--nav-h) / 2);
+        transform: translateY(-50%);
         z-index: 50;
     }
 
@@ -181,7 +185,7 @@
     .page-loader__text-wrap {
         align-items: center;
         bottom: 3.5em;
-        display: flex;
+        display: none;
         flex-direction: column;
         justify-content: center;
         position: absolute;

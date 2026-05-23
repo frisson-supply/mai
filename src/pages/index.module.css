@@ -88,7 +88,7 @@
     .cases-label {
         bottom: 2rem;
         font-size: clamp(3.5rem, 9vw, 8rem);
-        left: 2rem;
+        left: 1rem;
         line-height: 1;
         pointer-events: none;
         position: fixed;
@@ -109,7 +109,7 @@
         grid-auto-rows: var(--row-h);
         grid-template-columns: repeat(6, 1fr);
         grid-template-rows: calc(var(--row-h) * 1.4) var(--row-h);
-        padding: calc(var(--nav-h) + 1.5rem) 2rem 4rem;
+        padding: calc(var(--nav-h) + 1.5rem) 1rem 4rem;
         width: 100%;
     }
 
@@ -236,6 +236,7 @@
     .work[data-view="grid"] .work-item,
     .work[data-view="list"] .work-item {
         display: block;
+        height: auto !important;
         opacity: 1 !important;
         width: 100% !important;
     }
@@ -253,6 +254,7 @@
         display: none;
     }
 
+    .work[data-view="grid"] .work-item__info,
     .work[data-view="list"] .work-item__info {
         display: flex;
     }

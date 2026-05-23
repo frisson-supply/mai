@@ -6,11 +6,12 @@
         height: calc(100dvh - var(--nav-h));
         margin-top: var(--nav-h);
         overflow: hidden;
-        padding: 0 2rem;
+        padding: 2rem 1rem 0;
     }
 
     .about-bio {
         max-width: 38ch;
+        text-wrap: pretty;
     }
 
     .about-bio p {
@@ -154,5 +155,39 @@
 
     .about-footer-right a:hover {
         opacity: 0.5;
+    }
+}
+
+@media (width <= 48rem) {
+    .about {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        height: auto;
+        min-height: calc(100dvh - var(--nav-h));
+        overflow: visible;
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .about-bio {
+        max-width: none;
+    }
+
+    .about-bio-section {
+        width: 100%;
+    }
+
+    .about-brands {
+        align-self: unset;
+        width: 100%;
+    }
+
+    .about-footer {
+        margin-top: auto;
+    }
+
+    .about-recognitions {
+        align-self: unset;
+        width: 100%;
     }
 }
