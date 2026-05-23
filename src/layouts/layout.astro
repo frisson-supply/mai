@@ -173,9 +173,14 @@ function isActive(href: string) {
             is:inline
             src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js"
         ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/Flip.min.js"
+        ></script>
 
         <script is:inline>
             gsap.registerPlugin(CustomEase);
+            if (typeof Flip !== "undefined") gsap.registerPlugin(Flip);
             if (typeof SplitText !== "undefined")
                 gsap.registerPlugin(SplitText);
 
@@ -232,7 +237,7 @@ function isActive(href: string) {
                 } else {
                     initTextReveal(document.body);
                     initMediaReveal(document.body);
-                    initWorkItemReveal(document.body);
+                    initWorkItemReveal(document.body, initInfoSplits);
                 }
             }
 
@@ -445,12 +450,18 @@ function isActive(href: string) {
                     });
             }
 
-            function initWorkItemReveal(container) {
-                if (reducedMotion) return;
+            function initWorkItemReveal(container, onComplete) {
+                if (reducedMotion) {
+                    if (onComplete) onComplete();
+                    return;
+                }
                 var items = (container || document).querySelectorAll(
                     "[data-work-item]",
                 );
-                if (!items.length) return;
+                if (!items.length) {
+                    if (onComplete) onComplete();
+                    return;
+                }
                 gsap.fromTo(
                     items,
                     { y: 16, autoAlpha: 0 },
@@ -460,8 +471,20 @@ function isActive(href: string) {
                         duration: 0.7,
                         ease: "power3.out",
                         stagger: 0.06,
+                        onComplete: onComplete || null,
                     },
                 );
+            }
+
+            var infoLines = [];
+
+            function initInfoSplits() {
+                if (typeof SplitText === "undefined" || reducedMotion) return;
+                infoLines = [];
+                document.querySelectorAll("[data-work-line]").forEach(function (el) {
+                    var s = new SplitText(el, { type: "lines, words", mask: "lines" });
+                    infoLines = infoLines.concat(Array.from(s.lines));
+                });
             }
 
             function initMediaReveal(container) {
@@ -509,21 +532,68 @@ function isActive(href: string) {
                 applyWorkView(btn.dataset.viewBtn);
             });
 
-            function applyWorkView(view) {
+            function applyWorkView(view, instant) {
                 var section = document.getElementById("work-section");
-                var layout = document.getElementById("work-layout");
+                var layout  = document.getElementById("work-layout");
+                var items   = document.querySelectorAll("[data-work-item]");
+                var thumbs  = document.querySelectorAll("[data-work-thumb]");
+                var names     = document.querySelectorAll("[data-work-list-name]");
+                var nameTexts = document.querySelectorAll("[data-work-list-text]");
+                var toGrid  = view === "grid";
+
+                var flipState = (!instant && !reducedMotion && typeof Flip !== "undefined" && items.length)
+                    ? Flip.getState([...Array.from(items), ...Array.from(thumbs)])
+                    : null;
+
+                if (flipState) {
+                    if (!toGrid && infoLines.length) {
+                        // Leaving grid: slide info lines behind mask
+                        gsap.to(infoLines, { yPercent: 105, duration: 0.25, ease: "power2.in", stagger: 0.02, overwrite: true });
+                    }
+                }
+
                 if (section) section.dataset.view = view;
-                if (layout) layout.dataset.view = view;
+                if (layout)  layout.dataset.view  = view;
                 localStorage.setItem("workView", view);
-                document
-                    .querySelectorAll("[data-view-btn]")
-                    .forEach(function (btn) {
-                        btn.classList.toggle(
-                            "is-active",
-                            btn.dataset.viewBtn === view,
-                        );
+                document.querySelectorAll("[data-view-btn]").forEach(function (btn) {
+                    btn.classList.toggle("is-active", btn.dataset.viewBtn === view);
+                });
+
+                if (flipState) {
+                    if (toGrid && infoLines.length) {
+                        gsap.set(infoLines, { yPercent: 105, overwrite: true });
+                    }
+
+                    if (section) section.style.overflow = "visible";
+                    items.forEach(function (item)  { item.style.overflow = "visible"; });
+                    thumbs.forEach(function (thumb) { thumb.style.overflow = "visible"; });
+
+                    Flip.from(flipState, {
+                        duration: 0.55,
+                        ease: "power3.inOut",
+                        stagger: 0.04,
+                        nested: true,
+                        onComplete: function () {
+                            if (section) section.style.removeProperty("overflow");
+                            items.forEach(function (item)  { item.style.removeProperty("overflow"); });
+                            thumbs.forEach(function (thumb) { thumb.style.removeProperty("overflow"); });
+                            if (toGrid && infoLines.length) {
+                                // Entering grid: reveal info lines from mask
+                                gsap.to(infoLines, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: 0.03, overwrite: true });
+                            }
+                            if (!toGrid && nameTexts.length) {
+                                // Entering list: reveal name texts from behind their masks
+                                gsap.fromTo(nameTexts,
+                                    { yPercent: 105 },
+                                    { yPercent: 0, duration: 0.9, ease: "expo.out", stagger: 0.04, overwrite: true }
+                                );
+                            }
+                            initListHover();
+                        },
                     });
-                initListHover();
+                } else {
+                    initListHover();
+                }
             }
 
             function initListHover() {
@@ -541,24 +611,21 @@ function isActive(href: string) {
                 var isHovering = false;
                 var visibilityMap = new Map();
 
-                function setActive(index) {
+                function setActive(itemEl) {
+                    var slug = itemEl.dataset.projectSlug;
                     section.classList.add("has-active");
-                    items.forEach(function (el, i) {
-                        el.classList.toggle("is-active", i === index);
+                    items.forEach(function (el) {
+                        el.classList.toggle("is-active", el === itemEl);
                     });
-                    names.forEach(function (el, i) {
-                        el.classList.toggle("is-active", i === index);
+                    names.forEach(function (el) {
+                        el.classList.toggle("is-active", el.dataset.projectSlug === slug);
                     });
                 }
 
                 function clearActive() {
                     section.classList.remove("has-active");
-                    items.forEach(function (el) {
-                        el.classList.remove("is-active");
-                    });
-                    names.forEach(function (el) {
-                        el.classList.remove("is-active");
-                    });
+                    items.forEach(function (el) { el.classList.remove("is-active"); });
+                    names.forEach(function (el) { el.classList.remove("is-active"); });
                 }
 
                 function applyScrollActive() {
@@ -571,26 +638,29 @@ function isActive(href: string) {
                         }
                     });
                     if (best && bestRatio > 0) {
-                        setActive(parseInt(best.dataset.itemIndex, 10));
+                        setActive(best);
                     } else {
                         clearActive();
                     }
                 }
 
-                items.forEach(function (el, i) {
+                items.forEach(function (el) {
                     el.addEventListener("mouseenter", function () {
                         isHovering = true;
-                        setActive(i);
+                        setActive(el);
                     });
                     el.addEventListener("mouseleave", function () {
                         isHovering = false;
                         applyScrollActive();
                     });
                 });
-                names.forEach(function (el, i) {
+                names.forEach(function (el) {
                     el.addEventListener("mouseenter", function () {
                         isHovering = true;
-                        setActive(i);
+                        var matchingItem = Array.from(items).find(function (it) {
+                            return it.dataset.projectSlug === el.dataset.projectSlug;
+                        });
+                        if (matchingItem) setActive(matchingItem);
                     });
                     el.addEventListener("mouseleave", function () {
                         isHovering = false;
@@ -617,7 +687,7 @@ function isActive(href: string) {
             function initWorkView() {
                 var section = document.getElementById("work-section");
                 if (!section) return;
-                applyWorkView(localStorage.getItem("workView") || "grid");
+                applyWorkView(localStorage.getItem("workView") || "grid", true);
             }
 
             // -----------------------------------------
@@ -640,6 +710,7 @@ function isActive(href: string) {
                 var rows = document.querySelectorAll("[data-recognition-row]");
                 var items = document.querySelectorAll("[data-work-item]");
                 var media = document.querySelectorAll("[data-reveal]");
+                var nameTexts = document.querySelectorAll("[data-work-list-text]");
 
                 if (
                     !navEls.length &&
@@ -647,7 +718,8 @@ function isActive(href: string) {
                     !lines.length &&
                     !rows.length &&
                     !items.length &&
-                    !media.length
+                    !media.length &&
+                    !nameTexts.length
                 ) {
                     onComplete();
                     return;
@@ -713,6 +785,18 @@ function isActive(href: string) {
                             y: -8,
                             autoAlpha: 0,
                             stagger: 0.03,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
+                if (nameTexts.length) {
+                    tl.to(
+                        nameTexts,
+                        {
+                            duration: 0.45,
+                            yPercent: 105,
+                            stagger: 0.025,
                             ease: "power2.in",
                         },
                         0,

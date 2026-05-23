@@ -34,6 +34,10 @@ export default defineConfig({
               .title('About')
               .id('about')
               .child(S.document().schemaType('about').documentId('about')),
+            S.listItem()
+              .title('Home Grid')
+              .id('homeGrid')
+              .child(S.document().schemaType('homeGrid').documentId('homeGrid')),
             S.divider(),
             S.documentTypeListItem('project').title('Projects'),
           ]),

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useClient } from 'sanity'
 import { IntentLink } from 'sanity/router'
 import { Box, Card, Flex, Grid, Heading, Stack, Text, Spinner } from '@sanity/ui'
-import { CogIcon, UserIcon, ImagesIcon, AddIcon, StarFilledIcon, EditIcon, FolderIcon } from '@sanity/icons'
+import { CogIcon, UserIcon, ImagesIcon, AddIcon, StarFilledIcon, EditIcon, FolderIcon, MasterDetailIcon } from '@sanity/icons'
 
 interface Stats {
   total: number
@@ -80,7 +80,7 @@ export function Dashboard() {
           <Text size={1} weight="semibold" muted style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Quick access
           </Text>
-          <Grid columns={[2, 2, 4]} gap={3}>
+          <Grid columns={[2, 3, 5]} gap={3}>
             <IntentLink intent="edit" params={{ id: 'siteSettings', type: 'siteSettings' }} style={{ textDecoration: 'none' }}>
               <Card padding={4} radius={2} shadow={1} tone="default" style={{ cursor: 'pointer', height: '100%' }}>
                 <Flex align="center" gap={3}>
@@ -116,6 +116,18 @@ export function Dashboard() {
                 </Flex>
               </Card>
             </a>
+
+            <IntentLink intent="edit" params={{ id: 'homeGrid', type: 'homeGrid' }} style={{ textDecoration: 'none' }}>
+              <Card padding={4} radius={2} shadow={1} tone="default" style={{ cursor: 'pointer', height: '100%' }}>
+                <Flex align="center" gap={3}>
+                  <Text size={3}><MasterDetailIcon /></Text>
+                  <Stack space={2}>
+                    <Text size={2} weight="semibold">Home Grid</Text>
+                    <Text size={1} muted>Arrange projects</Text>
+                  </Stack>
+                </Flex>
+              </Card>
+            </IntentLink>
 
             <IntentLink intent="create" params={{ type: 'project' }} style={{ textDecoration: 'none' }}>
               <Card padding={4} radius={2} shadow={1} tone="primary" style={{ cursor: 'pointer', height: '100%' }}>
