@@ -2,14 +2,14 @@
 
 ## Project overview
 
-**mai** is a portfolio/agency website built with Astro (SSR, Vercel adapter), React, and Sanity as the CMS. The Sanity Studio is embedded at `/studio`. Content is modelled as schemas and rendered via a block-based sections system.
+**mai** is a portfolio/agency website — Astro (SSR, Vercel adapter) + React islands + Sanity CMS. The Studio is embedded at `/studio`. Pages are built from block-based sections driven by Sanity content.
 
 ## Tech stack
 
-- **Astro 5** — SSR, server output, Vercel adapter
+- **Astro 5** — SSR, Vercel adapter
 - **React 19** — interactive islands (`.tsx`)
-- **Sanity v5** — headless CMS, embedded Studio at `/studio`
-- **Three.js + GSAP** — 3D / animation (SSR-safe via `vite.ssr.noExternal`)
+- **Sanity v5** — headless CMS, Studio at `/studio`
+- **Three.js + GSAP** — 3D/animation (SSR-safe via `vite.ssr.noExternal`)
 - **CSS Modules** — scoped styles per component
 - **pnpm** — package manager
 
@@ -20,66 +20,39 @@ Required in `.env` (see `.env.example`):
 ```
 PUBLIC_SANITY_PROJECT_ID=
 PUBLIC_SANITY_DATASET=production
-SANITY_API_READ_TOKEN=        # optional — only needed for private datasets
+SANITY_API_READ_TOKEN=   # optional — private datasets only
 ```
 
 ## Commands
 
 ```bash
-pnpm dev          # start dev server
+pnpm dev          # dev server
 pnpm build        # production build
-pnpm preview      # preview production build
+pnpm preview      # preview build
 pnpm lint         # ESLint on src/
 pnpm lint:css     # Stylelint on src/**/*.css
 ```
 
-## Project structure
+## Architecture
 
-```
-src/
-  components/     # reusable UI components (Astro + React)
-    blocks/       # page-builder block components
-  layouts/        # shared page layout
-  lib/            # sanity client + GROQ queries
-  pages/          # file-based routing
-    index.astro           # home
-    about/                # about page
-    works/[slug]/         # dynamic project pages
-  schemas/        # Sanity schema definitions
-  studio/         # Sanity Studio customisation (Dashboard)
-  utils/          # shared utilities (cn.ts)
-  global.css      # global styles
-```
-
-## Architecture patterns
-
-- **Sections renderer** — `src/components/sections-renderer/sections-renderer.astro` maps Sanity block types to block components. Add a new block by: (1) creating a schema in `src/schemas/`, (2) exporting it from `src/schemas/index.ts`, (3) adding the corresponding component in `src/components/blocks/`, and (4) registering the mapping in the sections renderer.
-- **Sanity client** — singleton in `src/lib/sanity.ts`; use `urlFor()` for image URLs.
-- **GROQ queries** — kept in `src/lib/queries.ts`.
+- **Sections renderer** — `src/components/sections-renderer/sections-renderer.astro` maps Sanity block types to components. To add a block: create schema in `src/schemas/`, export from `src/schemas/index.ts`, add component in `src/components/blocks/`, register in the renderer.
+- **Sanity client** — singleton at `src/lib/sanity.ts`; use `urlFor()` for images.
+- **GROQ queries** — `src/lib/queries.ts`.
 
 ## Code conventions
 
-### File naming
-All source files must be **kebab-case** (enforced by ESLint `check-file` plugin). Dynamic route files (e.g. `[slug].astro`) are exempt.
+**File naming** — kebab-case enforced by ESLint `check-file`. Dynamic routes (`[slug].astro`) exempt.
 
-### CSS
-- One CSS Module per component, named `<component>.module.css`.
-- Class names must follow **BEM-compatible kebab-case** (enforced by Stylelint).
-- CSS properties must be in **alphabetical order** (enforced by Stylelint).
-- No hex colours (`color-no-hex: true`). No named colours (`color-named: never`). Use CSS custom properties instead.
-- Only use **widely-available baseline** CSS features (enforced by `stylelint-plugin-use-baseline`).
-- `composes` / `compose-with` are allowed in CSS Modules.
+**CSS**
+- One CSS Module per component: `<component>.module.css`
+- BEM-compatible kebab-case class names (Stylelint)
+- Alphabetical property order (Stylelint)
+- No hex or named colours — use CSS custom properties
+- Widely-available baseline features only (`stylelint-plugin-use-baseline`)
+- `composes` / `compose-with` allowed
 
-### Commits
-Conventional Commits are enforced by Commitlint + Husky:
-```
-feat: ...
-fix: ...
-chore: ...
-docs: ...
-refactor: ...
-```
+**Commits** — Conventional Commits enforced by Commitlint + Husky (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
 
 ## Deployment
 
-Deployed on **Vercel** via the `@astrojs/vercel` adapter (SSR). The Sanity Studio is served from the same deployment at `/studio`.
+Vercel via `@astrojs/vercel` adapter. Studio served from the same deployment at `/studio`.
