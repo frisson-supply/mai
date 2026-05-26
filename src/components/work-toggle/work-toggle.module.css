@@ -1,0 +1,45 @@
+@layer components {
+    .work-toggle {
+        align-items: center;
+        display: flex;
+        font-size: 0.875rem;
+        gap: 0.25em;
+        left: 25%;
+        position: fixed;
+        top: 1.5rem;
+        z-index: 50;
+    }
+
+    .work-toggle__btn {
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        opacity: 0.35;
+        padding: 0;
+        transition: opacity 0.2s;
+    }
+
+    .work-toggle__btn:hover,
+    .work-toggle__btn:global(.is-active) {
+        opacity: 1;
+    }
+
+    .work-toggle__sep {
+        opacity: 0.35;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-toggle {
+        display: none;
+    }
+}
+
+@media (width <= 48rem) {
+    .work-toggle {
+        display: none;
+    }
+}
