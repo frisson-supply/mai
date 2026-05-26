@@ -33,7 +33,7 @@ const settings = await getSiteSettings();
     {about?.brands && about.brands.length > 0 && (
       <section class={styles['about-brands']}>
         <h2 class={styles['about-section-heading']} data-split="title">Brands</h2>
-        <div class={styles['about-brands-list']}>
+        <div class={styles['about-brands-list']} data-reveal>
           {about.brands.map((brand: any) => {
             const inner = (
               <div class={styles['about-brand-item']}>

@@ -87,9 +87,34 @@
     .char {
         display: inline-block;
     }
+
+    /* Initial hidden states — prevent flash before GSAP loads and sets autoAlpha: 0 */
+    [data-split],
+    [data-recognition-row],
+    [data-work-item],
+    [data-reveal] {
+        visibility: hidden;
+    }
 }
 
 @layer overrides {
+    @media (prefers-reduced-motion: reduce) {
+        [data-split],
+        [data-recognition-row],
+        [data-work-item],
+        [data-reveal] {
+            visibility: visible;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
     body[data-page-theme="light"] {
         background: hsl(0deg 0% 96%);
         color: hsl(0deg 0% 4%);

@@ -206,6 +206,12 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .work-toggle {
+        display: none;
+    }
+}
+
 @media (width <= 48rem) {
     .cases-label {
         display: none;

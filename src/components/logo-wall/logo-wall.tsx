@@ -42,6 +42,7 @@ export function LogoWall({ heading, logos }: Props) {
 
   useEffect(() => {
     if (!rootRef.current || !listRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const list  = listRef.current;
     const items = Array.from(list.querySelectorAll<HTMLDivElement>('[data-logo-wall-item]'));
