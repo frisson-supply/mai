@@ -6,7 +6,7 @@
         height: calc(100dvh - var(--nav-h));
         margin-top: var(--nav-h);
         overflow: hidden;
-        padding: 2rem 1rem 0;
+        padding: var(--space-xl) var(--space-md) 0;
     }
 
     .about-bio {
@@ -16,8 +16,8 @@
 
     .about-bio p {
         color: inherit;
-        font-size: 0.9rem;
-        line-height: 1.65;
+        font-size: var(--fs-ui);
+        line-height: var(--lh-relaxed);
         margin-bottom: 0.75em;
         max-width: none;
         text-align: left;
@@ -39,8 +39,8 @@
     .about-brands-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 0.5rem;
+        gap: var(--space-sm);
+        margin-top: var(--space-xs);
     }
 
     .about-brand-link {
@@ -57,7 +57,7 @@
     }
 
     .about-brand-image {
-        border-radius: 0.25rem;
+        border-radius: var(--radius-sm);
         display: block;
         height: 2.5rem;
         object-fit: contain;
@@ -66,9 +66,9 @@
 
     .about-brand-fallback {
         align-items: center;
-        background: hsl(0deg 0% 14%);
-        border-radius: 0.25rem;
-        color: hsl(0deg 0% 50%);
+        background: var(--color-brand-bg);
+        border-radius: var(--radius-sm);
+        color: var(--color-brand-text);
         display: flex;
         height: 2.5rem;
         justify-content: center;
@@ -76,7 +76,7 @@
     }
 
     .about-brand-text {
-        font-size: 0.65rem;
+        font-size: var(--fs-2xs);
         opacity: 0.6;
         overflow: hidden;
         text-align: center;
@@ -95,27 +95,27 @@
 
     .about-section-heading {
         color: inherit;
-        font-size: 1rem;
-        font-weight: 400;
+        font-size: var(--fs-lg);
+        font-weight: var(--fw-normal);
     }
 
     .about-recognition-list {
         display: flex;
         flex-direction: column;
         gap: 0;
-        margin-top: 0.25rem;
+        margin-top: var(--space-2xs);
     }
 
     .about-recognition-row {
         color: inherit;
-        font-size: 0.875rem;
-        line-height: 1.8;
+        font-size: var(--fs-ui);
+        line-height: var(--lh-loose);
     }
 
     .about-recognition-link {
         color: inherit;
         text-decoration: none;
-        transition: opacity 0.2s;
+        transition: opacity var(--duration-fast);
     }
 
     .about-recognition-link:hover {
@@ -127,30 +127,30 @@
         align-items: flex-end;
         align-self: end;
         display: flex;
-        font-size: 0.875rem;
+        font-size: var(--fs-ui);
         grid-column: 1 / -1;
         grid-row: 5;
         justify-content: space-between;
-        padding-bottom: 1.5rem;
+        padding-bottom: var(--space-lg);
     }
 
     .about-footer-left {
         display: flex;
         flex-direction: column;
-        gap: 0.1em;
+        gap: var(--space-4xs);
     }
 
     .about-footer-right {
         align-items: flex-end;
         display: flex;
         flex-direction: column;
-        gap: 0.1em;
+        gap: var(--space-4xs);
     }
 
     .about-footer-right a {
         color: inherit;
         text-decoration: none;
-        transition: opacity 0.2s;
+        transition: opacity var(--duration-fast);
     }
 
     .about-footer-right a:hover {
@@ -162,11 +162,11 @@
     .about {
         display: flex;
         flex-direction: column;
-        gap: 2rem;
+        gap: var(--space-xl);
         height: auto;
         min-height: calc(100dvh - var(--nav-h));
         overflow: visible;
-        padding: 1.5rem 1rem 2rem;
+        padding: var(--space-lg) var(--space-md) var(--space-xl);
     }
 
     .about-bio {

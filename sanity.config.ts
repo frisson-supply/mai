@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
 import { schemaTypes } from './src/schemas';
 import { Dashboard } from './src/studio/dashboard';
+import { Docs } from './src/studio/docs';
 
 const dashboardPlugin = definePlugin({
   name: 'studio-dashboard',
@@ -12,6 +13,11 @@ const dashboardPlugin = definePlugin({
       name: 'dashboard',
       title: 'Dashboard',
       component: Dashboard,
+    },
+    {
+      name: 'docs',
+      title: 'Docs',
+      component: Docs,
     },
   ],
 });

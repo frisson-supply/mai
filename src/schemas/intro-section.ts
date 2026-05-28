@@ -1,3 +1,4 @@
+import React from 'react';
 import { defineField, defineType } from 'sanity';
 
 export const introSection = defineType({
@@ -21,7 +22,7 @@ export const introSection = defineType({
       name: 'videoUrl',
       type: 'url',
       title: 'Video URL',
-      description: 'Embed URL (e.g. https://player.vimeo.com/video/…)',
+      description: React.createElement(React.Fragment, null, React.createElement('span', { style: { display: 'block' } }, 'YouTube: https://www.youtube.com/embed/VIDEO_ID'), React.createElement('span', { style: { display: 'block' } }, 'Vimeo: https://player.vimeo.com/video/VIDEO_ID')),
     }),
     defineField({
       name: 'aspectRatio',

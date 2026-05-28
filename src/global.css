@@ -11,7 +11,91 @@
 @layer global {
     :root {
         --nav-h: 4rem;
+
+        /* Brand */
         --color-accent: hsl(20deg 80% 70%);
+
+        /* Background / foreground */
+        --color-bg: hsl(0deg 0% 4%);
+        --color-fg: hsl(0deg 0% 96%);
+        --color-surface: hsl(0deg 0% 7%);
+        --color-overlay: hsl(0deg 0% 0%);
+
+        /* Text */
+        --color-text-body: hsl(0deg 0% 60%);
+        --color-text-secondary: hsl(0deg 0% 80%);
+        --color-text-caption: hsl(0deg 0% 40%);
+
+        /* Borders */
+        --border: hsl(100deg 4% 17%);
+        --border-strong: hsl(0deg 0% 10%);
+        --color-border-subtle: hsl(0deg 0% 10%);
+
+        /* Light-theme text (used when data-page-theme="light") */
+        --text-default: hsl(100deg 4% 17%);
+        --text-muted: hsl(0deg 0% 50%);
+        --text-hover: hsl(108deg 5% 10%);
+        --text-title: hsl(0deg 0% 10%);
+
+        /* Fallback / brand icon backgrounds */
+        --color-brand-bg: hsl(0deg 0% 14%);
+        --color-brand-text: hsl(0deg 0% 50%);
+
+        /* Font sizes */
+        --fs-2xs: 0.65rem;
+        --fs-xs: 0.7rem;
+        --fs-sm: 0.75rem;
+        --fs-md: 0.8rem;
+        --fs-ui: 0.875rem;
+        --fs-base: 1rem;
+        --fs-body: 1.125rem;
+        --fs-lg: 1.25rem;
+
+        /* Breakpoints — reference only, cannot be used inside @media */
+        --bp-sm: 48rem;
+        --bp-md: 64rem;
+
+        /* Spacing */
+        --space-4xs: 0.1em;
+        --space-3xs: 0.25em;
+        --space-2xs: 0.25rem;
+        --space-xs: 0.5rem;
+        --space-sm: 0.75rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        --space-3xl: 4rem;
+
+        /* Border radius */
+        --radius-xs: 2px;
+        --radius-sm: 0.25rem;
+        --radius-md: 0.5rem;
+
+        /* Z-index scale */
+        --z-base: 1;
+        --z-overlay: 2;
+        --z-toggle: 10;
+        --z-nav: 50;
+        --z-loader: 100;
+
+        /* Font weights */
+        --fw-normal: 400;
+        --fw-semibold: 600;
+        --fw-bold: 700;
+
+        /* Line heights */
+        --lh-none: 1;
+        --lh-tight: 1.3;
+        --lh-normal: 1.6;
+        --lh-relaxed: 1.65;
+        --lh-loose: 1.8;
+
+        /* Transition durations */
+        --duration-fast: 0.2s;
+        --duration-base: 0.3s;
+        --duration-slow: 0.6s;
+        --ease-out: cubic-bezier(0.625, 0.05, 0, 1);
     }
 
     html {
@@ -20,12 +104,9 @@
     }
 
     body {
-        background: hsl(0deg 0% 4%);
-        color: hsl(0deg 0% 96%);
-        font-family:
-            system-ui,
-            -apple-system,
-            sans-serif;
+        background: var(--color-bg);
+        color: var(--color-fg);
+        font-family: "Geist", system-ui, sans-serif;
     }
 
     section {
@@ -35,27 +116,27 @@
 
     h1 {
         font-size: clamp(3rem, 8vw, 8rem);
-        font-weight: 700;
+        font-weight: var(--fw-bold);
         letter-spacing: -0.02em;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-md);
     }
 
     h2 {
         font-size: clamp(1.5rem, 4vw, 3rem);
-        font-weight: 600;
-        margin-bottom: 0.75rem;
+        font-weight: var(--fw-semibold);
+        margin-bottom: var(--space-sm);
     }
 
     h3 {
         font-size: clamp(1.25rem, 3vw, 2rem);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+        font-weight: var(--fw-semibold);
+        margin-bottom: var(--space-xs);
     }
 
     p {
-        color: hsl(0deg 0% 60%);
-        font-size: 1.125rem;
-        line-height: 1.6;
+        color: var(--color-text-body);
+        font-size: var(--fs-body);
+        line-height: var(--lh-normal);
         max-width: 40ch;
         text-align: center;
     }
@@ -63,19 +144,19 @@
     /* Nav element rule in global so page-layer CSS module classes can override via cascade */
     nav[data-site-nav] {
         align-items: center;
-        background: hsl(0deg 0% 4%);
+        background: var(--color-bg);
         display: flex;
         left: 0;
-        padding: 1.5rem 1rem;
+        padding: var(--space-lg) var(--space-md);
         position: fixed;
         right: 0;
         top: 0;
-        z-index: 50;
+        z-index: var(--z-nav);
     }
 
     nav a {
         color: inherit;
-        font-size: 0.875rem;
+        font-size: var(--fs-ui);
         text-decoration: none;
     }
 
@@ -92,7 +173,8 @@
     [data-split],
     [data-recognition-row],
     [data-work-item],
-    [data-reveal] {
+    [data-reveal],
+    [data-video-hero] {
         visibility: hidden;
     }
 }
@@ -102,7 +184,8 @@
         [data-split],
         [data-recognition-row],
         [data-work-item],
-        [data-reveal] {
+        [data-reveal],
+        [data-video-hero] {
             visibility: visible;
         }
 
@@ -116,12 +199,12 @@
     }
 
     body[data-page-theme="light"] {
-        background: hsl(0deg 0% 96%);
-        color: hsl(0deg 0% 4%);
+        background: var(--color-fg);
+        color: var(--color-bg);
     }
 
     body[data-page-theme="light"] nav[data-site-nav] {
-        background: hsl(0deg 0% 96%);
+        background: var(--color-fg);
     }
 
     html.loader-done #page-loader {
@@ -129,14 +212,14 @@
     }
 
     nav[data-theme-nav="dark"] {
-        color: hsl(0deg 0% 4%);
+        color: var(--color-bg);
     }
 
     nav[data-theme-nav="light"] {
-        color: hsl(0deg 0% 96%);
+        color: var(--color-fg);
     }
 
-    @media (width <= 768px) {
+    @media (width <= 48rem) {
         nav[data-site-nav] {
             grid-template-areas: "name about . end";
             grid-template-columns: repeat(4, 1fr);

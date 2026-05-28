@@ -10,6 +10,7 @@ export { projectDataSection } from './project-data-section';
 export { logoWallSection }    from './logo-wall-section';
 export { introSection }       from './intro-section';
 
+import type { SchemaTypeDefinition } from 'sanity';
 import { project }            from './project';
 import { siteSettings }       from './site-settings';
 import { about }              from './about';
@@ -34,4 +35,4 @@ export const schemaTypes = [
   projectDataSection,
   logoWallSection,
   introSection,
-];
+] as SchemaTypeDefinition[];

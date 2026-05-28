@@ -3,7 +3,7 @@
         bottom: 2rem;
         font-size: clamp(3.5rem, 9vw, 8rem);
         left: 1rem;
-        line-height: 1;
+        line-height: var(--lh-none);
         pointer-events: none;
         position: fixed;
         z-index: 10;

@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const siteSettings = defineType({
   name: 'siteSettings',
@@ -39,7 +40,15 @@ export const siteSettings = defineType({
       type: 'image',
       title: 'Favicon',
       description: 'Recommended: SVG or square PNG (at least 512×512px).',
-      options: { accept: 'image/svg+xml, image/png, image/x-icon' },
+      options: { accept: 'image/svg+xml, image/png, image/x-icon', sources: [mediaAssetSource] },
+      group: 'seo',
+    }),
+    defineField({
+      name: 'ogImage',
+      type: 'image',
+      title: 'Default OG Image',
+      description: 'Fallback preview image when sharing any page on social media. Recommended: 1200×630px JPG or PNG.',
+      options: { sources: [mediaAssetSource] },
       group: 'seo',
     }),
   ],

@@ -1,3 +1,4 @@
+import React from 'react';
 import { defineField, defineType } from 'sanity';
 
 export const videoSection = defineType({
@@ -9,7 +10,7 @@ export const videoSection = defineType({
       name: 'url',
       type: 'url',
       title: 'Video URL',
-      description: 'Paste a Vimeo or YouTube embed URL (e.g. https://player.vimeo.com/video/...)',
+      description: React.createElement(React.Fragment, null, React.createElement('span', { style: { display: 'block' } }, 'YouTube: https://www.youtube.com/embed/VIDEO_ID'), React.createElement('span', { style: { display: 'block' } }, 'Vimeo: https://player.vimeo.com/video/VIDEO_ID')),
       validation: r => r.required(),
     }),
     defineField({

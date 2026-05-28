@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const textImageBlock = defineType({
   name: 'textImageBlock',
@@ -16,7 +17,7 @@ export const textImageBlock = defineType({
       name: 'image',
       type: 'image',
       title: 'Image',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [
         defineField({ name: 'alt', type: 'string', title: 'Alt text' }),
       ],

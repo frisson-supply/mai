@@ -7,7 +7,7 @@
     }
 
     .nav__link {
-        font-size: 0.875rem;
+        font-size: var(--fs-ui);
         position: relative;
     }
 
@@ -24,7 +24,7 @@
     }
 
     .nav__link[aria-current="page"] .nav__link-line {
-        animation: nav-underline-in 0.6s cubic-bezier(0.625, 0.05, 0, 1) 0.3s both;
+        animation: nav-underline-in var(--duration-slow) var(--ease-out) 0.3s both;
     }
 
     @keyframes nav-underline-in {
@@ -38,7 +38,7 @@
     }
 
     .nav__name {
-        font-size: 0.875rem;
+        font-size: var(--fs-ui);
         grid-area: name;
     }
 
@@ -46,13 +46,13 @@
         align-items: flex-end;
         display: flex;
         flex-direction: column;
-        font-size: 0.875rem;
-        gap: 0.1em;
+        font-size: var(--fs-ui);
+        gap: var(--space-4xs);
         position: fixed;
-        right: 1rem;
+        right: var(--space-md);
         top: calc(var(--nav-h) / 2);
         transform: translateY(-50%);
-        z-index: 50;
+        z-index: var(--z-nav);
     }
 
     .page-meta a {
@@ -64,7 +64,7 @@
         align-items: center;
         color: inherit;
         display: flex;
-        gap: 0.3em;
+        gap: var(--space-3xs);
         text-decoration: none;
     }
 
@@ -76,7 +76,7 @@
         position: fixed;
         right: 0;
         top: 0;
-        z-index: 49;
+        z-index: calc(var(--z-nav) - 1);
     }
 
     .nav-blur__layer {
@@ -111,16 +111,16 @@
 
     /* ── Page Loader ── */
     .page-loader {
-        color: hsl(0deg 0% 96%);
+        color: var(--color-fg);
         height: 100dvh;
         inset: 0;
         position: fixed;
         width: 100%;
-        z-index: 100;
+        z-index: var(--z-loader);
     }
 
     .page-loader__bar {
-        background-color: hsl(0deg 0% 96%);
+        background-color: var(--color-fg);
         height: 0.35em;
         left: 0;
         position: absolute;
@@ -133,7 +133,7 @@
     }
 
     .page-loader__bg {
-        background-color: hsl(0deg 0% 4%);
+        background-color: var(--color-bg);
         height: 100%;
         inset: 0;
         position: absolute;
@@ -148,7 +148,7 @@
         justify-content: center;
         position: relative;
         width: 100%;
-        z-index: 2;
+        z-index: var(--z-overlay);
     }
 
     .page-loader__name-base {
@@ -164,15 +164,15 @@
     }
 
     .page-loader__name-wrap {
-        font-size: 1.125rem;
-        font-weight: 400;
+        font-size: var(--fs-body);
+        font-weight: var(--fw-normal);
         letter-spacing: 0.05em;
-        line-height: 1;
+        line-height: var(--lh-none);
         position: relative;
     }
 
     .page-loader__text {
-        font-size: 0.75rem;
+        font-size: var(--fs-sm);
         letter-spacing: 0.1em;
         margin-bottom: -0.25em;
         opacity: 0;

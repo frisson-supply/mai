@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const logoWallSection = defineType({
   name: 'logoWallSection',
@@ -23,7 +24,7 @@ export const logoWallSection = defineType({
               name: 'image',
               type: 'image',
               title: 'Logo',
-              options: { hotspot: false },
+              options: { hotspot: false, sources: [mediaAssetSource] },
               fields: [
                 defineField({ name: 'alt', type: 'string', title: 'Alt text' }),
               ],
@@ -37,7 +38,7 @@ export const logoWallSection = defineType({
           ],
           preview: {
             select: { media: 'image', subtitle: 'href' },
-            prepare: ({ media, subtitle }: { media: any; subtitle?: string }) => ({
+            prepare: ({ media, subtitle }) => ({
               title: 'Logo',
               media,
               subtitle: subtitle ?? 'No link',

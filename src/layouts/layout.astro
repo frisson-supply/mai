@@ -55,11 +55,11 @@ function isActive(href: string) {
                 <meta property="og:description" content={description} />
             )
         }
-        {ogImage && <meta property="og:image" content={ogImage} />}
+        {(ogImage ?? settings?.ogImageUrl) && <meta property="og:image" content={ogImage ?? settings?.ogImageUrl} />}
         <meta property="og:type" content="website" />
         <meta
             name="twitter:card"
-            content={ogImage ? "summary_large_image" : "summary"}
+            content={(ogImage ?? settings?.ogImageUrl) ? "summary_large_image" : "summary"}
         />
         <meta name="twitter:title" content={title} />
         {
@@ -67,7 +67,10 @@ function isActive(href: string) {
                 <meta name="twitter:description" content={description} />
             )
         }
-        {ogImage && <meta name="twitter:image" content={ogImage} />}
+        {(ogImage ?? settings?.ogImageUrl) && <meta name="twitter:image" content={ogImage ?? settings?.ogImageUrl} />}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js" />
@@ -201,12 +204,18 @@ function isActive(href: string) {
             is:inline
             src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/Flip.min.js"
         ></script>
+        <script
+            is:inline
+            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"
+        ></script>
 
         <script is:inline>
             gsap.registerPlugin(CustomEase);
             if (typeof Flip !== "undefined") gsap.registerPlugin(Flip);
             if (typeof SplitText !== "undefined")
                 gsap.registerPlugin(SplitText);
+            if (typeof ScrollTrigger !== "undefined")
+                gsap.registerPlugin(ScrollTrigger);
 
             var lenis = null;
             var hasLenis = typeof window.Lenis !== "undefined";
@@ -236,6 +245,10 @@ function isActive(href: string) {
                 gsap.set(document.querySelectorAll("[data-reveal]"), {
                     autoAlpha: 0,
                 });
+                gsap.set(document.querySelectorAll("[data-video-hero]"), {
+                    autoAlpha: 0,
+                    scale: 0.96,
+                });
             }
 
             // -----------------------------------------
@@ -257,7 +270,7 @@ function isActive(href: string) {
                 if (reducedMotion) {
                     gsap.set(
                         document.querySelectorAll(
-                            "[data-split], [data-recognition-row], [data-work-item], [data-reveal]",
+                            "[data-split], [data-recognition-row], [data-work-item], [data-reveal], [data-video-hero]",
                         ),
                         { autoAlpha: 1 },
                     );
@@ -274,8 +287,11 @@ function isActive(href: string) {
                 } else {
                     initTextReveal(document.body);
                     initMediaReveal(document.body);
+                    initVideoHeroReveal(document.body);
                     initWorkItemReveal(document.body, initInfoSplits);
                 }
+
+                document.dispatchEvent(new CustomEvent("mai:ready"));
             }
 
             // -----------------------------------------
@@ -522,6 +538,7 @@ function isActive(href: string) {
             }
 
             var infoLines = [];
+            var listWidthRafId = null;
 
             function initInfoSplits() {
                 if (typeof SplitText === "undefined" || reducedMotion) return;
@@ -556,6 +573,26 @@ function isActive(href: string) {
                 );
             }
 
+            function initVideoHeroReveal(container) {
+                if (reducedMotion) return;
+                var el = (container || document).querySelector(
+                    "[data-video-hero]",
+                );
+                if (!el) return;
+                gsap.fromTo(
+                    el,
+                    { autoAlpha: 0, scale: 0.96 },
+                    {
+                        autoAlpha: 1,
+                        scale: 1,
+                        duration: 1.1,
+                        delay: 0.15,
+                        ease: "osmo",
+                        clearProps: "scale",
+                    },
+                );
+            }
+
             function initRecognitionReveal(container) {
                 if (reducedMotion) return;
                 var rows = (container || document).querySelectorAll(
@@ -574,6 +611,43 @@ function isActive(href: string) {
                         delay: 0.4,
                     },
                 );
+            }
+
+            function startListWidthRaf(section, items, getHoveredItem) {
+                stopListWidthRaf();
+
+                var currentWidths = new Map();
+                items.forEach(function (item) {
+                    currentWidths.set(item, item.getBoundingClientRect().width);
+                });
+
+                function tick() {
+                    var vh = window.innerHeight;
+                    var centerY = vh * 0.5;
+                    items.forEach(function (item) {
+                        var rect = item.getBoundingClientRect();
+                        var itemCenter = rect.top + rect.height * 0.5;
+                        var dist = Math.abs(itemCenter - centerY);
+                        var maxDist = vh * 0.6;
+                        var t = Math.max(0, 1 - dist / maxDist);
+                        t = t * t * (3 - 2 * t); // smoothstep
+                        var targetW = 400 + 200 * t;
+                        var currentW = currentWidths.get(item) || targetW;
+                        currentW = currentW + (targetW - currentW) * 0.12;
+                        currentWidths.set(item, currentW);
+                        item.style.width =
+                            "min(" + Math.round(currentW) + "px, 100%)";
+                    });
+                    listWidthRafId = requestAnimationFrame(tick);
+                }
+                listWidthRafId = requestAnimationFrame(tick);
+            }
+
+            function stopListWidthRaf() {
+                if (listWidthRafId) {
+                    cancelAnimationFrame(listWidthRafId);
+                    listWidthRafId = null;
+                }
             }
 
             // -----------------------------------------
@@ -608,6 +682,11 @@ function isActive(href: string) {
                           ])
                         : null;
 
+                stopListWidthRaf();
+                items.forEach(function (item) {
+                    item.style.removeProperty("width");
+                });
+
                 if (flipState) {
                     if (!toGrid && infoLines.length) {
                         // Leaving grid: slide info lines behind mask
@@ -624,11 +703,13 @@ function isActive(href: string) {
                     if (!toGrid && nameTexts.length) {
                         gsap.set(nameTexts, { yPercent: 105 });
                     }
-                    // Pre-activate the first item so Flip animates directly to
-                    // the expanded (600px) active width — no post-animation grow
-                    if (!toGrid && items.length) {
-                        items[0].classList.add("is-active");
-                    }
+
+                }
+
+                if (toGrid && flipState) {
+                    document.body.style.minHeight =
+                        document.body.scrollHeight + "px";
+                    if (lenis) lenis.scrollTo(0, { duration: 0.7 });
                 }
 
                 if (section) section.dataset.view = view;
@@ -669,6 +750,14 @@ function isActive(href: string) {
                         stagger: 0.04,
                         nested: true,
                         onComplete: function () {
+                            if (toGrid) {
+                                if (lenis)
+                                    lenis.scrollTo(0, { immediate: true });
+                                else window.scrollTo(0, 0);
+                                document.body.style.removeProperty(
+                                    "min-height",
+                                );
+                            }
                             if (section)
                                 section.style.removeProperty("overflow");
                             items.forEach(function (item) {
@@ -712,12 +801,14 @@ function isActive(href: string) {
                     section._scrollObserver.disconnect();
                     section._scrollObserver = null;
                 }
+                stopListWidthRaf();
 
                 if (!section || section.dataset.view !== "list") return;
 
                 var items = section.querySelectorAll("[data-work-item]");
                 var names = document.querySelectorAll("[data-work-list-name]");
                 var isHovering = false;
+                var hoveredItem = null;
                 var visibilityMap = new Map();
 
                 function setActive(itemEl) {
@@ -763,10 +854,12 @@ function isActive(href: string) {
                 items.forEach(function (el) {
                     el.addEventListener("mouseenter", function () {
                         isHovering = true;
+                        hoveredItem = el;
                         setActive(el);
                     });
                     el.addEventListener("mouseleave", function () {
                         isHovering = false;
+                        hoveredItem = null;
                         applyScrollActive();
                     });
                 });
@@ -781,10 +874,12 @@ function isActive(href: string) {
                                 );
                             },
                         );
+                        hoveredItem = matchingItem || null;
                         if (matchingItem) setActive(matchingItem);
                     });
                     el.addEventListener("mouseleave", function () {
                         isHovering = false;
+                        hoveredItem = null;
                         applyScrollActive();
                     });
                 });
@@ -802,7 +897,7 @@ function isActive(href: string) {
                         }
                     },
                     {
-                        rootMargin: "-30% 0px -30% 0px",
+                        rootMargin: "-10% 0px -10% 0px",
                         threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
                     },
                 );
@@ -811,6 +906,10 @@ function isActive(href: string) {
                     observer.observe(el);
                 });
                 section._scrollObserver = observer;
+
+                startListWidthRaf(section, items, function () {
+                    return hoveredItem;
+                });
             }
 
             function initWorkView() {
@@ -848,6 +947,7 @@ function isActive(href: string) {
                 var nameTexts = document.querySelectorAll(
                     "[data-work-list-text]",
                 );
+                var videoHero = document.querySelector("[data-video-hero]");
 
                 if (
                     !navEls.length &&
@@ -857,7 +957,8 @@ function isActive(href: string) {
                     !rows.length &&
                     !items.length &&
                     !media.length &&
-                    !nameTexts.length
+                    !nameTexts.length &&
+                    !videoHero
                 ) {
                     onComplete();
                     return;
@@ -968,6 +1069,18 @@ function isActive(href: string) {
                         0,
                     );
                 }
+                if (videoHero) {
+                    tl.to(
+                        videoHero,
+                        {
+                            duration: 0.4,
+                            autoAlpha: 0,
+                            scale: 0.98,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
             }
 
             document.addEventListener("click", function (e) {
@@ -996,6 +1109,9 @@ function isActive(href: string) {
             function initLenis() {
                 if (lenis || !hasLenis) return;
                 lenis = new Lenis({ lerp: 0.165, wheelMultiplier: 1.25 });
+                if (typeof ScrollTrigger !== "undefined") {
+                    lenis.on("scroll", ScrollTrigger.update);
+                }
                 gsap.ticker.add(function (time) {
                     lenis.raf(time * 1000);
                 });

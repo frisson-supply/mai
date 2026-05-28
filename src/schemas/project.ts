@@ -1,4 +1,6 @@
+import React from 'react';
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const project = defineType({
   name: 'project',
@@ -19,10 +21,10 @@ export const project = defineType({
       group: 'content',
     }),
     defineField({ name: 'description', type: 'text', title: 'Description', group: 'content' }),
-    defineField({ name: 'videoUrl', type: 'url', title: 'Video URL', group: 'content' }),
+    defineField({ name: 'videoUrl', type: 'url', title: 'Video URL', description: React.createElement(React.Fragment, null, React.createElement('span', { style: { display: 'block' } }, 'YouTube: https://www.youtube.com/embed/VIDEO_ID'), React.createElement('span', { style: { display: 'block' } }, 'Vimeo: https://player.vimeo.com/video/VIDEO_ID')), group: 'content' }),
     defineField({
       name: 'thumbnail', type: 'image', title: 'Thumbnail',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
       group: 'content',
     }),
@@ -49,7 +51,7 @@ export const project = defineType({
     defineField({ name: 'genre',    type: 'string', title: 'Genre',    group: 'info' }),
     defineField({
       name: 'infoImage', type: 'image', title: 'Info Image',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
       group: 'info',
     }),
@@ -69,7 +71,7 @@ export const project = defineType({
     defineField({
       name: 'metaImage', type: 'image', title: 'Social Image',
       description: 'Used for OG / Twitter cards. Recommended: 1200×630px.',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
       group: 'seo',
     }),

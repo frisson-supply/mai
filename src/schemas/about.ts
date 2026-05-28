@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const about = defineType({
   name: 'about',
@@ -21,7 +22,7 @@ export const about = defineType({
     }),
     defineField({
       name: 'photo', type: 'image', title: 'Photo',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
       group: 'content',
     }),
@@ -47,14 +48,14 @@ export const about = defineType({
             name: 'image',
             type: 'image',
             title: 'Logo',
-            options: { hotspot: false },
+            options: { hotspot: false, sources: [mediaAssetSource] },
             fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
           }),
           defineField({ name: 'link', type: 'url', title: 'Link (optional)' }),
         ],
         preview: {
           select: { title: 'text', media: 'image', subtitle: 'link' },
-          prepare: ({ title, media, subtitle }: { title?: string; media: any; subtitle?: string }) => ({
+          prepare: ({ title, media, subtitle }) => ({
             title: title ?? 'Brand',
             media,
             subtitle: subtitle ?? 'No link',
@@ -94,7 +95,7 @@ export const about = defineType({
     defineField({
       name: 'metaImage', type: 'image', title: 'Social Image',
       description: 'Used for OG / Twitter cards. Recommended: 1200×630px.',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
       group: 'seo',
     }),
