@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import globals from 'globals';
 import checkFile from 'eslint-plugin-check-file';
 import tsParser from '@typescript-eslint/parser';
 import astroParser from 'astro-eslint-parser';
@@ -11,7 +12,12 @@ const fileNamingRule = [
 ];
 
 export default [
-  js.configs.recommended,
+  {
+    ...js.configs.recommended,
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 
   // TypeScript files
   {

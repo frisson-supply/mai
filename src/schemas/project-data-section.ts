@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { mediaAssetSource } from 'sanity-plugin-media';
 
 export const projectDataSection = defineType({
   name: 'projectDataSection',
@@ -13,7 +14,7 @@ export const projectDataSection = defineType({
       name: 'image',
       type: 'image',
       title: 'Image',
-      options: { hotspot: true },
+      options: { hotspot: true, sources: [mediaAssetSource] },
       fields: [
         defineField({ name: 'alt', type: 'string', title: 'Alt text' }),
       ],

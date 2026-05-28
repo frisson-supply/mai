@@ -22,11 +22,6 @@ try {
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
-  vite: {
-    ssr: {
-      noExternal: ['gsap', 'three'],
-    },
-  },
   integrations: [
     react(),
     sanity({

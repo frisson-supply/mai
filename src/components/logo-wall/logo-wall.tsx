@@ -1,11 +1,11 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import type GsapInstance from 'gsap';
+import type { ScrollTrigger as ScrollTriggerType } from 'gsap/ScrollTrigger';
 import { useEffect, useRef } from 'react';
 import styles from './logo-wall.module.css';
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+// gsap and ScrollTrigger are loaded via CDN in layout.astro — types only, no bundle cost
+declare const gsap: typeof GsapInstance;
+declare const ScrollTrigger: typeof ScrollTriggerType;
 
 interface Logo {
   src: string;
@@ -74,10 +74,11 @@ export function LogoWall({ heading, logos }: Props) {
 
       poolRef.current = shuffleArray(originalTargets.slice());
 
-      timelineRef.current = gsap.timeline({ repeat: -1, repeatDelay: LOOP_DELAY });
-      timelineRef.current.call(swapNext, [], `+=${LOOP_DELAY}`);
-      timelineRef.current.addLabel('loop', LOOP_DELAY);
-      timelineRef.current.to({}, { duration: LOOP_DELAY }, 'loop');
+      const tl = gsap.timeline({ repeat: -1, repeatDelay: LOOP_DELAY });
+      timelineRef.current = tl;
+      tl.call(swapNext, [], `+=${LOOP_DELAY}`);
+      tl.addLabel('loop', LOOP_DELAY);
+      tl.to({}, { duration: LOOP_DELAY }, 'loop');
     };
 
     const swapNext = () => {

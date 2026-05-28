@@ -4,6 +4,7 @@ export const prerender = true;
 import Layout from '@/layouts/layout.astro';
 import SectionsRenderer from '@/components/sections-renderer/sections-renderer.astro';
 import NextProject from '@/components/next-project/next-project.astro';
+import VideoSection from '@/components/blocks/video-section/video-section.astro';
 import { getAllProjectSlugs, getProjectBySlug, getNextProject } from '@/lib/queries';
 import { urlFor } from '@/lib/sanity';
 import styles from './slug.module.css';
@@ -43,21 +44,8 @@ if (!project) {
     </header>
 
     {project.videoUrl && (
-      <div class={styles['project-detail__video']} data-reveal data-video-wrapper>
-        {project.thumbnail && (
-          <button class={styles['project-detail__video-poster']} aria-label="Play video" data-video-poster>
-            <img
-              src={urlFor(project.thumbnail).width(1200).url()}
-              alt={project.thumbnail.alt || project.title}
-            />
-          </button>
-        )}
-        <iframe
-          data-src={project.videoUrl}
-          title={project.title}
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowfullscreen
-        />
+      <div class={styles['project-detail__video']} data-video-hero>
+        <VideoSection url={project.videoUrl} reveal={false} />
       </div>
     )}
 
@@ -117,17 +105,3 @@ if (!project) {
 
   {nextProject && <NextProject project={nextProject} />}
 </Layout>
-
-<script>
-  document.querySelectorAll<HTMLElement>('[data-video-wrapper]').forEach(wrapper => {
-    const poster = wrapper.querySelector<HTMLElement>('[data-video-poster]');
-    const iframe = wrapper.querySelector<HTMLIFrameElement>('iframe');
-    if (!poster || !iframe) return;
-    poster.addEventListener('click', () => {
-      const base = iframe.dataset.src ?? '';
-      iframe.src = base + (base.includes('?') ? '&' : '?') + 'autoplay=1';
-      poster.style.opacity = '0';
-      poster.style.pointerEvents = 'none';
-    });
-  });
-</script>

@@ -13,31 +13,28 @@
     }
 
     .work-layout[data-view="list"] .work-list-names {
-        align-self: flex-start;
+        align-self: flex-end;
+        bottom: var(--space-xl);
         display: flex;
         flex: 1;
         flex-direction: column;
-        gap: 0.2rem;
-        padding-left: 1.5rem;
-        padding-right: 2rem;
+        padding-left: var(--space-3xl);
+        padding-right: var(--space-xl);
         position: sticky;
-        top: 50vh;
-        transform: translateY(-50%);
     }
 
     .work-list-name {
         align-items: center;
-        color: inherit;
+        color: var(--text-muted);
         display: flex;
-        font-size: 0.875rem;
-        line-height: 1.6;
-        opacity: 0.3;
+        font-size: var(--fs-base);
+        line-height: var(--lh-tight);
         text-decoration: none;
-        transition: opacity 0.3s ease;
+        transition: color var(--duration-base) ease;
     }
 
     .work-list-name:global(.is-active) {
-        opacity: 1;
+        color: var(--text-title);
     }
 
     .work-list-name__label {
@@ -59,13 +56,17 @@
 
     /* ── Grid View ── */
     .work[data-view="grid"] {
-        --row-h: min(calc((100vw - 6.5rem) / 6), calc((100vh - var(--nav-h) - 10.5rem) / 3));
+        --row-h: min(
+            calc((100vw - 6.5rem) / 6),
+            calc((100vh - var(--nav-h) - 10.5rem) / 3)
+        );
         display: grid;
-        gap: 0.5rem;
+        gap: var(--space-xs);
         grid-auto-rows: var(--row-h);
         grid-template-columns: repeat(6, 1fr);
         grid-template-rows: calc(var(--row-h) * 1.4) var(--row-h);
-        padding: calc(var(--nav-h) + 1.5rem) 1rem 4rem;
+        padding: calc(var(--nav-h) + var(--space-lg)) var(--space-md)
+            var(--space-3xl);
         width: 100%;
     }
 
@@ -86,7 +87,8 @@
     }
 
     .work[data-view="grid"] .work-item__thumb {
-        background: hsl(0deg 0% 7%);
+        background: var(--color-surface);
+        border-radius: var(--radius-sm);
         display: block;
         flex: 1;
         min-height: 0;
@@ -97,7 +99,7 @@
         display: block;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.6s ease;
+        transition: transform var(--duration-slow) ease;
         width: 100%;
     }
 
@@ -114,7 +116,7 @@
         align-items: flex-start;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--space-xs);
         margin-left: 35%;
         padding: 30vh 0;
         width: 35%;
@@ -125,15 +127,8 @@
         display: block;
         overflow: hidden;
         text-decoration: none;
-        transition:
-            opacity 0.3s ease,
-            width 0.5s ease;
+        transition: opacity var(--duration-base) ease;
         width: min(400px, 100%);
-    }
-
-    .work[data-view="list"] .work-item:hover,
-    .work[data-view="list"] .work-item:global(.is-active) {
-        width: min(600px, 100%);
     }
 
     .work[data-view="list"] .work-item__info {
@@ -142,7 +137,8 @@
 
     .work[data-view="list"] .work-item__thumb {
         aspect-ratio: 16 / 10;
-        background: hsl(0deg 0% 7%);
+        background: var(--color-surface);
+        border-radius: var(--radius-sm);
         display: block;
         overflow: hidden;
         width: 100%;
@@ -152,7 +148,12 @@
         display: block;
         height: 100%;
         object-fit: cover;
+        transition: transform var(--duration-slow) ease;
         width: 100%;
+    }
+
+    .work[data-view="list"] .work-item:hover .work-item__thumb img {
+        transform: scale(1.04);
     }
 
     .work[data-view="list"]:global(.has-active)
@@ -175,9 +176,9 @@
     .work[data-view="list"] {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: var(--space-lg);
         margin-left: 0;
-        padding: 4rem 1rem;
+        padding: var(--space-3xl) var(--space-md);
         width: 100%;
     }
 

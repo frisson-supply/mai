@@ -1,14 +1,16 @@
 @layer components {
     .section-text {
-        color: hsl(0deg 0% 80%);
+        color: var(--text-default);
+        font-size: var(--fs-ui);
         grid-column: 1 / -1;
-        line-height: 1.8;
+        line-height: var(--lh-loose);
         text-align: left;
     }
 
     .section-text p {
-        color: hsl(0deg 0% 80%);
-        margin-bottom: 1rem;
+        color: var(--text-default);
+        font-size: var(--fs-ui);
+        margin-bottom: var(--space-md);
         max-width: none;
         text-align: left;
     }

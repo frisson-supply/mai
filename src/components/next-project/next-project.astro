@@ -18,26 +18,100 @@ const href = `/works/${project.slug}`;
 const thumbUrl = project.thumbnail ? urlFor(project.thumbnail).width(1600).url() : null;
 ---
 
-<section class={styles['next-project']}>
-  <a href={href} class={styles['next-project__link']}>
-    <div class={styles['next-project__top']}>
-      <span class={styles['next-project__label']}>Next up</span>
-      {(project.client || project.year) && (
-        <span class={styles['next-project__meta']}>
-          {project.client}{project.client && project.year && ' · '}{project.year}
-        </span>
+<section
+  class={styles['scroll-next']}
+  data-scroll-next-wrap
+  data-scroll-start="top top"
+  data-scroll-end="bottom bottom"
+>
+  <a href={href} data-scroll-next-link class={styles['scroll-next__inner']}>
+    <div data-scroll-next-bg-wrap class={styles['scroll-next__bg']}>
+      {thumbUrl && (
+        <img
+          src={thumbUrl}
+          alt={project.thumbnail?.alt || project.title}
+          data-scroll-next-bg
+          class={styles['scroll-next__bg-img']}
+        />
       )}
+      <div data-scroll-next-overlay class={styles['scroll-next__bg-overlay']}></div>
     </div>
-
-    <div class={styles['next-project__body']}>
-      <h2 class={styles['next-project__title']} data-split="title">{project.title}</h2>
-      <span class={styles['next-project__arrow']} aria-hidden="true">→</span>
+    <div class={styles['scroll-next__center']}>
+      <span data-scroll-next-sub class={styles['scroll-next__sub']}>Next Case:</span>
+      <h2 data-scroll-next-title class={styles['scroll-next__h']}>{project.title}</h2>
     </div>
-
-    {thumbUrl && (
-      <div class={styles['next-project__thumb']}>
-        <img src={thumbUrl} alt={project.thumbnail?.alt || project.title} />
-      </div>
-    )}
+    <div data-scroll-next-progres class={styles['scroll-next__progres']}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 480 480" fill="none" class={styles['scroll-next__progres-svg']}>
+        <circle opacity="0.4" cx="240" cy="240" r="240" stroke="currentColor" stroke-width="3"></circle>
+        <circle opacity="1" cx="240" cy="240" r="240" stroke="currentColor" stroke-width="3" data-scroll-next-path></circle>
+      </svg>
+    </div>
   </a>
 </section>
+
+<script is:inline>
+  document.addEventListener("mai:ready", function () {
+    var wrap = document.querySelector("[data-scroll-next-wrap]");
+    if (!wrap) return;
+
+    var link = wrap.querySelector("[data-scroll-next-link]");
+    var path = wrap.querySelector("[data-scroll-next-path]");
+    var bgWrap = wrap.querySelector("[data-scroll-next-bg-wrap]");
+    var bg = wrap.querySelector("[data-scroll-next-bg]");
+    var overlay = wrap.querySelector("[data-scroll-next-overlay]");
+    var subEl = wrap.querySelector("[data-scroll-next-sub]");
+    var titleEl = wrap.querySelector("[data-scroll-next-title]");
+    var progresEl = wrap.querySelector("[data-scroll-next-progres]");
+
+    if (!link || !path) return;
+
+    var start = wrap.getAttribute("data-scroll-start") || "top top";
+    var end = wrap.getAttribute("data-scroll-end") || "bottom bottom";
+
+    // SVG progress setup
+    var pathLength = path.getTotalLength();
+    gsap.set(path, { strokeDasharray: pathLength, strokeDashoffset: pathLength });
+
+    // Enter: set initial hidden states
+    gsap.set(bgWrap, { autoAlpha: 0, y: 24, scale: 0.97 });
+    gsap.set(subEl, { autoAlpha: 0, y: 10 });
+    gsap.set(titleEl, { autoAlpha: 0, y: 16 });
+    gsap.set(progresEl, { autoAlpha: 0 });
+
+    // Enter animation: fires once when section scrolls into view
+    ScrollTrigger.create({
+      trigger: wrap,
+      start: "top 80%",
+      once: true,
+      onEnter: function () {
+        gsap.to(bgWrap, { autoAlpha: 1, y: 0, scale: 1, duration: 0.9, ease: "osmo" });
+        gsap.to(subEl, { autoAlpha: 1, y: 0, duration: 0.6, delay: 0.1, ease: "osmo" });
+        gsap.to(titleEl, { autoAlpha: 1, y: 0, duration: 0.7, delay: 0.2, ease: "osmo" });
+        gsap.to(progresEl, { autoAlpha: 1, duration: 0.6, delay: 0.3, ease: "osmo" });
+      },
+    });
+
+    // Progress scrub + leave
+    var tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: wrap,
+        start: start,
+        end: end,
+        scrub: true,
+        onLeave: function () {
+          // Leave: animate out concurrently with global animatePageOut
+          gsap.to(subEl, { autoAlpha: 0, y: -10, duration: 0.35, ease: "power2.in" });
+          gsap.to(titleEl, { autoAlpha: 0, y: -16, duration: 0.4, ease: "power2.in" });
+          gsap.to(bgWrap, { autoAlpha: 0, scale: 1.04, duration: 0.45, ease: "power2.in" });
+          gsap.to(progresEl, { autoAlpha: 0, scale: 1.1, duration: 0.35, ease: "power2.in" });
+          link.click();
+        },
+      },
+    });
+
+    tl.to(path, { strokeDashoffset: 0 });
+    if (bg) tl.to(bg, { scale: 1.1 }, 0);
+    if (overlay) tl.to(overlay, { opacity: 0.4 }, 0);
+  });
+</script>
