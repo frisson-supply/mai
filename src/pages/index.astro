@@ -14,6 +14,6 @@ const gridItems = homeGrid?.items ?? [];
 
 <Layout title={settings?.siteTitle || "Mai"} namespace="home" pageTheme="light">
     <WorkToggle />
-    <div class={styles["cases-label"]} data-split="title">Cases</div>
+    <h2 class={styles["cases-label"]} data-split="title">Cases</h2>
     <WorkGrid items={gridItems} />
 </Layout>

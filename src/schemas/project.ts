@@ -62,6 +62,15 @@ export const project = defineType({
     }),
     defineField({ name: 'featured', type: 'boolean', title: 'Featured', initialValue: false, group: 'info' }),
     defineField({ name: 'order',    type: 'number',  title: 'Order',   group: 'info' }),
+    defineField({
+      name: 'nextProject',
+      type: 'reference',
+      title: 'Next Project',
+      description: 'Override which project appears in the "Next Case" scroll section. Defaults to the next project by order.',
+      to: [{ type: 'project' }],
+      options: { disableNew: true },
+      group: 'info',
+    }),
 
     // ── SEO ──
     defineField({ name: 'metaTitle', type: 'string', title: 'Meta Title', group: 'seo' }),

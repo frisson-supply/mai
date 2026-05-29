@@ -1,0 +1,26 @@
+---
+const icons = import.meta.glob<string>('../../assets/icons/*.svg', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+});
+
+interface Props {
+    name: string;
+    class?: string;
+}
+
+const { name, class: className } = Astro.props;
+let svg = icons[`../../assets/icons/${name}.svg`];
+
+// Make gradient/clip-path IDs unique so multiple instances on the same page
+// don't conflict with each other.
+if (svg) {
+    const uid = `${name}-${Math.random().toString(36).slice(2, 7)}`;
+    svg = svg.replace(/\bid="([^"]+)"/g, `id="${uid}-$1"`);
+    svg = svg.replace(/url\(#([^)]+)\)/g, `url(#${uid}-$1)`);
+    svg = svg.replace(/href="#([^"]+)"/g, `href="#${uid}-$1"`);
+}
+---
+
+{svg && <Fragment set:html={svg} class:list={[className]} />}

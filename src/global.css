@@ -1,5 +1,14 @@
 @layer reset, preflight, global, pages, components, overrides;
 
+.sr-only {
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
 @layer reset {
     * {
         box-sizing: border-box;

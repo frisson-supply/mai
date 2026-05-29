@@ -164,7 +164,7 @@
     }
 
     .page-loader__name-wrap {
-        font-size: var(--fs-body);
+        font-size: var(--fs-lg);
         font-weight: var(--fw-normal);
         letter-spacing: 0.05em;
         line-height: var(--lh-none);
@@ -193,5 +193,12 @@
 
     .page-loader__dot {
         color: var(--color-accent);
+    }
+
+    .page-loader__dot svg {
+        display: inline-block;
+        height: 0.6em;
+        vertical-align: middle;
+        width: auto;
     }
 }
