@@ -50,12 +50,17 @@ export async function getProjectBySlug(slug: string) {
 }
 
 export async function getNextProject(currentSlug: string) {
-  const current = await safeFetch<{ order: number }>(
-    `*[_type == "project" && slug.current == $slug][0] { order }`,
+  const current = await safeFetch<{ order: number; nextProject?: any }>(
+    `*[_type == "project" && slug.current == $slug][0] {
+      order,
+      nextProject->{ _id, title, "slug": slug.current, client, year, tags, thumbnail }
+    }`,
     { slug: currentSlug }
   );
 
   if (!current) return null;
+
+  if (current.nextProject) return current.nextProject;
 
   const next = await safeFetch<any>(
     `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {

@@ -2,6 +2,7 @@
 import "@/global.css";
 import styles from "./layout.module.css";
 import { getSiteSettings } from "@/lib/queries";
+import Icon from "@/components/icon/icon.astro";
 
 interface Props {
     title?: string;
@@ -104,8 +105,7 @@ function isActive(href: string) {
                                 {siteFirstName}
                                 {siteLastName && (
                                     <span class={styles["page-loader__dot"]}>
-                                        {" "}
-                                        •{" "}
+                                        <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName}
@@ -117,8 +117,7 @@ function isActive(href: string) {
                                 {siteFirstName}
                                 {siteLastName && (
                                     <span class={styles["page-loader__dot"]}>
-                                        {" "}
-                                        •{" "}
+                                        <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName}
@@ -163,9 +162,17 @@ function isActive(href: string) {
             {
                 !showBack ? (
                     <>
-                        {siteRole && <span data-split="title">{siteRole}</span>}
+                        {siteRole && (
+                            <>
+                                <span data-split="title" aria-hidden="true">{siteRole}</span>
+                                <span class="sr-only">{siteRole}</span>
+                            </>
+                        )}
                         {siteLocation && (
-                            <span data-split="title">{siteLocation}</span>
+                            <>
+                                <span data-split="title" aria-hidden="true">{siteLocation}</span>
+                                <span class="sr-only">{siteLocation}</span>
+                            </>
                         )}
                     </>
                 ) : (
@@ -740,9 +747,6 @@ function isActive(href: string) {
                     items.forEach(function (item) {
                         item.style.overflow = "visible";
                     });
-                    thumbs.forEach(function (thumb) {
-                        thumb.style.overflow = "visible";
-                    });
 
                     Flip.from(flipState, {
                         duration: 0.55,
@@ -762,9 +766,6 @@ function isActive(href: string) {
                                 section.style.removeProperty("overflow");
                             items.forEach(function (item) {
                                 item.style.removeProperty("overflow");
-                            });
-                            thumbs.forEach(function (thumb) {
-                                thumb.style.removeProperty("overflow");
                             });
                             if (toGrid && infoLines.length) {
                                 // Entering grid: reveal info lines from mask
