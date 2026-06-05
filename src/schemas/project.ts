@@ -43,8 +43,6 @@ export const project = defineType({
     }),
 
     // ── Project Info ──
-    defineField({ name: 'client',   type: 'string', title: 'Client',   group: 'info' }),
-    defineField({ name: 'year',     type: 'number', title: 'Year',     group: 'info' }),
     defineField({ name: 'role',     type: 'string', title: 'Role',     group: 'info' }),
     defineField({ name: 'released', type: 'string', title: 'Released', group: 'info' }),
     defineField({ name: 'duration', type: 'string', title: 'Duration', group: 'info' }),

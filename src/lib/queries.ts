@@ -12,7 +12,7 @@ async function safeFetch<T>(query: string, params?: Record<string, unknown>): Pr
 export async function getAllProjects() {
   return safeFetch<any[]>(
     `*[_type == "project"] | order(order asc) {
-      _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured
+      _id, title, "slug": slug.current, role, tags, thumbnail, featured
     }`
   ).then(r => r ?? []);
 }
@@ -20,7 +20,7 @@ export async function getAllProjects() {
 export async function getFeaturedProjects() {
   return safeFetch<any[]>(
     `*[_type == "project" && featured == true] | order(order asc) {
-      _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured
+      _id, title, "slug": slug.current, role, tags, thumbnail, featured
     }`
   ).then(r => r ?? []);
 }
@@ -28,7 +28,7 @@ export async function getFeaturedProjects() {
 export async function getProjectBySlug(slug: string) {
   return safeFetch<any>(
     `*[_type == "project" && slug.current == $slug][0] {
-      _id, title, "slug": slug.current, client, year, role, tags, thumbnail, featured,
+      _id, title, "slug": slug.current, role, tags, thumbnail, featured,
       description, released, duration, genre, infoImage,
       videoUrl,
       metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url,
@@ -37,10 +37,10 @@ export async function getProjectBySlug(slug: string) {
         title, description,
         text, width,
         image { asset, alt },
-        size, position, caption,
+        width, position, caption,
         imagePosition, imageSize,
         url, videoUrl, aspectRatio,
-        released, duration, client, role,
+        released, duration, role,
         heading,
         logos[] { "src": image.asset->url, "alt": image.alt, href }
       }
@@ -53,7 +53,7 @@ export async function getNextProject(currentSlug: string) {
   const current = await safeFetch<{ order: number; nextProject?: any }>(
     `*[_type == "project" && slug.current == $slug][0] {
       order,
-      nextProject->{ _id, title, "slug": slug.current, client, year, tags, thumbnail }
+      nextProject->{ _id, title, "slug": slug.current, tags, thumbnail }
     }`,
     { slug: currentSlug }
   );
@@ -64,7 +64,7 @@ export async function getNextProject(currentSlug: string) {
 
   const next = await safeFetch<any>(
     `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {
-      _id, title, "slug": slug.current, client, year, tags, thumbnail
+      _id, title, "slug": slug.current, tags, thumbnail
     }`,
     { order: current.order, slug: currentSlug }
   );
@@ -73,7 +73,7 @@ export async function getNextProject(currentSlug: string) {
 
   return safeFetch<any>(
     `*[_type == "project" && slug.current != $slug] | order(order asc) [0] {
-      _id, title, "slug": slug.current, client, year, tags, thumbnail
+      _id, title, "slug": slug.current, tags, thumbnail
     }`,
     { slug: currentSlug }
   );
@@ -101,7 +101,7 @@ export async function getHomeGrid() {
         columnSpan,
         rowStart,
         rowSpan,
-        project->{ _id, title, "slug": slug.current, client, year, thumbnail }
+        project->{ _id, title, "slug": slug.current, thumbnail }
       }
     }`
   );

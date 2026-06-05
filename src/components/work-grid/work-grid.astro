@@ -54,9 +54,7 @@ const { items } = Astro.props;
                                     class={styles["work-item__meta"]}
                                     data-work-line
                                 >
-                                    {[item.project.client, item.project.year]
-                                        .filter(Boolean)
-                                        .join(" · ")}
+                                    {item.project.tags?.join(" · ")}
                                 </span>
                             </div>
                         </a>
