@@ -1,20 +1,11 @@
 ---
-export const prerender = true;
-
 import Layout from '@/layouts/layout.astro';
 import SectionsRenderer from '@/components/sections-renderer/sections-renderer.astro';
 import NextProject from '@/components/next-project/next-project.astro';
 import VideoSection from '@/components/blocks/video-section/video-section.astro';
-import { getAllProjectSlugs, getProjectBySlug, getNextProject } from '@/lib/queries';
+import { getProjectBySlug, getNextProject } from '@/lib/queries';
 import { urlFor } from '@/lib/sanity';
 import styles from './slug.module.css';
-
-export async function getStaticPaths() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map((item: { slug: string }) => ({
-    params: { slug: item.slug },
-  }));
-}
 
 const { slug } = Astro.params;
 const [project, nextProject] = await Promise.all([
