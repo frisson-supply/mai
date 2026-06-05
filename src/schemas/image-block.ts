@@ -17,14 +17,15 @@ export const imageBlock = defineType({
       validation: r => r.required(),
     }),
     defineField({
-      name: 'size',
+      name: 'width',
       type: 'string',
-      title: 'Size',
+      title: 'Width',
       options: {
         list: [
-          { title: 'Full Width',  value: 'full' },
-          { title: 'Two Thirds',  value: 'two-thirds' },
-          { title: 'Half',        value: 'half' },
+          { title: 'Narrow',     value: 'narrow' },
+          { title: 'Normal',     value: 'normal' },
+          { title: 'Wide',       value: 'wide' },
+          { title: 'Full width', value: 'full' },
         ],
         layout: 'radio',
       },
@@ -36,23 +37,25 @@ export const imageBlock = defineType({
       title: 'Position',
       options: {
         list: [
-          { title: 'Left',   value: 'left' },
-          { title: 'Center', value: 'center' },
-          { title: 'Right',  value: 'right' },
+          { title: 'Left',             value: 'left' },
+          { title: 'Off left centre',  value: 'off-left-centre' },
+          { title: 'Centre',           value: 'centre' },
+          { title: 'Off right centre', value: 'off-right-centre' },
+          { title: 'Right',            value: 'right' },
         ],
         layout: 'radio',
       },
-      initialValue: 'center',
-      hidden: ({ parent }: { parent?: { size?: string } }) => parent?.size === 'full',
+      initialValue: 'left',
+      hidden: ({ parent }: { parent?: { width?: string } }) => parent?.width === 'full',
     }),
     defineField({ name: 'caption', type: 'string', title: 'Caption' }),
   ],
   preview: {
-    select: { media: 'image', size: 'size', position: 'position' },
-    prepare: ({ media, size, position }: { media: any; size: string; position: string }) => ({
+    select: { media: 'image', width: 'width', position: 'position' },
+    prepare: ({ media, width, position }: { media: any; width: string; position: string }) => ({
       title: 'Image',
       media,
-      subtitle: size === 'full' ? 'Full Width' : `${size} — ${position}`,
+      subtitle: width === 'full' ? 'Full width' : `${width} — ${position}`,
     }),
   },
 });

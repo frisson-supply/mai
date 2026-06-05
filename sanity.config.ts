@@ -27,6 +27,7 @@ export default defineConfig({
   title: 'Mai',
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
   dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
+  releases: { enabled: false },
   plugins: [
     dashboardPlugin(),
     structureTool({

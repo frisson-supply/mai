@@ -5,16 +5,16 @@ import styles from './image-block.module.css';
 
 interface Props {
   image: { asset: any; alt?: string };
-  size?: string;
-  position?: string;
+  width?: 'narrow' | 'normal' | 'wide' | 'full';
+  position?: 'left' | 'off-left-centre' | 'centre' | 'off-right-centre' | 'right';
   caption?: string;
 }
 
-const { image, size = 'full', position, caption } = Astro.props;
-const pos = size !== 'full' ? (position ?? 'center') : null;
+const { image, width = 'full', position, caption } = Astro.props;
+const pos = width !== 'full' ? (position ?? 'left') : null;
 ---
 
-<figure class={cn(styles['image-block'], styles[`image-block--${size}`], pos && styles[`image-block--${pos}`])} data-reveal>
+<figure class={cn(styles['image-block'], styles[`image-block--${width}`], pos && styles[`image-block--${pos}`])} data-reveal>
   <img src={urlFor(image).width(1200).url()} alt={image.alt || ''} />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

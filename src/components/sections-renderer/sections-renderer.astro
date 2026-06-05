@@ -23,8 +23,8 @@ interface ImageBlockData {
   _type: 'imageBlock';
   _key: string;
   image?: SanityImage;
-  size?: string;
-  position?: string;
+  width?: 'narrow' | 'normal' | 'wide' | 'full';
+  position?: 'left' | 'off-left-centre' | 'centre' | 'off-right-centre' | 'right';
   caption?: string;
 }
 
@@ -78,7 +78,7 @@ const { sections = [] } = Astro.props;
 
     if (section._type === 'imageBlock') {
       const s = section as ImageBlockData;
-      return s.image ? <ImageBlock image={s.image} size={s.size} position={s.position} caption={s.caption} /> : null;
+      return s.image ? <ImageBlock image={s.image} width={s.width} position={s.position} caption={s.caption} /> : null;
     }
 
     if (section._type === 'textImageBlock') {

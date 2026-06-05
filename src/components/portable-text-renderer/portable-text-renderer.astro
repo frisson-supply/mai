@@ -14,7 +14,7 @@ interface Block {
   style?: string;
   children?: TextSpan[];
   image?: { asset: any; alt?: string };
-  size?: string;
+  width?: string;
   position?: string;
   caption?: string;
   text?: Block[];
@@ -43,7 +43,7 @@ function renderText(children: Block['children']) {
     }
 
     if (block._type === 'imageBlock' && block.image)
-      return <ImageBlock image={block.image} size={block.size} position={block.position} caption={block.caption} />;
+      return <ImageBlock image={block.image} width={block.width} position={block.position} caption={block.caption} />;
 
     if (block._type === 'textImageBlock' && block.image)
       return <TextImageBlock text={block.text ?? []} image={block.image} imagePosition={block.imagePosition} imageSize={block.imageSize} />;
