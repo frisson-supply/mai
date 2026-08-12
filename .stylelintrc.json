@@ -25,7 +25,15 @@
             {
                 "available": "widely",
                 "ignoreSelectors": ["has"],
-                "ignoreProperties": { "scrollbar-gutter": ["/^.+$/"] }
+                "ignoreProperties": {
+                    "scrollbar-gutter": ["/^.+$/"],
+                    "scrollbar-width": ["/^.+$/"],
+                    "scrollbar-color": ["/^.+$/"],
+                    "backdrop-filter": ["/^.+$/"],
+                    "mask-image": ["/^.+$/"],
+                    "text-wrap": ["/^.+$/"],
+                    "grid-template-columns": ["subgrid"]
+                }
             }
         ]
     }

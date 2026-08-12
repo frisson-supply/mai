@@ -1,16 +1,24 @@
 import { sanityClient } from './sanity';
+import type {
+  ProjectSummary,
+  ProjectDetail,
+  NextProjectRef,
+  SiteSettings,
+  HomeGrid,
+  About,
+} from './types';
 
 async function safeFetch<T>(query: string, params?: Record<string, unknown>): Promise<T> {
   try {
     return await sanityClient.fetch<T>(query, params ?? {});
   } catch (err) {
     console.warn('[Sanity] Query failed:', err instanceof Error ? err.message : err);
-    return (Array.isArray(await Promise.resolve(null)) ? [] : null) as T;
+    return null as T;
   }
 }
 
 export async function getAllProjects() {
-  return safeFetch<any[]>(
+  return safeFetch<ProjectSummary[]>(
     `*[_type == "project"] | order(order asc) {
       _id, title, "slug": slug.current, role, tags, thumbnail, featured
     }`
@@ -18,7 +26,7 @@ export async function getAllProjects() {
 }
 
 export async function getFeaturedProjects() {
-  return safeFetch<any[]>(
+  return safeFetch<ProjectSummary[]>(
     `*[_type == "project" && featured == true] | order(order asc) {
       _id, title, "slug": slug.current, role, tags, thumbnail, featured
     }`
@@ -26,7 +34,7 @@ export async function getFeaturedProjects() {
 }
 
 export async function getProjectBySlug(slug: string) {
-  return safeFetch<any>(
+  return safeFetch<ProjectDetail>(
     `*[_type == "project" && slug.current == $slug][0] {
       _id, title, "slug": slug.current, role, tags, thumbnail, featured,
       description, released, duration, genre, infoImage,
@@ -34,13 +42,11 @@ export async function getProjectBySlug(slug: string) {
       metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url,
       sections[] {
         _type, _key,
-        title, description,
         text, width,
         image { asset, alt },
         width, position, caption,
         imagePosition, imageSize,
-        url, videoUrl, aspectRatio,
-        released, duration, role,
+        url, aspectRatio,
         heading,
         logos[] { "src": image.asset->url, "alt": image.alt, href }
       }
@@ -50,7 +56,7 @@ export async function getProjectBySlug(slug: string) {
 }
 
 export async function getNextProject(currentSlug: string) {
-  const current = await safeFetch<{ order: number; nextProject?: any }>(
+  const current = await safeFetch<{ order: number; nextProject?: NextProjectRef }>(
     `*[_type == "project" && slug.current == $slug][0] {
       order,
       nextProject->{ _id, title, "slug": slug.current, tags, thumbnail }
@@ -62,7 +68,7 @@ export async function getNextProject(currentSlug: string) {
 
   if (current.nextProject) return current.nextProject;
 
-  const next = await safeFetch<any>(
+  const next = await safeFetch<NextProjectRef>(
     `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {
       _id, title, "slug": slug.current, tags, thumbnail
     }`,
@@ -71,7 +77,7 @@ export async function getNextProject(currentSlug: string) {
 
   if (next) return next;
 
-  return safeFetch<any>(
+  return safeFetch<NextProjectRef>(
     `*[_type == "project" && slug.current != $slug] | order(order asc) [0] {
       _id, title, "slug": slug.current, tags, thumbnail
     }`,
@@ -86,13 +92,13 @@ export async function getAllProjectSlugs() {
 }
 
 export async function getSiteSettings() {
-  return safeFetch<any>(
+  return safeFetch<SiteSettings>(
     `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription, "faviconUrl": favicon.asset->url, "ogImageUrl": ogImage.asset->url }`
   );
 }
 
 export async function getHomeGrid() {
-  return safeFetch<any>(
+  return safeFetch<HomeGrid>(
     `*[_type == "homeGrid" && _id == "homeGrid"][0] {
       items[defined(project->_id)] {
         _key,
@@ -101,14 +107,14 @@ export async function getHomeGrid() {
         columnSpan,
         rowStart,
         rowSpan,
-        project->{ _id, title, "slug": slug.current, thumbnail }
+        project->{ _id, title, "slug": slug.current, tags, thumbnail }
       }
     }`
   );
 }
 
 export async function getAbout() {
-  return safeFetch<any>(
+  return safeFetch<About>(
     `*[_type == "about"][0] { bio, photo, skills, cvUrl, brands[] { text, image, link }, recognitions[] { title, url }, metaTitle, metaDescription, "metaImageUrl": metaImage.asset->url }`
   );
 }

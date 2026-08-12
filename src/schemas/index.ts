@@ -6,9 +6,7 @@ export { imageBlock }         from './image-block';
 export { textImageBlock }     from './text-image-block';
 export { textSection }        from './text-section';
 export { videoSection }       from './video-section';
-export { projectDataSection } from './project-data-section';
 export { logoWallSection }    from './logo-wall-section';
-export { introSection }       from './intro-section';
 
 import type { SchemaTypeDefinition } from 'sanity';
 import { project }            from './project';
@@ -19,9 +17,7 @@ import { imageBlock }         from './image-block';
 import { textImageBlock }     from './text-image-block';
 import { textSection }        from './text-section';
 import { videoSection }       from './video-section';
-import { projectDataSection } from './project-data-section';
 import { logoWallSection }    from './logo-wall-section';
-import { introSection }       from './intro-section';
 
 export const schemaTypes = [
   project,
@@ -32,7 +28,5 @@ export const schemaTypes = [
   textImageBlock,
   textSection,
   videoSection,
-  projectDataSection,
   logoWallSection,
-  introSection,
 ] as SchemaTypeDefinition[];

@@ -12,7 +12,7 @@
     }
 
     .nav__link-line {
-        background-color: currentColor;
+        background-color: currentcolor;
         bottom: -0.15em;
         display: block;
         height: 1px;
@@ -86,27 +86,27 @@
 
     .nav-blur__layer:nth-child(1) {
         backdrop-filter: blur(2px);
-        mask-image: linear-gradient(to bottom, black 0%, transparent 20%);
+        mask-image: linear-gradient(to bottom, var(--color-overlay) 0%, transparent 20%);
     }
 
     .nav-blur__layer:nth-child(2) {
         backdrop-filter: blur(6px);
-        mask-image: linear-gradient(to bottom, black 20%, transparent 40%);
+        mask-image: linear-gradient(to bottom, var(--color-overlay) 20%, transparent 40%);
     }
 
     .nav-blur__layer:nth-child(3) {
         backdrop-filter: blur(12px);
-        mask-image: linear-gradient(to bottom, black 40%, transparent 60%);
+        mask-image: linear-gradient(to bottom, var(--color-overlay) 40%, transparent 60%);
     }
 
     .nav-blur__layer:nth-child(4) {
         backdrop-filter: blur(20px);
-        mask-image: linear-gradient(to bottom, black 60%, transparent 80%);
+        mask-image: linear-gradient(to bottom, var(--color-overlay) 60%, transparent 80%);
     }
 
     .nav-blur__layer:nth-child(5) {
         backdrop-filter: blur(36px);
-        mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        mask-image: linear-gradient(to bottom, var(--color-overlay) 80%, transparent 100%);
     }
 
     /* ── Page Loader ── */
@@ -152,13 +152,17 @@
     }
 
     .page-loader__name-base {
-        display: block;
+        align-items: center;
+        display: flex;
+        gap: 0.3em;
         opacity: 0.15;
     }
 
     .page-loader__name-top {
+        align-items: center;
         clip-path: inset(0% 100% 0% 0%);
-        display: block;
+        display: flex;
+        gap: 0.3em;
         inset: 0;
         position: absolute;
     }

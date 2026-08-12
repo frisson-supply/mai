@@ -1,34 +1,15 @@
 ---
 import ImageBlock from '@/components/blocks/image-block/image-block.astro';
 import TextImageBlock from '@/components/blocks/text-image-block/text-image-block.astro';
-
-interface TextSpan {
-  _type: string;
-  text: string;
-  marks?: string[];
-}
-
-interface Block {
-  _type: string;
-  _key: string;
-  style?: string;
-  children?: TextSpan[];
-  image?: { asset: any; alt?: string };
-  width?: string;
-  position?: string;
-  caption?: string;
-  text?: Block[];
-  imagePosition?: 'left' | 'right';
-  imageSize?: 'one-third' | 'half' | 'two-thirds';
-}
+import type { PortableTextItem, PortableTextBlock } from '@/lib/types';
 
 interface Props {
-  blocks: Block[];
+  blocks: PortableTextItem[];
 }
 
 const { blocks = [] } = Astro.props;
 
-function renderText(children: Block['children']) {
+function renderText(children: PortableTextBlock['children']) {
   return (children ?? []).map(s => s.text || '').join('');
 }
 ---

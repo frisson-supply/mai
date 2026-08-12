@@ -1,19 +1,25 @@
 ---
 import { urlFor } from "@/lib/sanity";
 import styles from "./work-grid.module.css";
+import type { HomeGridItem } from "@/lib/types";
 
 interface Props {
-    items: any[];
+    items: HomeGridItem[];
 }
 
 const { items } = Astro.props;
+
+type ItemWithProject = HomeGridItem & { project: NonNullable<HomeGridItem['project']> };
+function hasProject(item: HomeGridItem): item is ItemWithProject {
+    return Boolean(item.project);
+}
 ---
 
 <div class={styles["work-layout"]} id="work-layout">
     <div class={styles["work"]} id="work-section" data-view="grid">
         {
             items.map(
-                (item: any, i: number) =>
+                (item, i) =>
                     item.project && (
                         <a
                             href={`/works/${item.project.slug}`}
@@ -65,8 +71,8 @@ const { items } = Astro.props;
     <nav class={styles["work-list-names"]} id="work-list-names">
         {
             items
-                .filter((item: any) => item.project)
-                .map((item: any, i: number) => (
+                .filter(hasProject)
+                .map((item, i) => (
                     <a
                         href={`/works/${item.project.slug}`}
                         class={styles["work-list-name"]}
