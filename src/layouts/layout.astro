@@ -3,6 +3,7 @@ import "@/global.css";
 import styles from "./layout.module.css";
 import { getSiteSettings } from "@/lib/queries";
 import Icon from "@/components/icon/icon.astro";
+import Analytics from "@vercel/analytics/astro";
 
 interface Props {
     title?: string;
@@ -85,6 +86,7 @@ function isActive(href: string) {
                 document.documentElement.classList.add("loader-done");
             }
         </script>
+        <Analytics />
     </head>
     <body data-page-theme={pageTheme} data-namespace={namespace}>
         {
