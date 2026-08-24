@@ -4,17 +4,26 @@ import SectionsRenderer from '@/components/sections-renderer/sections-renderer.a
 import NextProject from '@/components/next-project/next-project.astro';
 import VideoSection from '@/components/blocks/video-section/video-section.astro';
 import { getProjectBySlug, getNextProject } from '@/lib/queries';
+import { getClient, isPreviewMode } from '@/lib/preview';
 import { urlFor } from '@/lib/sanity';
 import styles from './slug.module.css';
 
+export const prerender = false;
+
 const { slug } = Astro.params;
+const preview = isPreviewMode(Astro.cookies);
+const client = getClient(Astro.cookies);
 const [project, nextProject] = await Promise.all([
-  getProjectBySlug(slug!),
-  getNextProject(slug!),
+  getProjectBySlug(slug!, client),
+  getNextProject(slug!, client),
 ]);
 
 if (!project) {
   return Astro.redirect('/');
+}
+
+if (preview) {
+  Astro.response.headers.set('Cache-Control', 'no-store');
 }
 ---
 

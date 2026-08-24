@@ -1,5 +1,6 @@
 import { defineConfig, definePlugin } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { presentationTool, defineLocations } from 'sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { media } from 'sanity-plugin-media';
 import { schemaTypes } from './src/schemas';
@@ -50,6 +51,39 @@ export default defineConfig({
             S.divider(),
             S.documentTypeListItem('project').title('Projects'),
           ]),
+    }),
+    presentationTool({
+      name: 'presentation',
+      title: 'Preview',
+      previewUrl: {
+        origin: import.meta.env.SANITY_STUDIO_PREVIEW_ORIGIN || 'http://localhost:4321',
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+          disable: '/api/draft-mode/disable',
+        },
+      },
+      resolve: {
+        locations: {
+          project: defineLocations({
+            select: { title: 'title', slug: 'slug.current' },
+            resolve: (doc: { title: string; slug: string } | null) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled project',
+                  href: `/works/${doc?.slug}`,
+                },
+              ],
+            }),
+          }),
+        },
+        mainDocuments: [
+          {
+            route: '/works/:slug',
+            filter: `_type == "project" && slug.current == $slug`,
+            params: ({ params }) => ({ slug: params.slug }),
+          },
+        ],
+      },
     }),
     ...(import.meta.env.DEV ? [visionTool()] : []),
     media(),
