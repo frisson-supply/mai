@@ -17,9 +17,14 @@ let svg = icons[`../../assets/icons/${name}.svg`];
 // don't conflict with each other.
 if (svg) {
     const uid = `${name}-${Math.random().toString(36).slice(2, 7)}`;
-    svg = svg.replace(/\bid="([^"]+)"/g, `id="${uid}-$1"`);
-    svg = svg.replace(/url\(#([^)]+)\)/g, `url(#${uid}-$1)`);
-    svg = svg.replace(/href="#([^"]+)"/g, `href="#${uid}-$1"`);
+    svg = svg.replace(
+        /\bid="([^"]+)"|url\(#([^)]+)\)|href="#([^"]+)"/g,
+        (match, idVal, urlVal, hrefVal) => {
+            if (idVal !== undefined) return `id="${uid}-${idVal}"`;
+            if (urlVal !== undefined) return `url(#${uid}-${urlVal})`;
+            return `href="#${uid}-${hrefVal}"`;
+        }
+    );
 }
 ---
 

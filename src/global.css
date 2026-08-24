@@ -108,14 +108,14 @@
     }
 
     html {
+        scrollbar-color: var(--color-text-body) transparent;
         scrollbar-width: thin;
-        scrollbar-color: gray transparent;
     }
 
     body {
         background: var(--color-bg);
         color: var(--color-fg);
-        font-family: "Geist", system-ui, sans-serif;
+        font-family: Geist, system-ui, sans-serif;
     }
 
     section {

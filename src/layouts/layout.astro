@@ -102,25 +102,25 @@ function isActive(href: string) {
                     >
                         <div class={styles["page-loader__name-wrap"]}>
                             <span class={styles["page-loader__name-base"]}>
-                                {siteFirstName}
+                                <span>{siteFirstName}</span>
                                 {siteLastName && (
                                     <span class={styles["page-loader__dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
-                                {siteLastName}
+                                {siteLastName && <span>{siteLastName}</span>}
                             </span>
                             <span
                                 class={styles["page-loader__name-top"]}
                                 data-loader="name-top"
                             >
-                                {siteFirstName}
+                                <span>{siteFirstName}</span>
                                 {siteLastName && (
                                     <span class={styles["page-loader__dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
-                                {siteLastName}
+                                {siteLastName && <span>{siteLastName}</span>}
                             </span>
                         </div>
                         <div class={styles["page-loader__text-wrap"]}>

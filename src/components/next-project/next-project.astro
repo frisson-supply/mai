@@ -1,14 +1,10 @@
 ---
 import { urlFor } from '@/lib/sanity';
 import styles from './next-project.module.css';
+import type { NextProjectRef } from '@/lib/types';
 
 interface Props {
-  project: {
-    title: string;
-    slug: string;
-    tags?: string[];
-    thumbnail?: any;
-  };
+  project: NextProjectRef;
 }
 
 const { project } = Astro.props;

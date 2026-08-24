@@ -1,6 +1,6 @@
 import imageUrlBuilder from '@sanity/image-url'
 import { Button, Card, Flex, Select, Stack, Text, TextInput } from '@sanity/ui'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PatchEvent, set, useClient } from 'sanity'
 
 interface GridItem {
@@ -28,7 +28,7 @@ const FEATURED_ROW_H = Math.round(BASE_ROW_H * 1.4)
 export function GridEditorInput({ value, onChange, readOnly }: any) {
   const client = useClient({ apiVersion: '2024-01-01' })
   const [projects, setProjects] = useState<SanityProject[]>([])
-  const builder = imageUrlBuilder(client)
+  const builder = useMemo(() => imageUrlBuilder(client), [client])
 
   const items: GridItem[] = value ?? []
 

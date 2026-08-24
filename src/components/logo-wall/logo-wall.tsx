@@ -64,14 +64,6 @@ export function LogoWall({ heading, logos }: Props) {
       );
       patternIndexRef.current = 0;
 
-      poolRef.current = originalTargets
-        .filter(t => !visibleItemsRef.current.some(item => item.contains(t)))
-        .concat(
-          visibleItemsRef.current
-            .map(item => item.querySelector<HTMLDivElement>('[data-logo-wall-target]'))
-            .filter(Boolean) as HTMLDivElement[]
-        );
-
       poolRef.current = shuffleArray(originalTargets.slice());
 
       const tl = gsap.timeline({ repeat: -1, repeatDelay: LOOP_DELAY });

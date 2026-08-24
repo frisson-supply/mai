@@ -4,6 +4,7 @@ import PortableTextRenderer from '@/components/portable-text-renderer/portable-t
 import { getAbout, getSiteSettings } from '@/lib/queries';
 import { urlFor } from '@/lib/sanity';
 import styles from './about.module.css';
+import type { AboutBrand, AboutRecognition } from '@/lib/types';
 
 const about = await getAbout();
 const settings = await getSiteSettings();
@@ -32,7 +33,7 @@ const settings = await getSiteSettings();
       <section class={styles['about-brands']}>
         <h2 class={styles['about-section-heading']} data-split="title">Brands</h2>
         <div class={styles['about-brands-list']} data-reveal>
-          {about.brands.map((brand: any) => {
+          {about.brands.map((brand: AboutBrand) => {
             const inner = (
               <div class={styles['about-brand-item']}>
                 {brand.image ? (
@@ -70,7 +71,7 @@ const settings = await getSiteSettings();
     <section class={styles['about-recognitions']}>
       <h2 class={styles['about-section-heading']} data-split="title">Recognitions &amp; Awards</h2>
       <div class={styles['about-recognition-list']}>
-        {about?.recognitions?.map((r: any) => (
+        {about?.recognitions?.map((r: AboutRecognition) => (
           <div class={styles['about-recognition-row']} data-recognition-row>
             {r.url ? (
               <a href={r.url} target="_blank" rel="noopener noreferrer" class={styles['about-recognition-link']}>
@@ -90,7 +91,7 @@ const settings = await getSiteSettings();
         {settings?.location && <span data-split="paragraph">{settings.location}</span>}
       </div>
       <div class={styles['about-footer-right']}>
-        {settings?.socialLinks?.map((link: any) => (
+        {settings?.socialLinks?.map((link) => (
           <a href={link.url} target="_blank" rel="noopener noreferrer" data-split="paragraph">
             {link.platform}
           </a>
