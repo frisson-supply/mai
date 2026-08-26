@@ -4,6 +4,8 @@ import styles from "./layout.module.css";
 import { getSiteSettings } from "@/lib/queries";
 import Icon from "@/components/icon/icon.astro";
 import Analytics from "@vercel/analytics/astro";
+import VisualEditing from "@/components/visual-editing/visual-editing";
+import { isPreviewMode } from "@/lib/preview";
 
 interface Props {
     title?: string;
@@ -20,6 +22,7 @@ const {
     namespace,
     pageTheme = "dark",
 } = Astro.props;
+const preview = isPreviewMode(Astro.cookies);
 const path = Astro.url.pathname;
 const showBack = path !== "/";
 const settings = await getSiteSettings();
@@ -88,7 +91,7 @@ function isActive(href: string) {
         </script>
         <Analytics />
     </head>
-    <body data-page-theme={pageTheme} data-namespace={namespace}>
+    <body data-page-theme={pageTheme} data-namespace={namespace} data-preview={preview}>
         {
             path === "/" && (
                 <div id="page-loader" class={styles["page-loader"]}>
@@ -234,6 +237,10 @@ function isActive(href: string) {
             rmMQ.addEventListener("change", function (e) {
                 reducedMotion = e.matches;
             });
+
+            // Sanity Presentation preview: skip splitting title/paragraph text
+            // into chars/lines so stega markers stay intact for click-to-edit overlays.
+            var isPreview = document.body.dataset.preview === "true";
 
             CustomEase.create("osmo", "0.625, 0.05, 0, 1");
             gsap.defaults({ ease: "osmo" });
@@ -468,6 +475,10 @@ function isActive(href: string) {
                 scope
                     .querySelectorAll('[data-split="title"]')
                     .forEach(function (el) {
+                        if (isPreview) {
+                            gsap.set(el, { autoAlpha: 1 });
+                            return;
+                        }
                         if (reducedMotion) return;
                         splitInstances.push(
                             new SplitText(el, {
@@ -492,6 +503,10 @@ function isActive(href: string) {
                 scope
                     .querySelectorAll('[data-split="paragraph"]')
                     .forEach(function (el) {
+                        if (isPreview) {
+                            gsap.set(el, { autoAlpha: 1 });
+                            return;
+                        }
                         if (reducedMotion) return;
                         var delay = parseFloat(el.dataset.splitDelay || "0");
                         splitInstances.push(
@@ -1121,5 +1136,6 @@ function isActive(href: string) {
                 gsap.ticker.lagSmoothing(0);
             }
         </script>
+        {preview && <VisualEditing client:only="react" />}
     </body>
 </html>

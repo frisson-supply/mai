@@ -84,4 +84,7 @@ export const project = defineType({
     }),
   ],
   orderings: [{ title: 'Order', name: 'orderAsc', by: [{ field: 'order', direction: 'asc' }] }],
+  preview: {
+    select: { title: 'title', subtitle: 'role', media: 'thumbnail' },
+  },
 });

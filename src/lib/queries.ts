@@ -1,3 +1,4 @@
+import type { SanityClient } from '@sanity/client';
 import { sanityClient } from './sanity';
 import type {
   ProjectSummary,
@@ -8,9 +9,13 @@ import type {
   About,
 } from './types';
 
-async function safeFetch<T>(query: string, params?: Record<string, unknown>): Promise<T> {
+async function safeFetch<T>(
+  query: string,
+  params?: Record<string, unknown>,
+  client: SanityClient = sanityClient
+): Promise<T> {
   try {
-    return await sanityClient.fetch<T>(query, params ?? {});
+    return await client.fetch<T>(query, params ?? {});
   } catch (err) {
     console.warn('[Sanity] Query failed:', err instanceof Error ? err.message : err);
     return null as T;
@@ -33,7 +38,7 @@ export async function getFeaturedProjects() {
   ).then(r => r ?? []);
 }
 
-export async function getProjectBySlug(slug: string) {
+export async function getProjectBySlug(slug: string, client?: SanityClient) {
   return safeFetch<ProjectDetail>(
     `*[_type == "project" && slug.current == $slug][0] {
       _id, title, "slug": slug.current, role, tags, thumbnail, featured,
@@ -51,17 +56,19 @@ export async function getProjectBySlug(slug: string) {
         logos[] { "src": image.asset->url, "alt": image.alt, href }
       }
     }`,
-    { slug }
+    { slug },
+    client
   );
 }
 
-export async function getNextProject(currentSlug: string) {
+export async function getNextProject(currentSlug: string, client?: SanityClient) {
   const current = await safeFetch<{ order: number; nextProject?: NextProjectRef }>(
     `*[_type == "project" && slug.current == $slug][0] {
       order,
       nextProject->{ _id, title, "slug": slug.current, tags, thumbnail }
     }`,
-    { slug: currentSlug }
+    { slug: currentSlug },
+    client
   );
 
   if (!current) return null;
@@ -72,7 +79,8 @@ export async function getNextProject(currentSlug: string) {
     `*[_type == "project" && order > $order && slug.current != $slug] | order(order asc) [0] {
       _id, title, "slug": slug.current, tags, thumbnail
     }`,
-    { order: current.order, slug: currentSlug }
+    { order: current.order, slug: currentSlug },
+    client
   );
 
   if (next) return next;
@@ -81,7 +89,8 @@ export async function getNextProject(currentSlug: string) {
     `*[_type == "project" && slug.current != $slug] | order(order asc) [0] {
       _id, title, "slug": slug.current, tags, thumbnail
     }`,
-    { slug: currentSlug }
+    { slug: currentSlug },
+    client
   );
 }
 

@@ -7,6 +7,11 @@
         position: relative;
     }
 
+    .work-layout:has(.work[data-view="grid"]) {
+        height: 100dvh;
+        overflow: hidden;
+    }
+
     /* ── Work List Names Panel ── */
     .work-list-names {
         display: none;
@@ -165,8 +170,11 @@
 }
 
 @media (width <= 48rem) {
-    .work-layout {
+    .work-layout,
+    .work-layout:has(.work[data-view="grid"]) {
         display: block;
+        height: auto;
+        overflow: visible;
     }
 
     .work-list-names {
