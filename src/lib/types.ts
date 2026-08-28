@@ -117,18 +117,13 @@ export interface SiteSettings {
   ogImageUrl?: string;
 }
 
-export interface HomeGridItem {
+export interface HomeListItem {
   _key: string;
-  featured?: boolean;
-  columnStart?: number;
-  columnSpan?: number;
-  rowStart?: number;
-  rowSpan?: number;
   project?: { _id: string; title: string; slug: string; tags?: string[]; thumbnail?: SanityImage };
 }
 
-export interface HomeGrid {
-  items: HomeGridItem[];
+export interface HomeList {
+  items: HomeListItem[];
 }
 
 export interface AboutBrand {

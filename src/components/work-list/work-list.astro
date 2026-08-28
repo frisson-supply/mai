@@ -1,22 +1,22 @@
 ---
 import { urlFor } from "@/lib/sanity";
-import styles from "./work-grid.module.css";
-import type { HomeGridItem } from "@/lib/types";
+import styles from "./work-list.module.css";
+import type { HomeListItem } from "@/lib/types";
 
 interface Props {
-    items: HomeGridItem[];
+    items: HomeListItem[];
 }
 
 const { items } = Astro.props;
 
-type ItemWithProject = HomeGridItem & { project: NonNullable<HomeGridItem['project']> };
-function hasProject(item: HomeGridItem): item is ItemWithProject {
+type ItemWithProject = HomeListItem & { project: NonNullable<HomeListItem['project']> };
+function hasProject(item: HomeListItem): item is ItemWithProject {
     return Boolean(item.project);
 }
 ---
 
 <div class={styles["work-layout"]} id="work-layout">
-    <div class={styles["work"]} id="work-section" data-view="grid">
+    <div class={styles["work"]} id="work-section">
         {
             items.map(
                 (item, i) =>
@@ -24,8 +24,6 @@ function hasProject(item: HomeGridItem): item is ItemWithProject {
                         <a
                             href={`/works/${item.project.slug}`}
                             class={styles["work-item"]}
-                            data-featured={i === 0 ? "" : undefined}
-                            style={`--col-start:${i === 0 ? 1 : (item.columnStart ?? 1)};--col-span:${i === 0 ? 2 : 1};--row-start:${i === 0 ? 1 : (item.rowStart ?? "auto")};--row-span:1;`}
                             data-item-index={i}
                             data-project-slug={item.project.slug}
                             data-work-item

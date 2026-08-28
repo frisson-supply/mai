@@ -117,12 +117,12 @@ export function Dashboard() {
               </Card>
             </a>
 
-            <IntentLink intent="edit" params={{ id: 'homeGrid', type: 'homeGrid' }} style={{ textDecoration: 'none' }}>
+            <IntentLink intent="edit" params={{ id: 'homeList', type: 'homeList' }} style={{ textDecoration: 'none' }}>
               <Card padding={4} radius={2} shadow={1} tone="default" style={{ cursor: 'pointer', height: '100%' }}>
                 <Flex align="center" gap={3}>
                   <Text size={3}><MasterDetailIcon /></Text>
                   <Stack space={2}>
-                    <Text size={2} weight="semibold">Home Grid</Text>
+                    <Text size={2} weight="semibold">Home List</Text>
                     <Text size={1} muted>Arrange projects</Text>
                   </Stack>
                 </Flex>

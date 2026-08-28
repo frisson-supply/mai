@@ -5,7 +5,7 @@ import type {
   ProjectDetail,
   NextProjectRef,
   SiteSettings,
-  HomeGrid,
+  HomeList,
   About,
 } from './types';
 
@@ -106,16 +106,11 @@ export async function getSiteSettings() {
   );
 }
 
-export async function getHomeGrid() {
-  return safeFetch<HomeGrid>(
-    `*[_type == "homeGrid" && _id == "homeGrid"][0] {
+export async function getHomeList() {
+  return safeFetch<HomeList>(
+    `*[_type == "homeList" && _id == "homeList"][0] {
       items[defined(project->_id)] {
         _key,
-        featured,
-        columnStart,
-        columnSpan,
-        rowStart,
-        rowSpan,
         project->{ _id, title, "slug": slug.current, tags, thumbnail }
       }
     }`

@@ -1,17 +1,15 @@
 ---
 import Layout from "@/layouts/layout.astro";
-import WorkToggle from "@/components/work-toggle/work-toggle.astro";
-import WorkGrid from "@/components/work-grid/work-grid.astro";
-import { getSiteSettings, getHomeGrid } from "@/lib/queries";
+import WorkList from "@/components/work-list/work-list.astro";
+import { getSiteSettings, getHomeList } from "@/lib/queries";
 import styles from "./index.module.css";
 
 const settings = await getSiteSettings();
-const homeGrid = await getHomeGrid();
-const gridItems = homeGrid?.items ?? [];
+const homeList = await getHomeList();
+const listItems = homeList?.items ?? [];
 ---
 
 <Layout title={settings?.siteTitle || "Mai"} namespace="home" pageTheme="light">
-    <WorkToggle />
     <h2 class={styles["cases-label"]} data-split="title">Cases</h2>
-    <WorkGrid items={gridItems} />
+    <WorkList items={listItems} />
 </Layout>
