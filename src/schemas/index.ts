@@ -1,7 +1,7 @@
 export { project }            from './project';
 export { siteSettings }       from './site-settings';
 export { about }              from './about';
-export { homeGrid }           from './home-grid';
+export { homeList }           from './home-list';
 export { imageBlock }         from './image-block';
 export { textImageBlock }     from './text-image-block';
 export { textSection }        from './text-section';
@@ -12,7 +12,7 @@ import type { SchemaTypeDefinition } from 'sanity';
 import { project }            from './project';
 import { siteSettings }       from './site-settings';
 import { about }              from './about';
-import { homeGrid }           from './home-grid';
+import { homeList }           from './home-list';
 import { imageBlock }         from './image-block';
 import { textImageBlock }     from './text-image-block';
 import { textSection }        from './text-section';
@@ -23,7 +23,7 @@ export const schemaTypes = [
   project,
   siteSettings,
   about,
-  homeGrid,
+  homeList,
   imageBlock,
   textImageBlock,
   textSection,

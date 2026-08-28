@@ -45,9 +45,9 @@ export default defineConfig({
               .id('about')
               .child(S.document().schemaType('about').documentId('about')),
             S.listItem()
-              .title('Home Grid')
-              .id('homeGrid')
-              .child(S.document().schemaType('homeGrid').documentId('homeGrid')),
+              .title('Home List')
+              .id('homeList')
+              .child(S.document().schemaType('homeList').documentId('homeList')),
             S.divider(),
             S.documentTypeListItem('project').title('Projects'),
           ]),
@@ -56,7 +56,9 @@ export default defineConfig({
       name: 'presentation',
       title: 'Preview',
       previewUrl: {
-        origin: import.meta.env.SANITY_STUDIO_PREVIEW_ORIGIN || 'http://localhost:4321',
+        origin:
+          import.meta.env.SANITY_STUDIO_PREVIEW_ORIGIN ||
+          (import.meta.env.DEV ? 'http://localhost:4321' : undefined),
         previewMode: {
           enable: '/api/draft-mode/enable',
           disable: '/api/draft-mode/disable',

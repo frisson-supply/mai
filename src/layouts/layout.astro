@@ -75,12 +75,11 @@ function isActive(href: string) {
         {(ogImage ?? settings?.ogImageUrl) && <meta name="twitter:image" content={ogImage ?? settings?.ogImageUrl} />}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/lenis@1.3.17/dist/lenis.min.js" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/CustomEase.min.js" />
         <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/SplitText.min.js" />
-        <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/Flip.min.js" />
         <script is:inline>
             if (
                 typeof sessionStorage !== "undefined" &&
@@ -214,16 +213,11 @@ function isActive(href: string) {
         ></script>
         <script
             is:inline
-            src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/Flip.min.js"
-        ></script>
-        <script
-            is:inline
             src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"
         ></script>
 
         <script is:inline>
             gsap.registerPlugin(CustomEase);
-            if (typeof Flip !== "undefined") gsap.registerPlugin(Flip);
             if (typeof SplitText !== "undefined")
                 gsap.registerPlugin(SplitText);
             if (typeof ScrollTrigger !== "undefined")
@@ -281,7 +275,7 @@ function isActive(href: string) {
                 }
 
                 initLenis();
-                initWorkView();
+                initListHover();
 
                 if (reducedMotion) {
                     gsap.set(
@@ -675,142 +669,8 @@ function isActive(href: string) {
             }
 
             // -----------------------------------------
-            // WORK VIEW TOGGLE
+            // WORK LIST HOVER
             // -----------------------------------------
-
-            document.addEventListener("click", function (e) {
-                var btn = e.target.closest("[data-view-btn]");
-                if (!btn) return;
-                applyWorkView(btn.dataset.viewBtn);
-            });
-
-            function applyWorkView(view, instant) {
-                var section = document.getElementById("work-section");
-                var layout = document.getElementById("work-layout");
-                var items = document.querySelectorAll("[data-work-item]");
-                var thumbs = document.querySelectorAll("[data-work-thumb]");
-                var names = document.querySelectorAll("[data-work-list-name]");
-                var nameTexts = document.querySelectorAll(
-                    "[data-work-list-text]",
-                );
-                var toGrid = view === "grid";
-
-                var flipState =
-                    !instant &&
-                    !reducedMotion &&
-                    typeof Flip !== "undefined" &&
-                    items.length
-                        ? Flip.getState([
-                              ...Array.from(items),
-                              ...Array.from(thumbs),
-                          ])
-                        : null;
-
-                stopListWidthRaf();
-                items.forEach(function (item) {
-                    item.style.removeProperty("width");
-                });
-
-                if (flipState) {
-                    if (!toGrid && infoLines.length) {
-                        // Leaving grid: slide info lines behind mask
-                        gsap.to(infoLines, {
-                            yPercent: 105,
-                            duration: 0.25,
-                            ease: "power2.in",
-                            stagger: 0.02,
-                            overwrite: true,
-                        });
-                    }
-                    // Pre-hide name texts so they don't flash visible when the
-                    // list panel becomes CSS-visible on the next line
-                    if (!toGrid && nameTexts.length) {
-                        gsap.set(nameTexts, { yPercent: 105 });
-                    }
-
-                }
-
-                if (toGrid && flipState) {
-                    document.body.style.minHeight =
-                        document.body.scrollHeight + "px";
-                    if (lenis) lenis.scrollTo(0, { duration: 0.7 });
-                }
-
-                if (section) section.dataset.view = view;
-                if (layout) layout.dataset.view = view;
-                localStorage.setItem("workView", view);
-                document
-                    .querySelectorAll("[data-view-btn]")
-                    .forEach(function (btn) {
-                        btn.classList.toggle(
-                            "is-active",
-                            btn.dataset.viewBtn === view,
-                        );
-                    });
-
-                if (flipState) {
-                    if (toGrid && infoLines.length) {
-                        gsap.set(infoLines, { yPercent: 105, overwrite: true });
-                    }
-                    // Clean up active state when returning to grid
-                    if (toGrid) {
-                        if (section) section.classList.remove("has-active");
-                        items.forEach(function (item) {
-                            item.classList.remove("is-active");
-                        });
-                    }
-
-                    if (section) section.style.overflow = "visible";
-                    items.forEach(function (item) {
-                        item.style.overflow = "visible";
-                    });
-
-                    Flip.from(flipState, {
-                        duration: 0.55,
-                        ease: "power3.inOut",
-                        stagger: 0.04,
-                        nested: true,
-                        onComplete: function () {
-                            if (toGrid) {
-                                if (lenis)
-                                    lenis.scrollTo(0, { immediate: true });
-                                else window.scrollTo(0, 0);
-                                document.body.style.removeProperty(
-                                    "min-height",
-                                );
-                            }
-                            if (section)
-                                section.style.removeProperty("overflow");
-                            items.forEach(function (item) {
-                                item.style.removeProperty("overflow");
-                            });
-                            if (toGrid && infoLines.length) {
-                                // Entering grid: reveal info lines from mask
-                                gsap.to(infoLines, {
-                                    yPercent: 0,
-                                    duration: 0.55,
-                                    ease: "expo.out",
-                                    stagger: 0.03,
-                                    overwrite: true,
-                                });
-                            }
-                            if (!toGrid && nameTexts.length) {
-                                // Entering list: reveal name texts (already hidden by gsap.set above)
-                                gsap.to(nameTexts, {
-                                    yPercent: 0,
-                                    duration: 0.9,
-                                    ease: "expo.out",
-                                    stagger: 0.04,
-                                    overwrite: true,
-                                });
-                            }
-                            initListHover();
-                        },
-                    });
-                } else {
-                    initListHover();
-                }
-            }
 
             function initListHover() {
                 var section = document.getElementById("work-section");
@@ -821,7 +681,7 @@ function isActive(href: string) {
                 }
                 stopListWidthRaf();
 
-                if (!section || section.dataset.view !== "list") return;
+                if (!section) return;
 
                 var items = section.querySelectorAll("[data-work-item]");
                 var names = document.querySelectorAll("[data-work-list-name]");
@@ -928,15 +788,6 @@ function isActive(href: string) {
                 startListWidthRaf(section, items, function () {
                     return hoveredItem;
                 });
-            }
-
-            function initWorkView() {
-                var section = document.getElementById("work-section");
-                if (!section) return;
-                var view = reducedMotion
-                    ? "grid"
-                    : localStorage.getItem("workView") || "grid";
-                applyWorkView(view, true);
             }
 
             // -----------------------------------------
