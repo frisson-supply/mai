@@ -19,6 +19,13 @@ export const homeList = defineType({
           fields: [
             defineField({ name: 'project', type: 'reference', to: [{ type: 'project' }] }),
           ],
+          preview: {
+            select: { title: 'project.title', media: 'project.thumbnail' },
+            prepare: ({ title, media }) => ({
+              title: title ?? 'No project selected',
+              media,
+            }),
+          },
         },
       ],
     }),

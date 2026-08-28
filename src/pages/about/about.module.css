@@ -14,6 +14,21 @@
         text-wrap: pretty;
     }
 
+    .about-photo {
+        margin-top: var(--space-lg);
+        max-width: 38ch;
+        overflow: hidden;
+    }
+
+    .about-photo img {
+        aspect-ratio: 4 / 3;
+        border-radius: var(--radius-sm);
+        display: block;
+        height: auto;
+        object-fit: cover;
+        width: 100%;
+    }
+
     .about-bio p {
         color: inherit;
         font-size: var(--fs-ui);
@@ -175,6 +190,10 @@
 
     .about-bio-section {
         width: 100%;
+    }
+
+    .about-photo {
+        max-width: none;
     }
 
     .about-brands {

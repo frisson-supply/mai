@@ -2,7 +2,7 @@
 // Sanity document _id/_type can't be patched in place, so this creates a new
 // `homeList` document and deletes the old `homeGrid` one in a single transaction.
 //
-// Usage:
+// Usage (requires SANITY_API_WRITE_TOKEN in .env for --apply):
 //   node --env-file=.env scripts/migrate-home-list.mjs            # dry run (default)
 //   node --env-file=.env scripts/migrate-home-list.mjs --apply    # actually writes
 
