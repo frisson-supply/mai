@@ -111,6 +111,7 @@ export interface SiteSettings {
   role?: string;
   location?: string;
   showreelUrl?: string;
+  email?: string;
   socialLinks?: { platform?: string; url?: string }[];
   seoDescription?: string;
   faviconUrl?: string;
