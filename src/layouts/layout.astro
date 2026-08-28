@@ -234,7 +234,11 @@ function isActive(href: string) {
 
             // Sanity Presentation preview: skip splitting title/paragraph text
             // into chars/lines so stega markers stay intact for click-to-edit overlays.
-            var isPreview = document.body.dataset.preview === "true";
+            // ponytail: only inside the Presentation iframe — the draft-mode cookie
+            // outlives the Studio visit and would otherwise kill text animation sitewide.
+            var isPreview =
+                document.body.dataset.preview === "true" &&
+                window.self !== window.top;
 
             CustomEase.create("osmo", "0.625, 0.05, 0, 1");
             gsap.defaults({ ease: "osmo" });
@@ -465,6 +469,20 @@ function isActive(href: string) {
             function initTextReveal(container) {
                 if (typeof SplitText === "undefined") return;
                 var scope = container || document;
+
+                // Sanity stega hides edit metadata in zero-width chars. They are
+                // invisible as text but SplitText gives each its own laid-out box,
+                // which shoves the visible text off-centre. Strip them before
+                // splitting (drops click-to-edit here, which is why the
+                // Presentation iframe skips splitting altogether).
+                if (!isPreview && document.body.dataset.preview === "true") {
+                    scope.querySelectorAll("[data-split]").forEach(function (el) {
+                        el.textContent = el.textContent.replace(
+                            /[\u200B-\u200D\u2060\uFEFF]/g,
+                            "",
+                        );
+                    });
+                }
 
                 scope
                     .querySelectorAll('[data-split="title"]')
