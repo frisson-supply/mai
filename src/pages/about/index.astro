@@ -101,6 +101,9 @@ const settings = await getSiteSettings();
         {settings?.location && <span data-split="paragraph">{settings.location}</span>}
       </div>
       <div class={styles['about-footer-right']}>
+        {settings?.email && (
+          <a href={`mailto:${settings.email}`} data-split="paragraph">Email</a>
+        )}
         {settings?.socialLinks?.map((link) => (
           <a href={link.url} target="_blank" rel="noopener noreferrer" data-split="paragraph">
             {link.platform}

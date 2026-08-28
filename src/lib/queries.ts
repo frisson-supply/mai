@@ -102,7 +102,7 @@ export async function getAllProjectSlugs() {
 
 export async function getSiteSettings() {
   return safeFetch<SiteSettings>(
-    `*[_type == "siteSettings"][0] { siteTitle, role, location, showreelUrl, socialLinks, seoDescription, "faviconUrl": favicon.asset->url, "ogImageUrl": ogImage.asset->url }`
+    `*[_type == "siteSettings"][0] { siteTitle, role, location, email, showreelUrl, socialLinks, seoDescription, "faviconUrl": favicon.asset->url, "ogImageUrl": ogImage.asset->url }`
   );
 }
 

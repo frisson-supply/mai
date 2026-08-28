@@ -18,6 +18,10 @@ export const siteSettings = defineType({
     defineField({ name: 'siteTitle', type: 'string', title: 'Site Title',         group: 'identity' }),
     defineField({ name: 'role',      type: 'string', title: 'Role / Occupation',  group: 'identity' }),
     defineField({ name: 'location',  type: 'string', title: 'Location',           group: 'identity' }),
+    defineField({
+      name: 'email', type: 'string', title: 'Email', group: 'identity',
+      validation: r => r.email(),
+    }),
 
     // ── Links ──
     defineField({ name: 'showreelUrl', type: 'url', title: 'Showreel URL', group: 'links' }),
