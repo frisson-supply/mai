@@ -22,7 +22,7 @@ const blocks = text.map(block => {
 });
 ---
 
-<div class={cn(styles['section-text'], styles[`section-text--${width}`], pos && styles[`section-text--${pos}`])}>
+<div class={cn(styles['section-text'], styles[`section-text-${width}`], pos && styles[`section-text-${pos}`])}>
   {blocks.map(({ tag, text }) => (
     tag === 'h2' ? <h2 data-split="title">{text}</h2> :
     tag === 'h3' ? <h3 data-split="title">{text}</h3> :

@@ -5,7 +5,7 @@
         position: relative;
     }
 
-    .scroll-next__inner {
+    .scroll-next-inner {
         align-items: center;
         color: inherit;
         display: flex;
@@ -19,7 +19,7 @@
         width: 100%;
     }
 
-    .scroll-next__bg {
+    .scroll-next-bg {
         aspect-ratio: 16 / 9;
         border-radius: var(--radius-sm);
         overflow: hidden;
@@ -28,13 +28,13 @@
         z-index: 0;
     }
 
-    .scroll-next__bg-img {
+    .scroll-next-bg-img {
         height: 100%;
         object-fit: cover;
         width: 100%;
     }
 
-    .scroll-next__bg-overlay {
+    .scroll-next-bg-overlay {
         background-color: var(--color-overlay);
         inset: 0%;
         opacity: 0.2;
@@ -42,7 +42,7 @@
         z-index: var(--z-overlay);
     }
 
-    .scroll-next__center {
+    .scroll-next-center {
         align-items: center;
         display: flex;
         flex-direction: column;
@@ -51,7 +51,7 @@
         z-index: var(--z-overlay);
     }
 
-    .scroll-next__sub {
+    .scroll-next-sub {
         color: var(--text-muted);
         font-size: var(--fs-sm);
         font-weight: var(--fw-normal);
@@ -60,7 +60,7 @@
         text-transform: uppercase;
     }
 
-    .scroll-next__h {
+    .scroll-next-h {
         color: var(--text-title);
         font-size: clamp(1.5rem, 3vw, 3rem);
         font-weight: var(--fw-normal);
@@ -70,14 +70,14 @@
         margin-top: 0.25em;
     }
 
-    .scroll-next__progres {
+    .scroll-next-progres {
         color: var(--text-title);
         position: absolute;
         width: min(40vw, 560px);
         z-index: var(--z-base);
     }
 
-    .scroll-next__progres-svg {
+    .scroll-next-progres-svg {
         align-items: center;
         display: flex;
         justify-content: center;

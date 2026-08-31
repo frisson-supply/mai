@@ -12,9 +12,9 @@ const { url, aspectRatio = '16/9', caption, reveal = true } = Astro.props;
 ---
 
 <figure class={styles['video-section']} {...(reveal ? { 'data-reveal': true } : {})}>
-  <div class={styles['video-section__player']} style={`aspect-ratio: ${aspectRatio}`}>
+  <div class={styles['video-section-player']} style={`aspect-ratio: ${aspectRatio}`}>
     <iframe
-      class={styles['video-section__iframe']}
+      class={styles['video-section-iframe']}
       src={url}
       allow="autoplay; fullscreen; picture-in-picture"
       allowfullscreen

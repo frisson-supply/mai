@@ -120,7 +120,15 @@ export interface SiteSettings {
 
 export interface HomeListItem {
   _key: string;
-  project?: { _id: string; title: string; slug: string; tags?: string[]; thumbnail?: SanityImage };
+  project?: {
+    _id: string;
+    title: string;
+    slug: string;
+    role?: string;
+    released?: string;
+    tags?: string[];
+    thumbnail?: SanityImage;
+  };
 }
 
 export interface HomeList {

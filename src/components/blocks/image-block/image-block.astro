@@ -14,7 +14,7 @@ const { image, width = 'full', position, caption } = Astro.props;
 const pos = width !== 'full' ? (position ?? 'left') : null;
 ---
 
-<figure class={cn(styles['image-block'], styles[`image-block--${width}`], pos && styles[`image-block--${pos}`])} data-reveal>
+<figure class={cn(styles['image-block'], styles[`image-block-${width}`], pos && styles[`image-block-${pos}`])} data-reveal>
   <img src={urlFor(image).width(1200).url()} alt={image.alt || ''} />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>

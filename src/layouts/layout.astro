@@ -24,7 +24,6 @@ const {
 } = Astro.props;
 const preview = isPreviewMode(Astro.cookies);
 const path = Astro.url.pathname;
-const showBack = path !== "/";
 const settings = await getSiteSettings();
 
 const siteName = settings?.siteTitle ?? "Mai";
@@ -32,7 +31,6 @@ const siteNameParts = siteName.split(" ");
 const siteFirstName = siteNameParts[0];
 const siteLastName = siteNameParts.slice(1).join(" ") || "";
 const siteRole = settings?.role ?? "";
-const siteLocation = settings?.location ?? "";
 
 function isActive(href: string) {
     if (href === "/") return path === "/";
@@ -94,48 +92,51 @@ function isActive(href: string) {
         {
             path === "/" && (
                 <div id="page-loader" class={styles["page-loader"]}>
-                    <div class={styles["page-loader__bg"]} data-loader="bg">
+                    <div class={styles["page-loader-bg"]} data-loader="bg">
                         <div
-                            class={styles["page-loader__bar"]}
+                            class={styles["page-loader-bar"]}
                             data-loader="bar"
                         />
                     </div>
                     <div
-                        class={styles["page-loader__content"]}
+                        class={styles["page-loader-content"]}
                         data-loader="content"
                     >
-                        <div class={styles["page-loader__name-wrap"]}>
-                            <span class={styles["page-loader__name-base"]}>
+                        {siteRole && (
+                            <div class={styles["page-loader-role"]}>{siteRole}</div>
+                        )}
+                        <div class={styles["page-loader-name-wrap"]}>
+                            <span class={styles["page-loader-name-base"]}>
                                 <span>{siteFirstName}</span>
                                 {siteLastName && (
-                                    <span class={styles["page-loader__dot"]}>
+                                    <span class={styles["page-loader-dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName && <span>{siteLastName}</span>}
                             </span>
                             <span
-                                class={styles["page-loader__name-top"]}
+                                class={styles["page-loader-name-top"]}
                                 data-loader="name-top"
                             >
                                 <span>{siteFirstName}</span>
                                 {siteLastName && (
-                                    <span class={styles["page-loader__dot"]}>
+                                    <span class={styles["page-loader-dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName && <span>{siteLastName}</span>}
                             </span>
                         </div>
-                        <div class={styles["page-loader__text-wrap"]}>
+                        <div class={styles["page-loader-text-wrap"]}>
                             <span
-                                class={styles["page-loader__text"]}
+                                class={styles["page-loader-text"]}
                                 data-loader-text="1"
                             >
                                 Hold tight
                             </span>
                             <span
-                                class={styles["page-loader__text"]}
+                                class={styles["page-loader-text"]}
                                 data-loader-text="2"
                             >
                                 Hi there!
@@ -148,46 +149,32 @@ function isActive(href: string) {
         <nav data-site-nav data-theme-nav>
             <a
                 href="/"
-                class={styles["nav__name"]}
+                class={`${styles["nav-name"]} ${styles["nav-link"]}`}
                 aria-current={isActive("/") ? "page" : undefined}
-            >
-                {siteName}
-            </a>
-            <div class={styles["nav__col"]}>
-                <a
-                    href="/about"
-                    class={styles["nav__link"]}
-                    aria-current={isActive("/about") ? "page" : undefined}
-                >About<span class={styles["nav__link-line"]} data-nav-line aria-hidden="true" /></a>
-            </div>
+            >{siteName}<span class={styles["nav-link-line"]} data-nav-line aria-hidden="true" /></a>
         </nav>
 
         <div class={styles["page-meta"]}>
-            {
-                !showBack ? (
-                    <>
-                        {siteRole && (
-                            <>
-                                <span data-split="title" aria-hidden="true">{siteRole}</span>
-                                <span class="sr-only">{siteRole}</span>
-                            </>
-                        )}
-                        {siteLocation && (
-                            <>
-                                <span data-split="title" aria-hidden="true">{siteLocation}</span>
-                                <span class="sr-only">{siteLocation}</span>
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <a href="/" class={styles["page-meta__link"]}>
-                        <span data-split="title">←</span>{" "}
-                        <span data-split="title" data-split-delay="0.08">
-                            Back
-                        </span>
-                    </a>
-                )
-            }
+            <a
+                href="/about"
+                class={styles["nav-link"]}
+                aria-current={isActive("/about") ? "page" : undefined}
+            >About<span class={styles["nav-link-line"]} data-nav-line aria-hidden="true" /></a>
+            {settings?.email && (
+                <button
+                    type="button"
+                    aria-label="Copy email to clipboard"
+                    data-copy-button
+                    data-copy-email={settings.email}
+                    class={styles["page-meta-link"]}
+                >
+                    <span class={styles["page-meta-text-wrap"]}>
+                        <span class={styles["page-meta-text-el"]}>Email</span>
+                        <span class={styles["page-meta-text-el"]}>Copy</span>
+                        <span class={styles["page-meta-text-el"]}>Copied!</span>
+                    </span>
+                </button>
+            )}
         </div>
 
         <main data-page-theme={pageTheme}>
@@ -232,16 +219,22 @@ function isActive(href: string) {
                 reducedMotion = e.matches;
             });
 
-            // Sanity Presentation preview: skip splitting title/paragraph text
-            // into chars/lines so stega markers stay intact for click-to-edit overlays.
-            // ponytail: only inside the Presentation iframe — the draft-mode cookie
-            // outlives the Studio visit and would otherwise kill text animation sitewide.
+            // Skip splitting text in the Presentation iframe so stega markers survive
+            // for click-to-edit. Iframe-only: the draft-mode cookie outlives the Studio
+            // visit and would otherwise kill text animation sitewide.
             var isPreview =
                 document.body.dataset.preview === "true" &&
                 window.self !== window.top;
 
             CustomEase.create("osmo", "0.625, 0.05, 0, 1");
             gsap.defaults({ ease: "osmo" });
+
+            // The loader covers the viewport, so the carousel can sit visible
+            // underneath it instead of fading in once it's gone.
+            var loaderWillPlay =
+                !reducedMotion &&
+                document.getElementById("page-loader") &&
+                !sessionStorage.getItem("mai_loaded");
 
             if (!reducedMotion) {
                 gsap.set(document.querySelectorAll(".nav__clip > *"), {
@@ -253,15 +246,15 @@ function isActive(href: string) {
                 gsap.set(document.querySelectorAll("[data-recognition-row]"), {
                     autoAlpha: 0,
                 });
-                gsap.set(document.querySelectorAll("[data-work-item]"), {
-                    autoAlpha: 0,
-                });
                 gsap.set(document.querySelectorAll("[data-reveal]"), {
                     autoAlpha: 0,
                 });
                 gsap.set(document.querySelectorAll("[data-video-hero]"), {
                     autoAlpha: 0,
                     scale: 0.96,
+                });
+                gsap.set(document.querySelectorAll("[data-carousel-reveal]"), {
+                    autoAlpha: loaderWillPlay ? 1 : 0,
                 });
             }
 
@@ -279,12 +272,11 @@ function isActive(href: string) {
                 }
 
                 initLenis();
-                initListHover();
 
                 if (reducedMotion) {
                     gsap.set(
                         document.querySelectorAll(
-                            "[data-split], [data-recognition-row], [data-work-item], [data-reveal], [data-video-hero]",
+                            "[data-split], [data-recognition-row], [data-reveal], [data-video-hero], [data-carousel-reveal]",
                         ),
                         { autoAlpha: 1 },
                     );
@@ -302,9 +294,12 @@ function isActive(href: string) {
                     initTextReveal(document.body);
                     initMediaReveal(document.body);
                     initVideoHeroReveal(document.body);
-                    initWorkItemReveal(document.body, initInfoSplits);
+                    if (!loaderWillPlay) {
+                        initCarouselReveal(document.body);
+                    }
                 }
 
+                window.maiReady = true;
                 document.dispatchEvent(new CustomEvent("mai:ready"));
             }
 
@@ -436,6 +431,10 @@ function isActive(href: string) {
                 if (e.persisted) {
                     gsap.set(getNavAnimEls(), { yPercent: 110 });
                     animateNavIn();
+                    // A bfcache restore can return the page mid-fade (animatePageOut
+                    // leaves it at autoAlpha 0) and with its WebGL context dropped.
+                    gsap.set(document.querySelectorAll("[data-carousel-reveal]"), { autoAlpha: 1 });
+                    document.dispatchEvent(new CustomEvent("mai:pageshow-restored"));
                 }
             });
 
@@ -470,11 +469,9 @@ function isActive(href: string) {
                 if (typeof SplitText === "undefined") return;
                 var scope = container || document;
 
-                // Sanity stega hides edit metadata in zero-width chars. They are
-                // invisible as text but SplitText gives each its own laid-out box,
-                // which shoves the visible text off-centre. Strip them before
-                // splitting (drops click-to-edit here, which is why the
-                // Presentation iframe skips splitting altogether).
+                // Stega hides edit metadata in zero-width chars — invisible as text,
+                // but SplitText lays each one out and shoves the visible text
+                // off-centre. Stripping them costs click-to-edit, hence the skip above.
                 if (!isPreview && document.body.dataset.preview === "true") {
                     scope.querySelectorAll("[data-split]").forEach(function (el) {
                         el.textContent = el.textContent.replace(
@@ -547,49 +544,6 @@ function isActive(href: string) {
                     });
             }
 
-            function initWorkItemReveal(container, onComplete) {
-                if (reducedMotion) {
-                    if (onComplete) onComplete();
-                    return;
-                }
-                var items = (container || document).querySelectorAll(
-                    "[data-work-item]",
-                );
-                if (!items.length) {
-                    if (onComplete) onComplete();
-                    return;
-                }
-                gsap.fromTo(
-                    items,
-                    { y: 16, autoAlpha: 0 },
-                    {
-                        y: 0,
-                        autoAlpha: 1,
-                        duration: 0.7,
-                        ease: "power3.out",
-                        stagger: 0.06,
-                        onComplete: onComplete || null,
-                    },
-                );
-            }
-
-            var infoLines = [];
-            var listWidthRafId = null;
-
-            function initInfoSplits() {
-                if (typeof SplitText === "undefined" || reducedMotion) return;
-                infoLines = [];
-                document
-                    .querySelectorAll("[data-work-line]")
-                    .forEach(function (el) {
-                        var s = new SplitText(el, {
-                            type: "lines, words",
-                            mask: "lines",
-                        });
-                        infoLines = infoLines.concat(Array.from(s.lines));
-                    });
-            }
-
             function initMediaReveal(container) {
                 if (reducedMotion) return;
                 var els = (container || document).querySelectorAll(
@@ -629,6 +583,21 @@ function isActive(href: string) {
                 );
             }
 
+            function initCarouselReveal(container) {
+                if (reducedMotion) return;
+                var el = (container || document).querySelector(
+                    "[data-carousel-reveal]",
+                );
+                if (!el) return;
+                // Opacity only: a y/scale tween fights the carousel's own rAF loop
+                // and reads as a stutter.
+                gsap.fromTo(
+                    el,
+                    { autoAlpha: 0 },
+                    { autoAlpha: 1, duration: 0.6, delay: 0.15, ease: "power2.out" },
+                );
+            }
+
             function initRecognitionReveal(container) {
                 if (reducedMotion) return;
                 var rows = (container || document).querySelectorAll(
@@ -649,165 +618,6 @@ function isActive(href: string) {
                 );
             }
 
-            function startListWidthRaf(section, items, getHoveredItem) {
-                stopListWidthRaf();
-
-                var currentWidths = new Map();
-                items.forEach(function (item) {
-                    currentWidths.set(item, item.getBoundingClientRect().width);
-                });
-
-                function tick() {
-                    var vh = window.innerHeight;
-                    var centerY = vh * 0.5;
-                    items.forEach(function (item) {
-                        var rect = item.getBoundingClientRect();
-                        var itemCenter = rect.top + rect.height * 0.5;
-                        var dist = Math.abs(itemCenter - centerY);
-                        var maxDist = vh * 0.6;
-                        var t = Math.max(0, 1 - dist / maxDist);
-                        t = t * t * (3 - 2 * t); // smoothstep
-                        var targetW = 400 + 200 * t;
-                        var currentW = currentWidths.get(item) || targetW;
-                        currentW = currentW + (targetW - currentW) * 0.12;
-                        currentWidths.set(item, currentW);
-                        item.style.width =
-                            "min(" + Math.round(currentW) + "px, 100%)";
-                    });
-                    listWidthRafId = requestAnimationFrame(tick);
-                }
-                listWidthRafId = requestAnimationFrame(tick);
-            }
-
-            function stopListWidthRaf() {
-                if (listWidthRafId) {
-                    cancelAnimationFrame(listWidthRafId);
-                    listWidthRafId = null;
-                }
-            }
-
-            // -----------------------------------------
-            // WORK LIST HOVER
-            // -----------------------------------------
-
-            function initListHover() {
-                var section = document.getElementById("work-section");
-
-                if (section && section._scrollObserver) {
-                    section._scrollObserver.disconnect();
-                    section._scrollObserver = null;
-                }
-                stopListWidthRaf();
-
-                if (!section) return;
-
-                var items = section.querySelectorAll("[data-work-item]");
-                var names = document.querySelectorAll("[data-work-list-name]");
-                var isHovering = false;
-                var hoveredItem = null;
-                var visibilityMap = new Map();
-
-                function setActive(itemEl) {
-                    var slug = itemEl.dataset.projectSlug;
-                    section.classList.add("has-active");
-                    items.forEach(function (el) {
-                        el.classList.toggle("is-active", el === itemEl);
-                    });
-                    names.forEach(function (el) {
-                        el.classList.toggle(
-                            "is-active",
-                            el.dataset.projectSlug === slug,
-                        );
-                    });
-                }
-
-                function clearActive() {
-                    section.classList.remove("has-active");
-                    items.forEach(function (el) {
-                        el.classList.remove("is-active");
-                    });
-                    names.forEach(function (el) {
-                        el.classList.remove("is-active");
-                    });
-                }
-
-                function applyScrollActive() {
-                    var best = null;
-                    var bestRatio = 0;
-                    visibilityMap.forEach(function (ratio, el) {
-                        if (ratio > bestRatio) {
-                            bestRatio = ratio;
-                            best = el;
-                        }
-                    });
-                    if (best && bestRatio > 0) {
-                        setActive(best);
-                    } else {
-                        clearActive();
-                    }
-                }
-
-                items.forEach(function (el) {
-                    el.addEventListener("mouseenter", function () {
-                        isHovering = true;
-                        hoveredItem = el;
-                        setActive(el);
-                    });
-                    el.addEventListener("mouseleave", function () {
-                        isHovering = false;
-                        hoveredItem = null;
-                        applyScrollActive();
-                    });
-                });
-                names.forEach(function (el) {
-                    el.addEventListener("mouseenter", function () {
-                        isHovering = true;
-                        var matchingItem = Array.from(items).find(
-                            function (it) {
-                                return (
-                                    it.dataset.projectSlug ===
-                                    el.dataset.projectSlug
-                                );
-                            },
-                        );
-                        hoveredItem = matchingItem || null;
-                        if (matchingItem) setActive(matchingItem);
-                    });
-                    el.addEventListener("mouseleave", function () {
-                        isHovering = false;
-                        hoveredItem = null;
-                        applyScrollActive();
-                    });
-                });
-
-                var observer = new IntersectionObserver(
-                    function (entries) {
-                        entries.forEach(function (entry) {
-                            visibilityMap.set(
-                                entry.target,
-                                entry.intersectionRatio,
-                            );
-                        });
-                        if (!isHovering) {
-                            applyScrollActive();
-                        }
-                    },
-                    {
-                        rootMargin: "-10% 0px -10% 0px",
-                        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-                    },
-                );
-
-                items.forEach(function (el) {
-                    observer.observe(el);
-                });
-                section._scrollObserver = observer;
-
-                startListWidthRaf(section, items, function () {
-                    return hoveredItem;
-                });
-            }
-
             // -----------------------------------------
             // PAGE TRANSITIONS
             // -----------------------------------------
@@ -820,7 +630,7 @@ function isActive(href: string) {
 
                 var navEls = getNavAnimEls();
                 var navLine = document.querySelector(
-                    'nav a[aria-current="page"] [data-nav-line]',
+                    'a[aria-current="page"] [data-nav-line]',
                 );
                 var lines = document.querySelectorAll(
                     '[data-split="paragraph"] .line',
@@ -829,12 +639,9 @@ function isActive(href: string) {
                     '[data-split="title"] .char',
                 );
                 var rows = document.querySelectorAll("[data-recognition-row]");
-                var items = document.querySelectorAll("[data-work-item]");
                 var media = document.querySelectorAll("[data-reveal]");
-                var nameTexts = document.querySelectorAll(
-                    "[data-work-list-text]",
-                );
                 var videoHero = document.querySelector("[data-video-hero]");
+                var carousel = document.querySelector("[data-carousel-reveal]");
 
                 if (
                     !navEls.length &&
@@ -842,10 +649,9 @@ function isActive(href: string) {
                     !chars.length &&
                     !lines.length &&
                     !rows.length &&
-                    !items.length &&
                     !media.length &&
-                    !nameTexts.length &&
-                    !videoHero
+                    !videoHero &&
+                    !carousel
                 ) {
                     onComplete();
                     return;
@@ -918,31 +724,6 @@ function isActive(href: string) {
                         0,
                     );
                 }
-                if (items.length) {
-                    tl.to(
-                        items,
-                        {
-                            duration: 0.35,
-                            y: -8,
-                            autoAlpha: 0,
-                            stagger: 0.03,
-                            ease: "power2.in",
-                        },
-                        0,
-                    );
-                }
-                if (nameTexts.length) {
-                    tl.to(
-                        nameTexts,
-                        {
-                            duration: 0.45,
-                            yPercent: 105,
-                            stagger: 0.025,
-                            ease: "power2.in",
-                        },
-                        0,
-                    );
-                }
                 if (media.length) {
                     tl.to(
                         media,
@@ -968,6 +749,18 @@ function isActive(href: string) {
                         0,
                     );
                 }
+                if (carousel) {
+                    // Opacity only — see initCarouselReveal for why.
+                    tl.to(
+                        carousel,
+                        {
+                            duration: 0.35,
+                            autoAlpha: 0,
+                            ease: "power2.in",
+                        },
+                        0,
+                    );
+                }
             }
 
             document.addEventListener("click", function (e) {
@@ -984,10 +777,57 @@ function isActive(href: string) {
                 )
                     return;
                 e.preventDefault();
+                var clickedNavLine = link.querySelector("[data-nav-line]");
+                if (clickedNavLine) {
+                    // Pin it so it can't drop back out mid-navigation.
+                    clickedNavLine.style.transform = "scaleX(1)";
+                }
                 animatePageOut(function () {
                     window.location.href = href;
                 });
             });
+
+            // -----------------------------------------
+            // EMAIL COPY
+            // -----------------------------------------
+
+            (function initEmailCopy() {
+                var button = document.querySelector("[data-copy-email]");
+                if (!button) return;
+
+                var resetTimer = null;
+
+                function copyEmail() {
+                    var email = button.getAttribute("data-copy-email");
+                    if (!email) return;
+                    navigator.clipboard.writeText(email).then(function () {
+                        button.setAttribute("data-copy-button", "copied");
+                        button.setAttribute(
+                            "aria-label",
+                            "Email copied to clipboard!",
+                        );
+                        clearTimeout(resetTimer);
+                        resetTimer = setTimeout(function () {
+                            button.removeAttribute("data-copy-button");
+                            button.setAttribute(
+                                "aria-label",
+                                "Copy email to clipboard",
+                            );
+                        }, 2000);
+                    });
+                }
+
+                button.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    copyEmail();
+                });
+                button.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        copyEmail();
+                    }
+                });
+            })();
 
             // -----------------------------------------
             // HELPERS

@@ -7,7 +7,7 @@
         padding: var(--space-xl) 0;
     }
 
-    .logo-wall-section__heading {
+    .logo-wall-section-heading {
         color: var(--text-muted);
         font-size: var(--fs-sm);
         font-weight: var(--fw-semibold);
@@ -17,21 +17,21 @@
         text-transform: uppercase;
     }
 
-    .logo-wall__item {
+    .logo-wall-item {
         position: relative;
         width: 25%;
     }
 
-    .logo-wall__list {
+    .logo-wall-list {
         display: flex;
         flex-wrap: wrap;
     }
 
-    .logo-wall__list [data-logo-wall-item]:nth-child(n + 5) {
+    .logo-wall-list [data-logo-wall-item]:nth-child(n + 5) {
         display: none;
     }
 
-    .logo-wall__logo {
+    .logo-wall-logo {
         align-items: center;
         border: 1px solid var(--color-border-subtle);
         display: flex;
@@ -40,7 +40,7 @@
         position: relative;
     }
 
-    .logo-wall__logo-img {
+    .logo-wall-logo-img {
         filter: brightness(0) invert(1);
         height: 100%;
         max-height: 100%;
@@ -50,12 +50,12 @@
         width: 100%;
     }
 
-    .logo-wall__logo-sizer {
+    .logo-wall-logo-sizer {
         padding-top: 66.66%;
         width: 100%;
     }
 
-    .logo-wall__logo-target {
+    .logo-wall-logo-target {
         align-items: center;
         display: flex;
         height: 40%;
@@ -66,7 +66,7 @@
         width: 60%;
     }
 
-    .logo-wall__logo-target a {
+    .logo-wall-logo-target a {
         align-items: center;
         display: flex;
         height: 100%;
@@ -74,12 +74,12 @@
         width: 100%;
     }
 
-    .logo-wall__logo-target a:hover .logo-wall__logo-img {
+    .logo-wall-logo-target a:hover .logo-wall-logo-img {
         opacity: 0.9;
     }
 
     @media (width <= 48rem) {
-        .logo-wall__item {
+        .logo-wall-item {
             width: 50%;
         }
     }

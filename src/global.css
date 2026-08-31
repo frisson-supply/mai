@@ -27,6 +27,7 @@
         /* Background / foreground */
         --color-bg: hsl(0deg 0% 4%);
         --color-fg: hsl(0deg 0% 96%);
+        --color-bg-light: hsl(0deg 0% 100%);
         --color-surface: hsl(0deg 0% 7%);
         --color-overlay: hsl(0deg 0% 0%);
 
@@ -181,9 +182,9 @@
     /* Initial hidden states — prevent flash before GSAP loads and sets autoAlpha: 0 */
     [data-split],
     [data-recognition-row],
-    [data-work-item],
     [data-reveal],
-    [data-video-hero] {
+    [data-video-hero],
+    [data-carousel-reveal] {
         visibility: hidden;
     }
 }
@@ -192,9 +193,9 @@
     @media (prefers-reduced-motion: reduce) {
         [data-split],
         [data-recognition-row],
-        [data-work-item],
         [data-reveal],
-        [data-video-hero] {
+        [data-video-hero],
+        [data-carousel-reveal] {
             visibility: visible;
         }
 
@@ -208,12 +209,12 @@
     }
 
     body[data-page-theme="light"] {
-        background: var(--color-fg);
+        background: var(--color-bg-light);
         color: var(--color-bg);
     }
 
     body[data-page-theme="light"] nav[data-site-nav] {
-        background: var(--color-fg);
+        background: var(--color-bg-light);
     }
 
     html.loader-done #page-loader {

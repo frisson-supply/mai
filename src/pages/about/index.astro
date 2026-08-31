@@ -1,13 +1,12 @@
 ---
 import Layout from '@/layouts/layout.astro';
 import PortableTextRenderer from '@/components/portable-text-renderer/portable-text-renderer.astro';
-import { getAbout, getSiteSettings } from '@/lib/queries';
+import { getAbout } from '@/lib/queries';
 import { urlFor } from '@/lib/sanity';
 import styles from './about.module.css';
 import type { AboutBrand, AboutRecognition } from '@/lib/types';
 
 const about = await getAbout();
-const settings = await getSiteSettings();
 ---
 
 <Layout
@@ -94,23 +93,6 @@ const settings = await getSiteSettings();
         ))}
       </div>
     </section>
-
-    <footer class={styles['about-footer']}>
-      <div class={styles['about-footer-left']}>
-        {settings?.role && <span data-split="paragraph">{settings.role}</span>}
-        {settings?.location && <span data-split="paragraph">{settings.location}</span>}
-      </div>
-      <div class={styles['about-footer-right']}>
-        {settings?.email && (
-          <a href={`mailto:${settings.email}`} data-split="paragraph">Email</a>
-        )}
-        {settings?.socialLinks?.map((link) => (
-          <a href={link.url} target="_blank" rel="noopener noreferrer" data-split="paragraph">
-            {link.platform}
-          </a>
-        ))}
-      </div>
-    </footer>
 
   </div>
 </Layout>
