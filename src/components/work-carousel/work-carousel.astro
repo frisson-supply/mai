@@ -25,30 +25,30 @@ const carouselItems = items.filter(hasThumbnail);
     <canvas
         aria-hidden="true"
         data-glass-carousel-canvas
-        class={styles["glass-carousel__canvas"]}
+        class={styles["glass-carousel-canvas"]}
     ></canvas>
     <div>
-        <div data-glass-carousel-list class={styles["glass-carousel__list"]}>
+        <div data-glass-carousel-list class={styles["glass-carousel-list"]}>
             {
                 carouselItems.map((item) => (
                     <a
                         href={`/works/${item.project.slug}`}
                         data-glass-carousel-item
-                        class={styles["glass-carousel__item"]}
+                        class={styles["glass-carousel-item"]}
                     >
                         <img
                             src={urlFor(item.project.thumbnail).width(1600).url()}
                             loading="eager"
                             data-glass-carousel-image
                             alt={item.project.thumbnail.alt || item.project.title}
-                            class={styles["glass-carousel__item-img"]}
+                            class={styles["glass-carousel-item-img"]}
                         />
                         <div data-glass-carousel-content>
                             {
                                 item.project.role && (
                                     <p
                                         data-glass-carousel-role
-                                        class={`${styles["glass-carousel__item-p"]} ${styles["glass-carousel__item-p--role"]}`}
+                                        class={`${styles["glass-carousel-item-p"]} ${styles["glass-carousel-item-p-role"]}`}
                                     >
                                         {item.project.role}
                                     </p>
@@ -56,18 +56,18 @@ const carouselItems = items.filter(hasThumbnail);
                             }
                             <p
                                 data-glass-carousel-title
-                                class={`${styles["glass-carousel__item-p"]} ${styles["glass-carousel__item-p--title"]}`}
+                                class={`${styles["glass-carousel-item-p"]} ${styles["glass-carousel-item-p-title"]}`}
                             >
-                                <span class={styles["glass-carousel__title-text"]}>
+                                <span class={styles["glass-carousel-title-text"]}>
                                     {item.project.title}
-                                    <span class={styles["glass-carousel__title-line"]} />
+                                    <span class={styles["glass-carousel-title-line"]} />
                                 </span>
                             </p>
                             {
                                 item.project.released && (
                                     <p
                                         data-glass-carousel-released
-                                        class={`${styles["glass-carousel__item-p"]} ${styles["glass-carousel__item-p--released"]} ${styles["is--faded"]}`}
+                                        class={`${styles["glass-carousel-item-p"]} ${styles["glass-carousel-item-p-released"]} ${styles["is-faded"]}`}
                                     >
                                         {item.project.released}
                                     </p>
@@ -83,16 +83,16 @@ const carouselItems = items.filter(hasThumbnail);
         aria-live="polite"
         href={carouselItems[0] ? `/works/${carouselItems[0].project.slug}` : undefined}
         data-glass-carousel-caption
-        class={styles["glass-carousel__caption"]}
+        class={styles["glass-carousel-caption"]}
     ></a>
-    <div class={styles["glass-carousel__bar"]}>
+    <div class={styles["glass-carousel-bar"]}>
         <button
             type="button"
             data-glass-carousel-prev
-            class={`${styles["glass-carousel__control"]} ${styles["glass-carousel__control--prev"]}`}
+            class={`${styles["glass-carousel-control"]} ${styles["glass-carousel-control-prev"]}`}
             aria-label="Previous project"
         >
-            <svg viewBox="0 0 24 24" aria-hidden="true" class={styles["glass-carousel__chevron"]}>
+            <svg viewBox="0 0 24 24" aria-hidden="true" class={styles["glass-carousel-chevron"]}>
                 <path
                     d="M9 6l6 6-6 6"
                     fill="none"
@@ -103,14 +103,14 @@ const carouselItems = items.filter(hasThumbnail);
                 />
             </svg>
         </button>
-        <div data-glass-carousel-counter class={styles["glass-carousel__counter"]}></div>
+        <div data-glass-carousel-counter class={styles["glass-carousel-counter"]}></div>
         <button
             type="button"
             data-glass-carousel-next
-            class={styles["glass-carousel__control"]}
+            class={styles["glass-carousel-control"]}
             aria-label="Next project"
         >
-            <svg viewBox="0 0 24 24" aria-hidden="true" class={styles["glass-carousel__chevron"]}>
+            <svg viewBox="0 0 24 24" aria-hidden="true" class={styles["glass-carousel-chevron"]}>
                 <path
                     d="M9 6l6 6-6 6"
                     fill="none"
@@ -125,12 +125,12 @@ const carouselItems = items.filter(hasThumbnail);
             viewBox="0 0 40 40"
             aria-hidden="true"
             data-glass-carousel-ring
-            class={styles["glass-carousel__ring"]}
+            class={styles["glass-carousel-ring"]}
         >
-            <circle class={styles["glass-carousel__ring-track"]} cx="20" cy="20" r="17" />
+            <circle class={styles["glass-carousel-ring-track"]} cx="20" cy="20" r="17" />
             <circle
                 data-glass-carousel-ring-fill
-                class={styles["glass-carousel__ring-fill"]}
+                class={styles["glass-carousel-ring-fill"]}
                 cx="20"
                 cy="20"
                 r="17"

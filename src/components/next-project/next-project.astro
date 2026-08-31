@@ -18,24 +18,24 @@ const thumbUrl = project.thumbnail ? urlFor(project.thumbnail).width(1600).url()
   data-scroll-start="top top"
   data-scroll-end="bottom bottom"
 >
-  <a href={href} data-scroll-next-link class={styles['scroll-next__inner']}>
-    <div data-scroll-next-bg-wrap class={styles['scroll-next__bg']}>
+  <a href={href} data-scroll-next-link class={styles['scroll-next-inner']}>
+    <div data-scroll-next-bg-wrap class={styles['scroll-next-bg']}>
       {thumbUrl && (
         <img
           src={thumbUrl}
           alt={project.thumbnail?.alt || project.title}
           data-scroll-next-bg
-          class={styles['scroll-next__bg-img']}
+          class={styles['scroll-next-bg-img']}
         />
       )}
-      <div data-scroll-next-overlay class={styles['scroll-next__bg-overlay']}></div>
+      <div data-scroll-next-overlay class={styles['scroll-next-bg-overlay']}></div>
     </div>
-    <div class={styles['scroll-next__center']}>
-      <span data-scroll-next-sub class={styles['scroll-next__sub']}>Next Case:</span>
-      <h2 data-scroll-next-title class={styles['scroll-next__h']}>{project.title}</h2>
+    <div class={styles['scroll-next-center']}>
+      <span data-scroll-next-sub class={styles['scroll-next-sub']}>Next Case:</span>
+      <h2 data-scroll-next-title class={styles['scroll-next-h']}>{project.title}</h2>
     </div>
-    <div data-scroll-next-progres class={styles['scroll-next__progres']}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 480 480" fill="none" class={styles['scroll-next__progres-svg']}>
+    <div data-scroll-next-progres class={styles['scroll-next-progres']}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 480 480" fill="none" class={styles['scroll-next-progres-svg']}>
         <circle opacity="0.4" cx="240" cy="240" r="240" stroke="currentColor" stroke-width="3"></circle>
         <circle opacity="1" cx="240" cy="240" r="240" stroke="currentColor" stroke-width="3" data-scroll-next-path></circle>
       </svg>

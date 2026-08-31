@@ -45,7 +45,7 @@ pnpm lint:css     # Stylelint on src/**/*.css
 
 **CSS**
 - One CSS Module per component: `<component>.module.css`
-- BEM-compatible kebab-case class names (Stylelint)
+- kebab-case class names, no BEM separators (Stylelint)
 - Alphabetical property order (Stylelint)
 - No hex or named colours — use CSS custom properties
 - Widely-available baseline features only (`stylelint-plugin-use-baseline`)

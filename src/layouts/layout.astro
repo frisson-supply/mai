@@ -92,51 +92,51 @@ function isActive(href: string) {
         {
             path === "/" && (
                 <div id="page-loader" class={styles["page-loader"]}>
-                    <div class={styles["page-loader__bg"]} data-loader="bg">
+                    <div class={styles["page-loader-bg"]} data-loader="bg">
                         <div
-                            class={styles["page-loader__bar"]}
+                            class={styles["page-loader-bar"]}
                             data-loader="bar"
                         />
                     </div>
                     <div
-                        class={styles["page-loader__content"]}
+                        class={styles["page-loader-content"]}
                         data-loader="content"
                     >
                         {siteRole && (
-                            <div class={styles["page-loader__role"]}>{siteRole}</div>
+                            <div class={styles["page-loader-role"]}>{siteRole}</div>
                         )}
-                        <div class={styles["page-loader__name-wrap"]}>
-                            <span class={styles["page-loader__name-base"]}>
+                        <div class={styles["page-loader-name-wrap"]}>
+                            <span class={styles["page-loader-name-base"]}>
                                 <span>{siteFirstName}</span>
                                 {siteLastName && (
-                                    <span class={styles["page-loader__dot"]}>
+                                    <span class={styles["page-loader-dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName && <span>{siteLastName}</span>}
                             </span>
                             <span
-                                class={styles["page-loader__name-top"]}
+                                class={styles["page-loader-name-top"]}
                                 data-loader="name-top"
                             >
                                 <span>{siteFirstName}</span>
                                 {siteLastName && (
-                                    <span class={styles["page-loader__dot"]}>
+                                    <span class={styles["page-loader-dot"]}>
                                         <Icon name="nm-sphere-white" />
                                     </span>
                                 )}
                                 {siteLastName && <span>{siteLastName}</span>}
                             </span>
                         </div>
-                        <div class={styles["page-loader__text-wrap"]}>
+                        <div class={styles["page-loader-text-wrap"]}>
                             <span
-                                class={styles["page-loader__text"]}
+                                class={styles["page-loader-text"]}
                                 data-loader-text="1"
                             >
                                 Hold tight
                             </span>
                             <span
-                                class={styles["page-loader__text"]}
+                                class={styles["page-loader-text"]}
                                 data-loader-text="2"
                             >
                                 Hi there!
@@ -149,29 +149,29 @@ function isActive(href: string) {
         <nav data-site-nav data-theme-nav>
             <a
                 href="/"
-                class={`${styles["nav__name"]} ${styles["nav__link"]}`}
+                class={`${styles["nav-name"]} ${styles["nav-link"]}`}
                 aria-current={isActive("/") ? "page" : undefined}
-            >{siteName}<span class={styles["nav__link-line"]} data-nav-line aria-hidden="true" /></a>
+            >{siteName}<span class={styles["nav-link-line"]} data-nav-line aria-hidden="true" /></a>
         </nav>
 
         <div class={styles["page-meta"]}>
             <a
                 href="/about"
-                class={styles["nav__link"]}
+                class={styles["nav-link"]}
                 aria-current={isActive("/about") ? "page" : undefined}
-            >About<span class={styles["nav__link-line"]} data-nav-line aria-hidden="true" /></a>
+            >About<span class={styles["nav-link-line"]} data-nav-line aria-hidden="true" /></a>
             {settings?.email && (
                 <button
                     type="button"
                     aria-label="Copy email to clipboard"
                     data-copy-button
                     data-copy-email={settings.email}
-                    class={styles["page-meta__link"]}
+                    class={styles["page-meta-link"]}
                 >
-                    <span class={styles["page-meta__text-wrap"]}>
-                        <span class={styles["page-meta__text-el"]}>Email</span>
-                        <span class={styles["page-meta__text-el"]}>Copy</span>
-                        <span class={styles["page-meta__text-el"]}>Copied!</span>
+                    <span class={styles["page-meta-text-wrap"]}>
+                        <span class={styles["page-meta-text-el"]}>Email</span>
+                        <span class={styles["page-meta-text-el"]}>Copy</span>
+                        <span class={styles["page-meta-text-el"]}>Copied!</span>
                     </span>
                 </button>
             )}

@@ -20,20 +20,20 @@
         width: 100%;
     }
 
-    .image-block--narrow { max-width: 60ch; }
-    .image-block--normal { max-width: 75ch; }
-    .image-block--wide   { max-width: 100%; }
+    .image-block-narrow { max-width: 60ch; }
+    .image-block-normal { max-width: 75ch; }
+    .image-block-wide   { max-width: 100%; }
 
-    .image-block--full {
+    .image-block-full {
         grid-column: 1 / -1;
         max-width: none;
     }
 
-    .image-block--left             { grid-column: 1 / 9; }
-    .image-block--off-left-centre  { grid-column: 3 / 11; }
-    .image-block--centre           { grid-column: 5 / 13; }
-    .image-block--off-right-centre { grid-column: 7 / 15; }
-    .image-block--right            { grid-column: 9 / -1; }
+    .image-block-left             { grid-column: 1 / 9; }
+    .image-block-off-left-centre  { grid-column: 3 / 11; }
+    .image-block-centre           { grid-column: 5 / 13; }
+    .image-block-off-right-centre { grid-column: 7 / 15; }
+    .image-block-right            { grid-column: 9 / -1; }
 }
 
 @layer overrides {

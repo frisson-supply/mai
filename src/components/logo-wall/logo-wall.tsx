@@ -146,20 +146,20 @@ export function LogoWall({ heading, logos }: Props) {
 
   return (
     <section className={styles['logo-wall-section']}>
-      {heading && <h2 className={styles['logo-wall-section__heading']}>{heading}</h2>}
+      {heading && <h2 className={styles['logo-wall-section-heading']}>{heading}</h2>}
       <div ref={rootRef} className={styles['logo-wall']}>
-        <div ref={listRef} className={styles['logo-wall__list']}>
+        <div ref={listRef} className={styles['logo-wall-list']}>
           {logos.map((logo, index) => (
-            <div key={index} data-logo-wall-item="" className={styles['logo-wall__item']}>
-              <div data-logo-wall-target-parent="" className={styles['logo-wall__logo']}>
-                <div className={styles['logo-wall__logo-sizer']} />
-                <div data-logo-wall-target="" className={styles['logo-wall__logo-target']}>
+            <div key={index} data-logo-wall-item="" className={styles['logo-wall-item']}>
+              <div data-logo-wall-target-parent="" className={styles['logo-wall-logo']}>
+                <div className={styles['logo-wall-logo-sizer']} />
+                <div data-logo-wall-target="" className={styles['logo-wall-logo-target']}>
                   {logo.href ? (
                     <a href={logo.href} target="_blank" rel="noopener noreferrer" aria-label={logo.alt}>
-                      <img src={logo.src} alt={logo.alt} className={styles['logo-wall__logo-img']} />
+                      <img src={logo.src} alt={logo.alt} className={styles['logo-wall-logo-img']} />
                     </a>
                   ) : (
-                    <img src={logo.src} alt={logo.alt} className={styles['logo-wall__logo-img']} />
+                    <img src={logo.src} alt={logo.alt} className={styles['logo-wall-logo-img']} />
                   )}
                 </div>
               </div>

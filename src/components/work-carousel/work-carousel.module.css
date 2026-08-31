@@ -9,7 +9,7 @@
         position: relative;
     }
 
-    .glass-carousel__canvas {
+    .glass-carousel-canvas {
         display: block;
         height: 100%;
         inset: 0%;
@@ -32,7 +32,7 @@
         cursor: grabbing;
     }
 
-    .glass-carousel__list {
+    .glass-carousel-list {
         align-items: center;
         display: flex;
         inset: 0%;
@@ -54,7 +54,7 @@
         width: 1px;
     }
 
-    .glass-carousel__item {
+    .glass-carousel-item {
         flex: none;
         height: 35%;
         scroll-snap-align: center;
@@ -64,13 +64,13 @@
         visibility: hidden;
     }
 
-    .glass-carousel__item-img {
+    .glass-carousel-item-img {
         display: block;
         height: 100%;
         object-fit: cover;
     }
 
-    .glass-carousel__item-p {
+    .glass-carousel-item-p {
         color: var(--text-title);
         font-family: Haffer, Arial, sans-serif;
         font-size: 1em;
@@ -81,30 +81,30 @@
         text-align: center;
     }
 
-    .glass-carousel__item-p--role {
+    .glass-carousel-item-p-role {
         font-size: 0.85em;
     }
 
-    .glass-carousel__item-p--title {
+    .glass-carousel-item-p-title {
         font-size: 2.5em;
         margin-top: var(--space-xs);
     }
 
-    .glass-carousel__item-p--released {
+    .glass-carousel-item-p-released {
         font-size: 0.85em;
         margin-top: var(--space-xs);
     }
 
-    .is--faded {
+    .is-faded {
         opacity: 0.6;
     }
 
-    .glass-carousel__title-text {
+    .glass-carousel-title-text {
         display: inline-block;
         position: relative;
     }
 
-    .glass-carousel__title-line {
+    .glass-carousel-title-line {
         background-color: currentcolor;
         bottom: 0;
         display: block;
@@ -118,12 +118,12 @@
     }
 
     @media (hover: hover) {
-        .glass-carousel__caption:hover .glass-carousel__title-line {
+        .glass-carousel-caption:hover .glass-carousel-title-line {
             transform: scaleX(1);
         }
     }
 
-    .glass-carousel__caption {
+    .glass-carousel-caption {
         align-items: center;
         color: var(--text-title);
         display: flex;
@@ -139,14 +139,14 @@
         transform: translate(-50%);
     }
 
-    .glass-carousel__caption > div {
+    .glass-carousel-caption > div {
         align-items: center;
         display: flex;
         flex-direction: column;
     }
 
 
-    .glass-carousel__counter {
+    .glass-carousel-counter {
         font-size: 1em;
         min-width: 3em;
         pointer-events: none;
@@ -154,11 +154,11 @@
     }
 
     /* ── Bottom bar: prev / counter / dots / next, one chip ── */
-    .glass-carousel__bar {
+    .glass-carousel-bar {
         display: none;
     }
 
-    [data-glass-carousel="canvas"] .glass-carousel__bar {
+    [data-glass-carousel="canvas"] .glass-carousel-bar {
         align-items: center;
         background-color: hsl(0deg 0% 0% / 6%);
         border-radius: var(--radius-sm);
@@ -171,7 +171,7 @@
         transform: translate(-50%);
     }
 
-    .glass-carousel__control {
+    .glass-carousel-control {
         align-items: center;
         background: none;
         border: none;
@@ -187,39 +187,39 @@
         width: 1.5em;
     }
 
-    .glass-carousel__control:hover {
+    .glass-carousel-control:hover {
         opacity: 1;
     }
 
-    .glass-carousel__control:disabled {
+    .glass-carousel-control:disabled {
         cursor: default;
         opacity: 0.35;
     }
 
-    .glass-carousel__control--prev .glass-carousel__chevron {
+    .glass-carousel-control-prev .glass-carousel-chevron {
         transform: scaleX(-1);
     }
 
-    .glass-carousel__chevron {
+    .glass-carousel-chevron {
         height: 1em;
         width: 1em;
     }
 
-    .glass-carousel__ring {
+    .glass-carousel-ring {
         height: 1.5em;
         transform: rotate(-90deg);
         transform-origin: center;
         width: 1.5em;
     }
 
-    .glass-carousel__ring-track {
+    .glass-carousel-ring-track {
         fill: none;
         stroke: var(--text-muted);
         stroke-opacity: 0.35;
         stroke-width: 2;
     }
 
-    .glass-carousel__ring-fill {
+    .glass-carousel-ring-fill {
         fill: none;
         stroke: var(--text-title);
         stroke-dasharray: 106.81;
@@ -233,7 +233,7 @@
    Transform, not inset — the canvas keeps its measured size so the WebGL layout
    and pointer hit-testing stay in sync. */
 @media (64rem < width <= 100rem) {
-    .glass-carousel__canvas {
+    .glass-carousel-canvas {
         transform: translateY(3%);
     }
 }
@@ -243,11 +243,11 @@
         min-height: 115svh;
     }
 
-    [data-glass-carousel="canvas"] .glass-carousel__bar {
+    [data-glass-carousel="canvas"] .glass-carousel-bar {
         bottom: 20%;
     }
 
-    .glass-carousel__item-p--title {
+    .glass-carousel-item-p-title {
         font-size: 2em;
     }
 }
@@ -257,11 +257,11 @@
         min-height: 95svh;
     }
 
-    .glass-carousel__caption {
+    .glass-carousel-caption {
         top: 16%;
     }
 
-    .glass-carousel__item-p--title {
+    .glass-carousel-item-p-title {
         font-size: 1.5em;
     }
 }

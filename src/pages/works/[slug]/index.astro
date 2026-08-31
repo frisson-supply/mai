@@ -36,15 +36,15 @@ if (preview) {
 >
   <article class={styles['project-detail']}>
 
-    <header class={styles['project-detail__header']}>
+    <header class={styles['project-detail-header']}>
       <h1 style="font-size:clamp(2rem,5vw,5rem);" data-split="title">{project.title}</h1>
       {project.description && (
-        <p class={styles['project-detail__description']} data-split="paragraph">{project.description}</p>
+        <p class={styles['project-detail-description']} data-split="paragraph">{project.description}</p>
       )}
     </header>
 
     {project.videoUrl && (
-      <div class={styles['project-detail__video']} data-video-hero>
+      <div class={styles['project-detail-video']} data-video-hero>
         <VideoSection url={project.videoUrl} reveal={false} />
       </div>
     )}
@@ -53,40 +53,40 @@ if (preview) {
       <img
         src={urlFor(project.thumbnail).width(1200).url()}
         alt={project.thumbnail.alt || project.title}
-        class={styles['project-detail__hero-img']}
+        class={styles['project-detail-hero-img']}
         data-reveal
       />
     )}
 
-    <div class={styles['project-detail__info']}>
-      <dl class={styles['project-detail__info-meta']}>
+    <div class={styles['project-detail-info']}>
+      <dl class={styles['project-detail-info-meta']}>
         {project.released && (
-          <div class={styles['project-detail__info-item']}>
+          <div class={styles['project-detail-info-item']}>
             <dt data-split="paragraph">Released</dt>
             <dd data-split="paragraph">{project.released}</dd>
           </div>
         )}
         {project.duration && (
-          <div class={styles['project-detail__info-item']}>
+          <div class={styles['project-detail-info-item']}>
             <dt data-split="paragraph">Duration</dt>
             <dd data-split="paragraph">{project.duration}</dd>
           </div>
         )}
         {project.genre && (
-          <div class={styles['project-detail__info-item']}>
+          <div class={styles['project-detail-info-item']}>
             <dt data-split="paragraph">Genre</dt>
             <dd data-split="paragraph">{project.genre}</dd>
           </div>
         )}
         {project.role && (
-          <div class={styles['project-detail__info-item']}>
+          <div class={styles['project-detail-info-item']}>
             <dt data-split="paragraph">Role</dt>
             <dd data-split="paragraph">{project.role}</dd>
           </div>
         )}
       </dl>
       {project.infoImage && (
-        <div class={styles['project-detail__info-image']} data-reveal>
+        <div class={styles['project-detail-info-image']} data-reveal>
           <img
             src={urlFor(project.infoImage).width(1200).url()}
             alt={project.infoImage.alt || project.title}
@@ -96,7 +96,7 @@ if (preview) {
     </div>
 
     {project.sections && project.sections.length > 0 && (
-      <div class={styles['project-detail__sections']}>
+      <div class={styles['project-detail-sections']}>
         <SectionsRenderer sections={project.sections} />
       </div>
     )}
