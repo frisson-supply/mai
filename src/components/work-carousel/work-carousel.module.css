@@ -1,0 +1,267 @@
+@layer pages {
+    /* ── Glass Carousel ── */
+    .glass-carousel {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-height: 100svh;
+        overflow: clip;
+        position: relative;
+    }
+
+    .glass-carousel__canvas {
+        display: block;
+        height: 100%;
+        inset: 0%;
+        position: absolute;
+        touch-action: pan-y;
+        /* stylelint-disable-next-line plugin/use-baseline -- widely supported, just not yet "widely available" by baseline's date cutoff */
+        user-select: none;
+        width: 100%;
+    }
+
+    [data-glass-carousel-wheel="all"] canvas {
+        touch-action: none;
+    }
+
+    [data-glass-carousel-pointer="grab"] canvas {
+        cursor: grab;
+    }
+
+    [data-glass-carousel-pointer="grabbing"] canvas {
+        cursor: grabbing;
+    }
+
+    .glass-carousel__list {
+        align-items: center;
+        display: flex;
+        inset: 0%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-left: 2em;
+        padding-right: 2em;
+        position: absolute;
+        scroll-snap-type: x mandatory;
+    }
+
+    /* Once the canvas takes over, the list stays for screen readers only */
+    [data-glass-carousel="canvas"] [data-glass-carousel-list] {
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        padding: 0;
+        white-space: nowrap;
+        width: 1px;
+    }
+
+    .glass-carousel__item {
+        flex: none;
+        height: 35%;
+        scroll-snap-align: center;
+    }
+
+    [data-glass-carousel-item] [data-glass-carousel-content] {
+        visibility: hidden;
+    }
+
+    .glass-carousel__item-img {
+        display: block;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .glass-carousel__item-p {
+        color: var(--text-title);
+        font-family: Haffer, Arial, sans-serif;
+        font-size: 1em;
+        font-weight: var(--fw-normal);
+        line-height: var(--lh-tight);
+        margin-bottom: 0;
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .glass-carousel__item-p--role {
+        font-size: 0.85em;
+    }
+
+    .glass-carousel__item-p--title {
+        font-size: 2.5em;
+        margin-top: var(--space-xs);
+    }
+
+    .glass-carousel__item-p--released {
+        font-size: 0.85em;
+        margin-top: var(--space-xs);
+    }
+
+    .is--faded {
+        opacity: 0.6;
+    }
+
+    .glass-carousel__title-text {
+        display: inline-block;
+        position: relative;
+    }
+
+    .glass-carousel__title-line {
+        background-color: currentcolor;
+        bottom: 0;
+        display: block;
+        height: 1px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform var(--duration-fast) var(--ease-out);
+    }
+
+    @media (hover: hover) {
+        .glass-carousel__caption:hover .glass-carousel__title-line {
+            transform: scaleX(1);
+        }
+    }
+
+    .glass-carousel__caption {
+        align-items: center;
+        color: var(--text-title);
+        display: flex;
+        flex-direction: column;
+        left: 50%;
+        outline-offset: var(--space-2xs);
+        padding-left: 1em;
+        padding-right: 1em;
+        position: absolute;
+        text-align: center;
+        text-decoration: none;
+        top: 15%;
+        transform: translate(-50%);
+    }
+
+    .glass-carousel__caption > div {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .glass-carousel__counter {
+        font-size: 1em;
+        min-width: 3em;
+        pointer-events: none;
+        text-align: center;
+    }
+
+    /* ── Bottom bar: prev / counter / dots / next, one chip ── */
+    .glass-carousel__bar {
+        display: none;
+    }
+
+    [data-glass-carousel="canvas"] .glass-carousel__bar {
+        align-items: center;
+        background-color: hsl(0deg 0% 0% / 6%);
+        border-radius: var(--radius-sm);
+        bottom: 6%;
+        display: flex;
+        gap: var(--space-md);
+        left: 50%;
+        padding: 0.625em 1em;
+        position: absolute;
+        transform: translate(-50%);
+    }
+
+    .glass-carousel__control {
+        align-items: center;
+        background: none;
+        border: none;
+        color: var(--text-title);
+        cursor: pointer;
+        display: flex;
+        font-size: var(--fs-lg);
+        height: 1.5em;
+        justify-content: center;
+        opacity: 0.7;
+        padding: 0;
+        transition: opacity var(--duration-base) ease;
+        width: 1.5em;
+    }
+
+    .glass-carousel__control:hover {
+        opacity: 1;
+    }
+
+    .glass-carousel__control:disabled {
+        cursor: default;
+        opacity: 0.35;
+    }
+
+    .glass-carousel__control--prev .glass-carousel__chevron {
+        transform: scaleX(-1);
+    }
+
+    .glass-carousel__chevron {
+        height: 1em;
+        width: 1em;
+    }
+
+    .glass-carousel__ring {
+        height: 1.5em;
+        transform: rotate(-90deg);
+        transform-origin: center;
+        width: 1.5em;
+    }
+
+    .glass-carousel__ring-track {
+        fill: none;
+        stroke: var(--text-muted);
+        stroke-opacity: 0.35;
+        stroke-width: 2;
+    }
+
+    .glass-carousel__ring-fill {
+        fill: none;
+        stroke: var(--text-title);
+        stroke-dasharray: 106.81;
+        stroke-dashoffset: 106.81;
+        stroke-linecap: round;
+        stroke-width: 2;
+    }
+}
+
+/* Laptop widths (~1024–1600px): the panels sit a touch high, nudge them down.
+   Transform, not inset — the canvas keeps its measured size so the WebGL layout
+   and pointer hit-testing stay in sync. */
+@media (64rem < width <= 100rem) {
+    .glass-carousel__canvas {
+        transform: translateY(3%);
+    }
+}
+
+@media (48rem < width <= 64rem) {
+    .glass-carousel {
+        min-height: 115svh;
+    }
+
+    [data-glass-carousel="canvas"] .glass-carousel__bar {
+        bottom: 20%;
+    }
+
+    .glass-carousel__item-p--title {
+        font-size: 2em;
+    }
+}
+
+@media (width <= 48rem) {
+    .glass-carousel {
+        min-height: 95svh;
+    }
+
+    .glass-carousel__caption {
+        top: 16%;
+    }
+
+    .glass-carousel__item-p--title {
+        font-size: 1.5em;
+    }
+}

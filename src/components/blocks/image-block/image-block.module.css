@@ -35,3 +35,12 @@
     .image-block--off-right-centre { grid-column: 7 / 15; }
     .image-block--right            { grid-column: 9 / -1; }
 }
+
+@layer overrides {
+    @media (width <= 48rem) {
+        .image-block {
+            grid-column: 1 / -1;
+            max-width: none;
+        }
+    }
+}

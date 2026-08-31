@@ -107,15 +107,27 @@
 @layer overrides {
     @media (width <= 64rem) {
         .project-detail__info-meta {
-            display: flex;
-            flex-flow: row wrap;
+            display: grid;
             gap: 0 var(--space-xl);
             grid-column: 1 / -1;
+            grid-template-columns: repeat(2, 1fr);
             margin-bottom: var(--space-md);
+            padding-inline-start: 0;
+        }
+
+        .project-detail__info-item dt,
+        .project-detail__info-item dd {
+            text-align: center;
         }
 
         .project-detail__info-item dd {
             margin-bottom: 0;
+        }
+    }
+
+    @media (width <= 48rem) {
+        .project-detail__info-image {
+            grid-column: 1 / -1;
         }
     }
 }

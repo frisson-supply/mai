@@ -111,7 +111,7 @@ export async function getHomeList() {
     `*[_type == "homeList" && _id == "homeList"][0] {
       items[defined(project->_id)] {
         _key,
-        project->{ _id, title, "slug": slug.current, tags, thumbnail }
+        project->{ _id, title, "slug": slug.current, role, released, tags, thumbnail }
       }
     }`
   );

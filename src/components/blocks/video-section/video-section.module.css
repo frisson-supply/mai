@@ -27,3 +27,11 @@
     width: 100%;
   }
 }
+
+@layer overrides {
+  @media (width <= 48rem) {
+    .video-section {
+      padding-inline: 0;
+    }
+  }
+}
