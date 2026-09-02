@@ -1,7 +1,7 @@
 @layer components {
     .section-text {
         color: var(--text-default);
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
         grid-column: 1 / -1;
         line-height: var(--lh-loose);
         text-align: left;
@@ -9,7 +9,7 @@
 
     .section-text p {
         color: var(--text-default);
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
         margin-bottom: var(--space-md);
         max-width: none;
         text-align: left;

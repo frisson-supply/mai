@@ -6,7 +6,7 @@
 
     .image-block figcaption {
         color: var(--color-text-caption);
-        font-size: var(--fs-md);
+        font-size: var(--fs-caption);
         margin-top: var(--space-xs);
         text-align: center;
     }

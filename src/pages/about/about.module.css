@@ -8,6 +8,59 @@
         padding: var(--space-xl) var(--space-md) 0;
     }
 
+    /* Same fixed viewport position as the homepage "Cases" label */
+    .about-contact {
+        bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        left: 1rem;
+        position: fixed;
+        z-index: 10;
+    }
+
+    /* Same treatment as the homepage "Cases" label */
+    .about-contact-heading {
+        font-size: var(--fs-display);
+        line-height: var(--lh-none);
+        pointer-events: none;
+    }
+
+    .about-contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2xs);
+    }
+
+    .about-contact-link {
+        color: inherit;
+        font-size: var(--fs-body);
+        position: relative;
+        text-decoration: none;
+        width: fit-content;
+    }
+
+    /* Same underline reveal as the nav links */
+    .about-link-line {
+        background-color: currentcolor;
+        bottom: -0.15em;
+        display: block;
+        height: 1px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform var(--duration-fast) var(--ease-out);
+    }
+
+    @media (hover: hover) {
+        .about-contact-link:hover .about-link-line,
+        .about-recognition-link:hover .about-link-line {
+            transform: scaleX(1);
+        }
+    }
+
     .about-bio {
         max-width: 38ch;
         text-wrap: pretty;
@@ -30,7 +83,7 @@
 
     .about-bio p {
         color: inherit;
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
         line-height: var(--lh-relaxed);
         margin-bottom: 0.75em;
         max-width: none;
@@ -43,18 +96,22 @@
         min-height: 30rem;
     }
 
+    .about-credits {
+        display: contents;
+    }
+
     /* Brands */
     .about-brands {
         align-self: start;
-        grid-column: 1 / 7;
-        grid-row: 3;
+        grid-column: 1 / 5;
+        grid-row: 1;
         padding-bottom: 0;
     }
 
     .about-brands-list {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--space-sm);
+        gap: var(--space-lg) var(--space-md);
         margin-top: var(--space-xs);
     }
 
@@ -67,16 +124,16 @@
         align-items: center;
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
-        width: 4rem;
+        gap: var(--space-xs);
+        width: 7rem;
     }
 
     .about-brand-image {
         border-radius: var(--radius-sm);
         display: block;
-        height: 2.5rem;
+        height: 4rem;
         object-fit: contain;
-        width: 2.5rem;
+        width: 4rem;
     }
 
     .about-brand-fallback {
@@ -85,32 +142,31 @@
         border-radius: var(--radius-sm);
         color: var(--color-brand-text);
         display: flex;
-        height: 2.5rem;
+        height: 4rem;
         justify-content: center;
-        width: 2.5rem;
+        width: 4rem;
     }
 
     .about-brand-text {
-        font-size: var(--fs-2xs);
+        font-size: var(--fs-caption);
+        line-height: var(--lh-tight);
         opacity: 0.6;
-        overflow: hidden;
         text-align: center;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        text-wrap: balance;
         width: 100%;
     }
 
     /* Recognitions */
     .about-recognitions {
         align-self: start;
-        grid-column: 7 / 13;
-        grid-row: 3;
+        grid-column: 5 / 10;
+        grid-row: 1;
         padding-bottom: 0;
     }
 
     .about-section-heading {
         color: inherit;
-        font-size: var(--fs-lg);
+        font-size: var(--fs-label);
         font-weight: var(--fw-normal);
     }
 
@@ -123,34 +179,39 @@
 
     .about-recognition-row {
         color: inherit;
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
         line-height: var(--lh-loose);
     }
 
     .about-recognition-link {
         color: inherit;
+        position: relative;
         text-decoration: none;
-        transition: opacity var(--duration-fast);
     }
-
-    .about-recognition-link:hover {
-        opacity: 0.5;
-    }
-
 }
 
 @layer overrides {
     @media (width <= 64rem) {
         .about-bio-section {
             grid-column: 9 / -1;
+            min-height: auto;
+        }
+
+        .about-credits {
+            align-self: start;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+            grid-column: 1 / 9;
+            grid-row: 1;
         }
 
         .about-brands {
-            grid-column: 1 / 9;
+            align-self: stretch;
         }
 
         .about-recognitions {
-            grid-column: 9 / -1;
+            align-self: stretch;
         }
     }
 }
@@ -185,6 +246,13 @@
 
     .about-recognitions {
         align-self: unset;
+        width: 100%;
+    }
+
+    .about-contact {
+        bottom: auto;
+        left: auto;
+        position: static;
         width: 100%;
     }
 }
