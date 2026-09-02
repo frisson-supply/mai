@@ -1,6 +1,6 @@
 @layer components {
     .nav-link {
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         line-height: 1.2;
         position: relative;
     }
@@ -29,7 +29,7 @@
     }
 
     .nav-name {
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         grid-area: name;
     }
 
@@ -37,7 +37,7 @@
         align-items: center;
         display: flex;
         flex-direction: row;
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         gap: var(--space-sm);
         position: fixed;
         right: var(--space-md);
@@ -191,7 +191,7 @@
     }
 
     .page-loader-role {
-        font-size: var(--fs-sm);
+        font-size: var(--fs-caption);
         letter-spacing: 0.1em;
         margin-bottom: var(--space-3xs);
         opacity: 0.5;
@@ -199,7 +199,7 @@
     }
 
     .page-loader-name-wrap {
-        font-size: var(--fs-lg);
+        font-size: var(--fs-label);
         font-weight: var(--fw-normal);
         letter-spacing: 0.05em;
         line-height: var(--lh-none);
@@ -207,7 +207,7 @@
     }
 
     .page-loader-text {
-        font-size: var(--fs-sm);
+        font-size: var(--fs-caption);
         letter-spacing: 0.1em;
         margin-bottom: -0.25em;
         opacity: 0;

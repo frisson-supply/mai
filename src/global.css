@@ -52,14 +52,14 @@
         --color-brand-text: hsl(0deg 0% 50%);
 
         /* Font sizes */
-        --fs-2xs: 0.65rem;
-        --fs-xs: 0.7rem;
-        --fs-sm: 0.75rem;
-        --fs-md: 0.8rem;
-        --fs-ui: 0.875rem;
-        --fs-base: 1rem;
-        --fs-body: 1.125rem;
-        --fs-lg: 1.25rem;
+        --fs-caption: 0.75rem;
+        --fs-body: 0.875rem;
+        --fs-ui: 1rem;
+        --fs-label: 1.25rem;
+        --fs-heading-sm: clamp(1.25rem, 3vw, 2rem);
+        --fs-heading: clamp(1.5rem, 4vw, 3rem);
+        --fs-title: clamp(2rem, 5vw, 5rem);
+        --fs-display: clamp(3.5rem, 9vw, 8rem);
 
         /* Breakpoints — reference only, cannot be used inside @media */
         --bp-sm: 48rem;
@@ -125,20 +125,20 @@
     }
 
     h1 {
-        font-size: clamp(3rem, 8vw, 8rem);
+        font-size: var(--fs-title);
         font-weight: var(--fw-bold);
         letter-spacing: -0.02em;
         margin-bottom: var(--space-md);
     }
 
     h2 {
-        font-size: clamp(1.5rem, 4vw, 3rem);
+        font-size: var(--fs-heading);
         font-weight: var(--fw-semibold);
         margin-bottom: var(--space-sm);
     }
 
     h3 {
-        font-size: clamp(1.25rem, 3vw, 2rem);
+        font-size: var(--fs-heading-sm);
         font-weight: var(--fw-semibold);
         margin-bottom: var(--space-xs);
     }
@@ -166,7 +166,7 @@
 
     nav a {
         color: inherit;
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         text-decoration: none;
     }
 

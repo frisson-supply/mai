@@ -9,7 +9,7 @@
 
     .logo-wall-section-heading {
         color: var(--text-muted);
-        font-size: var(--fs-sm);
+        font-size: var(--fs-caption);
         font-weight: var(--fw-semibold);
         letter-spacing: 0.12em;
         margin-bottom: var(--space-xl);

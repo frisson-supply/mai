@@ -73,7 +73,7 @@
     .glass-carousel-item-p {
         color: var(--text-title);
         font-family: Haffer, Arial, sans-serif;
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         font-weight: var(--fw-normal);
         line-height: var(--lh-tight);
         margin-bottom: 0;
@@ -82,16 +82,16 @@
     }
 
     .glass-carousel-item-p-role {
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
     }
 
     .glass-carousel-item-p-title {
-        font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+        font-size: var(--fs-heading);
         margin-top: var(--space-xs);
     }
 
     .glass-carousel-item-p-released {
-        font-size: var(--fs-ui);
+        font-size: var(--fs-body);
         margin-top: var(--space-xs);
     }
 
@@ -147,7 +147,7 @@
 
 
     .glass-carousel-counter {
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         min-width: 3em;
         pointer-events: none;
         text-align: center;
@@ -178,7 +178,7 @@
         color: var(--text-title);
         cursor: pointer;
         display: flex;
-        font-size: var(--fs-base);
+        font-size: var(--fs-ui);
         height: 1.5em;
         justify-content: center;
         opacity: 0.7;
