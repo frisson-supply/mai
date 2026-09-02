@@ -428,7 +428,12 @@ const carouselItems = items.filter(hasThumbnail);
                         tex.magFilter = THREE.LinearFilter;
                         tex.generateMipmaps = true;
                         tex.anisotropy = maxAnisotropy;
-                        tex.colorSpace = THREE.SRGBColorSpace;
+                        // ponytail: NoColorSpace + no output conversion = the shader passes sRGB bytes straight through,
+                        // so un-lensed pixels match the CMS asset exactly. The lens blur then averages in sRGB
+                        // rather than linear, which is technically wrong but keeps the contrast the images were
+                        // authored with. Switch to SRGBColorSpace + #include <colorspace_fragment> if the glow
+                        // ever needs physically correct compositing.
+                        tex.colorSpace = THREE.NoColorSpace;
                         tex.needsUpdate = true;
                         source.tex = tex;
                         measurePanel();
@@ -678,6 +683,11 @@ const carouselItems = items.filter(hasThumbnail);
                 if (v === pointerState) return;
                 pointerState = v;
                 wrapper.setAttribute("data-glass-carousel-pointer", v);
+                // "grab" (mouse over a panel) / "grabbing" (dragging) / "" — the
+                // controls layer pauses autoplay off this rather than raw pointermove.
+                wrapper.dispatchEvent(
+                    new CustomEvent("glasscarousel:pointer", { detail: { state: v } }),
+                );
             }
 
             function setHover(on) {
@@ -1047,7 +1057,10 @@ const carouselItems = items.filter(hasThumbnail);
             function withNavLock(action) {
                 if (navLockTimeout) return;
                 action();
-                restartAutoplay();
+                // Hold the ring empty until the slide actually lands — the change
+                // event below starts it. Starting here too made it run for a frame or
+                // two and then visibly reset on the crossing.
+                stopAutoplay();
                 if (prevBtn) prevBtn.disabled = true;
                 if (nextBtn) nextBtn.disabled = true;
                 navLockTimeout = window.setTimeout(() => {
@@ -1064,10 +1077,12 @@ const carouselItems = items.filter(hasThumbnail);
 
             // Ring indicator: fills over AUTOPLAY_MS, then advances and starts again.
             let ringTween = null;
+            let paused = false;
             const circumference = ringFill ? 2 * Math.PI * ringFill.r.baseVal.value : 0;
 
             function startAutoplay() {
-                if (!ringFill || reducedMotion) return;
+                if (!ringFill || reducedMotion || paused) return;
+                stopAutoplay(); // never stack: onComplete and a change event can both land here
                 gsap.set(ringFill, { strokeDashoffset: circumference });
                 ringTween = gsap.to(ringFill, {
                     strokeDashoffset: 0,
@@ -1085,31 +1100,24 @@ const carouselItems = items.filter(hasThumbnail);
                 if (ringFill) gsap.set(ringFill, { strokeDashoffset: circumference });
             }
 
-            function restartAutoplay() {
-                stopAutoplay();
-                startAutoplay();
+            // Pause only over an actual panel, or mid-drag. The instance already
+            // hit-tests the panels for the cursor, so this needs no geometry of its
+            // own — and because the state comes from real coordinates, the loader's
+            // synthesised re-target events can no longer pause it with no leave.
+            function onPointerState(e) {
+                const next = e.detail.state !== "";
+                if (next === paused) return;
+                paused = next;
+                if (paused) stopAutoplay();
+                else startAutoplay();
             }
 
-            // The loader unmounting makes the browser re-target the stationary cursor
-            // and synthesize hover events over the carousel — a fake pointerenter that
-            // would pause autoplay with no pointerleave ever following. Re-target
-            // events carry no displacement, so pause on a move that actually moved.
-            let hoverPaused = false;
+            // Drag, wheel and click-to-centre move the carousel without going through
+            // the buttons; restart so the ring always reflects the slide on screen.
+            const onChange = () => startAutoplay();
 
-            function onHoverMove(e) {
-                if (hoverPaused || (!e.movementX && !e.movementY)) return;
-                hoverPaused = true;
-                stopAutoplay();
-            }
-
-            function onHoverLeave() {
-                if (!hoverPaused) return;
-                hoverPaused = false;
-                startAutoplay();
-            }
-
-            wrapper.addEventListener("pointermove", onHoverMove);
-            wrapper.addEventListener("pointerleave", onHoverLeave);
+            wrapper.addEventListener("glasscarousel:pointer", onPointerState);
+            wrapper.addEventListener("glasscarousel:change", onChange);
 
             // Start with the page reveal rather than behind the loader.
             if (window.maiReady) startAutoplay();
@@ -1123,8 +1131,8 @@ const carouselItems = items.filter(hasThumbnail);
                     document.removeEventListener("mai:ready", startAutoplay);
                     prevBtn?.removeEventListener("click", onPrev);
                     nextBtn?.removeEventListener("click", onNext);
-                    wrapper.removeEventListener("pointermove", onHoverMove);
-                    wrapper.removeEventListener("pointerleave", onHoverLeave);
+                    wrapper.removeEventListener("glasscarousel:pointer", onPointerState);
+                    wrapper.removeEventListener("glasscarousel:change", onChange);
                     delete wrapper.dataset.glasscarouselWired;
                 },
                 { once: true },
